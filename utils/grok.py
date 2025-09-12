@@ -12,7 +12,7 @@ class Grok():
             base_url = self.endpoint,
         )
         
-        self.models = ["xai/grok-3-mini", "xai/grok-3", "openai/gpt-5-nano", "openai/gpt-5-mini", "openai/gpt-5", "openai/gpt-4.1-nano", "openai/gpt-4.1-mini", "openai/gpt-4.1"]
+        self.models = ["xai/grok-3-mini", "xai/grok-3", "openai/gpt-4.1-nano", "openai/gpt-4.1-mini", "openai/gpt-4.1"]
         #self.models = ["openai/gpt-5-mini"]
         #"deepseek/DeepSeek-R1-0528"]
         
