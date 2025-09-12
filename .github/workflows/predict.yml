@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read  # For repo access
-      packages: read  # Crucial for GitHub Models/Packages
+      models: read  # Crucial for GitHub Models/Packages
     steps:
       # checkout the repository content to github runner
       - name: checkout repo content
