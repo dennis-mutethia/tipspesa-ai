@@ -12,7 +12,8 @@ class Grok():
             base_url = self.endpoint,
         )
         
-        self.models = ["xai/grok-3-mini", "xai/grok-3", "deepseek/DeepSeek-R1-0528"]
+        self.models = ["xai/grok-3-mini", "xai/grok-3"] 
+        #"deepseek/DeepSeek-R1-0528"]
         
     def get_response(self, query):
         model = self.models[0]
