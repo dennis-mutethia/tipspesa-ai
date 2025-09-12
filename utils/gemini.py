@@ -18,7 +18,7 @@ class Gemini():
             
             except Exception as e:
                 print(f"Error in Gemini.get_response: {e}")
-                self.client = genai.Client('AIzaSyDdp3DT8Q8xBc39dsuIrxQMs7vrcMa17Fs') # Fallback API key
+                return None
     
     def call_gemini_api(self, query):
         try:
