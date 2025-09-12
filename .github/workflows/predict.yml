@@ -10,6 +10,9 @@ on:
 jobs:
   execute:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      models: read
     steps:
       # checkout the repository content to github runner
       - name: checkout repo content
