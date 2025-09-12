@@ -8,7 +8,7 @@ class Grok():
         self.endpoint = "https://models.github.ai/inference"
         
         self.client = OpenAI(
-            api_key = os.getenv("GITHUB_TOKEN"),
+            api_key = os.getenv("GIT_TOKEN"),
             base_url = self.endpoint,
         )
         
