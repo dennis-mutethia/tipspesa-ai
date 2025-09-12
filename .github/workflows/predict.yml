@@ -7,13 +7,12 @@ on:
   schedule:
     - cron: '0 3 * * *'  # Runs at 3am UTC (6am EAT)
 
-permissions:
-  contents: read
-  models: read
-
 jobs:
   execute:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read  # For repo access
+      packages: read  # Crucial for GitHub Models/Packages
     steps:
       # checkout the repository content to github runner
       - name: checkout repo content
@@ -27,7 +26,6 @@ jobs:
           echo "DB_NAME=${{ secrets.DB_NAME }}" >> $GITHUB_ENV
           echo "DB_USER=${{ secrets.DB_USER }}" >> $GITHUB_ENV
           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> $GITHUB_ENV
-          echo "GIT_TOKEN=${{ secrets.GIT_TOKEN }}" >> $GITHUB_ENV
 
       - name: setup python
         uses: actions/setup-python@v4
@@ -40,6 +38,8 @@ jobs:
           pip install -r requirements.txt
 
       - name: Predict Ai
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
         run: python predict_deep.py
 
 
