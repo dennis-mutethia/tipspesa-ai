@@ -10,8 +10,8 @@ class PostgresCRUD:
         load_dotenv()
         self.conn_params = {
             'host': os.getenv('DB_HOST'),
-            'database': os.getenv('DB_NAME'),
             'port': os.getenv('DB_PORT'),
+            'database': os.getenv('DB_NAME'),
             'user': os.getenv('DB_USER'),
             'password': os.getenv('DB_PASSWORD')
         }

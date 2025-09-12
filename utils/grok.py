@@ -12,15 +12,14 @@ class Grok():
             base_url = self.endpoint,
         )
         
-        self.model = "xai/grok-3-mini"
-        # self.model = "deepseek/DeepSeek-R1-0528"
-        # self.model = "openai/gpt-5" 
-        self.model = "openai/gpt-4.1"
+        self.models = ["xai/grok-3-mini", "xai/grok-3", "deepseek/DeepSeek-R1-0528"]
         
     def get_response(self, query):
+        model = self.models[0]
         try:
+            print(f"Using model: {model}")
             response = self.client.chat.completions.create(
-                model = self.model,
+                model = model,
                 messages=[
                     {"role": "user", "content": query}                
                 ],
@@ -30,4 +29,10 @@ class Grok():
             return content
         except Exception as e:
             print(f"Error in Grok.get_response: {e}")
+            if "RateLimitReached" in str(e):
+                self.models.remove(model)
+                if self.models:                
+                    return self.get_response(query)
+                else:
+                    print("No more models to try.")
             return None

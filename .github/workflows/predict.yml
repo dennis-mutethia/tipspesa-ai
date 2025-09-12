@@ -5,7 +5,7 @@ on:
   workflow_dispatch: # Manually trigger the workflow
 
   schedule:
-    - cron: '0 3,6,9,12 * * *'  # Runs at 3am, 6am,9:00am and 12:00pm UTC (6am,9am,12:00pm and 15:00pm EAT)
+    - cron: '0 3 * * *'  # Runs at 3am UTC (6am EAT)
 
 jobs:
   execute:
@@ -23,8 +23,7 @@ jobs:
           echo "DB_NAME=${{ secrets.DB_NAME }}" >> $GITHUB_ENV
           echo "DB_USER=${{ secrets.DB_USER }}" >> $GITHUB_ENV
           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> $GITHUB_ENV
-          echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" >> $GITHUB_ENV
-          echo "GEMINI_MODEL=${{ secrets.GEMINI_MODEL }}" >> $GITHUB_ENV
+          echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
 
       - name: setup python
         uses: actions/setup-python@v4
@@ -37,9 +36,6 @@ jobs:
           pip install -r requirements.txt
 
       - name: Predict Ai
-        run: python predict_ai.py
-
-      # - name: Auto Bet
-      #   run: python auto_bet.py
+        run: python predict_deep.py
 
 

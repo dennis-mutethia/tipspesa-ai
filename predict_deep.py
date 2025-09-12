@@ -5,6 +5,7 @@ import time
 
 from utils.betika import Betika
 from utils.grok import Grok
+from utils.postgres_crud import PostgresCRUD
 
 class Predict:
     """
@@ -13,6 +14,7 @@ class Predict:
     def __init__(self):
         self.grok = Grok()
         self.betika = Betika()
+        self.db = PostgresCRUD()
     
     def prepare_query(self, parent_match_id):
         url = f'https://api.betika.com/v1/uo/match?parent_match_id={parent_match_id}'
@@ -110,7 +112,7 @@ class Predict:
             if query:
                 response = self.grok.get_response(query)
                 filtered_match = json.loads(response)
-                predicted_match = filtered_match if filtered_match["odd"] >= 1.10 and filtered_match["overall_prob"] >= 80 else None
+                predicted_match = filtered_match if filtered_match["odd"] >= 1.10 and filtered_match["overall_prob"] >= 70 else None
                 
                 return predicted_match
             else:
@@ -139,7 +141,7 @@ class Predict:
             predicted_match = self.predict_match(parent_match_id)
             if predicted_match:
                 print(predicted_match)
-                # self.db.insert_matches([predicted_match]) 
+                self.db.insert_matches([predicted_match]) 
                 time.sleep(6)
                 
 if __name__ == "__main__":
