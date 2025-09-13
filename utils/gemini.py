@@ -1,4 +1,4 @@
-import os, requests
+import os
 from dotenv import load_dotenv
 from google import genai
 
@@ -6,7 +6,7 @@ class Gemini():
     def __init__(self):        
         load_dotenv()
         self.client = genai.Client(api_key=os.getenv('GEMINI_API_KEY'))
-        self.model = "gemini-2.5-flash", # os.getenv('GEMINI_MODEL'), 
+        self.model = "gemini-2.5-flash"
         
     def get_response(self, query):
         while True:
