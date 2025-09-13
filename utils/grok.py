@@ -13,11 +13,12 @@ class Grok():
         )
         
         self.models = ["xai/grok-3-mini", "xai/grok-3", "openai/gpt-4.1-nano", "openai/gpt-4.1-mini", "openai/gpt-4.1", "openai/gpt-4o-mini", "openai/gpt-4o"]
+        self.models = ["xai/grok-3-mini"] 
         
-    def get_response(self, query):
-        model = self.models[0]
+    def get_response(self, query):        
         try:
-            print(f"Using model: {model}")
+            model = self.models[0]
+            print(f"Using Open AI model: {model}")
             response = self.client.chat.completions.create(
                 model = model,
                 messages=[
@@ -26,7 +27,7 @@ class Grok():
             )
             content = response.choices[0].message.content
             print(content)
-            return content
+            return content, model
         except Exception as e:
             print(f"Error in Grok.get_response: {e}")
             if "RateLimitReached" in str(e):
@@ -34,5 +35,5 @@ class Grok():
                 if self.models:                
                     return self.get_response(query)
                 else:
-                    print("No more models to try.")
-            return None
+                    print("No more Open AI models to try.")
+            return None, None

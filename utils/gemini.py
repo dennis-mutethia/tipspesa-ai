@@ -11,18 +11,18 @@ class Gemini():
     def get_response(self, query):
         while True:
             try:
-                print(f"Using model: {self.model}")
+                print(f"Using Open GenAI model: {self.model}")
                 response = self.client.models.generate_content(
                     model= self.model,
                     contents=str(query)
                 )
                 content = response.text
                 print(content)
-                return content
+                return content, self.model
             
             except Exception as e:
                 print(f"Error in Gemini.get_response: {e}")
                 if "overloaded" in str(e):
                     return self.get_response(query)
-                return None
+                return None, self.model
     

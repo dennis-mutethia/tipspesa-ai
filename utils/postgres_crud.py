@@ -587,11 +587,22 @@ class PostgresCRUD:
                 return cursor.fetchall()
         except Exception as e:
             print(f"Error fetching active profiles: {e}")
-            return []
-
-    
+            return []        
+        
+    def update_source_model(self, parent_match_id, model):         
+        self.ensure_connection()
+        try:
+            with self.conn.cursor() as cur:
+                query = """
+                    INSERT INTO source_model(parent_match_id, model)
+                    VALUES(%s, %s)
+                """
+                
+                cur.execute(query, (parent_match_id, model)) 
+                self.conn.commit()  
+        except Exception as e:
+            print(f"Error updating source model: {e}")
                   
-# Example usage:
 if __name__ == "__main__":
     crud = PostgresCRUD()
 
