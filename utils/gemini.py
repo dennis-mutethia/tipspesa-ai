@@ -6,44 +6,21 @@ class Gemini():
     def __init__(self):        
         load_dotenv()
         self.client = genai.Client(api_key=os.getenv('GEMINI_API_KEY'))
+        self.model = "gemini-2.5-flash", # os.getenv('GEMINI_MODEL'), 
         
     def get_response(self, query):
         while True:
             try:
+                print(f"Using model: {self.model}")
                 response = self.client.models.generate_content(
-                    model= "gemini-2.5-flash", # os.getenv('GEMINI_MODEL'), 
+                    model= self.model,
                     contents=str(query)
                 )
                 return response.text
             
             except Exception as e:
                 print(f"Error in Gemini.get_response: {e}")
+                if "overloaded" in str(e):
+                    return self.get_response(query)
                 return None
     
-    def call_gemini_api(self, query):
-        try:
-            url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
-            headers = {
-                "Content-Type": "application/json",
-                "X-goog-api-key": os.getenv('GEMINI_API_KEY')
-            }
-            data = {
-                "contents": [
-                    {
-                        "parts": [
-                            {
-                                "text": query
-                            }
-                        ]
-                    }
-                ]
-            }
-            
-            response = requests.post(url, headers=headers, json=data)
-            text = response.json().get('candidates', [{}])[0].get('content', {}).get('parts', [{}])[0].get('text', '')
-            return text
-        
-        except Exception as e:
-            print(f"Error in predict_match: {e}")
-
-            return None
