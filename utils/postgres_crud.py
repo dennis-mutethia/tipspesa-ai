@@ -156,13 +156,12 @@ class PostgresCRUD:
             WITH m AS(
                 SELECT * FROM matches
                 WHERE kickoff::date {comparator} (CURRENT_TIMESTAMP + INTERVAL '3 hours')::date {day} {status}
-                -- AND DATE_PART('hour', kickoff) > 12
                 ORDER BY overall_prob DESC, odd DESC
                 LIMIT {limit}
             )
             SELECT * 
             FROM m
-            ORDER BY KICKOFF, overall_prob, odd, match_id
+            ORDER BY kickoff, overall_prob, odd, match_id
             """
             cur.execute(query)
             return cur.fetchall()
@@ -176,7 +175,7 @@ class PostgresCRUD:
                 SELECT kickoff, home_team, away_team, odd, parent_match_id, sub_type_id, bet_pick, special_bet_value, outcome_id 
                 FROM matches
                 WHERE kickoff > (CURRENT_TIMESTAMP + INTERVAL '3 hours')
-                ORDER BY overall_prob DESC, odd DESC
+                ORDER BY overall_prob DESC, odd DESC                
             ),
             placed AS(
               SELECT parent_match_id 
