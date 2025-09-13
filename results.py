@@ -20,21 +20,21 @@ class Results:
         """Determine the match status based on scores and bet pick."""
         
         # Handle 1x2 bets
-        if int(match.subtype_id) == 1:
+        if int(match.sub_type_id) == 1:
             if (match.outcome_id == 1 and home_score < away_score) or \
                 (match.outcome_id == 2 and home_score != away_score) or \
                 (match.outcome_id == 3 and home_score > away_score):
                     return ''
         
         # Handle double chances        
-        if int(subtype_id) == 10:
+        if int(match.sub_type_id) == 10:
             if (match.outcome_id == 9 and away_score < home_score) or \
                 (match.outcome_id == 10 and home_score == away_score) or \
                 (match.outcome_id == 11 and home_score > away_score):
                     return ''   
                 
         # Handle overs/unders goals      
-        if int(subtype_id) == 18:
+        if int(match.sub_type_id) == 18:
             if (match.bet_pick == 'over 0.5' and home_score + away_score < 1) or \
                 (match.bet_pick == 'over 1.5' and home_score + away_score < 2) or \
                 (match.bet_pick == 'over 2.5' and home_score + away_score < 3) or \
@@ -45,13 +45,13 @@ class Results:
                     return ''
         
         # Handle both teams to score      
-        if int(subtype_id) == 29:
-            if (match.bet_pick == 'yes' and (away_score == 0 or home_score == 0)) or \
-                (match.bet_pick == 'no' and (away_score > 0 and home_score > 0)):
+        if int(match.sub_type_id) == 29:
+            if (match.bet_pick == 'yes' and (home_score == 0 or away_score == 0)) or \
+                (match.bet_pick == 'no' and (home_score > 0 and away_score > 0)):
                     return ''   
         
         # Handle corner bets
-        if int(subtype_id) == 166:
+        if int(match.sub_type_id) == 166:
             if (match.bet_pick == 'over 6.5' and home_score + away_score < 7) or \
                 (match.bet_pick == 'over 7.5' and home_score + away_score < 8) or \
                 (match.bet_pick == 'over 8.5' and home_score + away_score < 9) or \
