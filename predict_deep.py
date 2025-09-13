@@ -124,10 +124,9 @@ class Predict:
     
     def predict_match(self, parent_match_id):   
         try:     
-            print(f"Predicting match id: {parent_match_id}")
             query = self.prepare_query(parent_match_id)
             if query:
-                print(f"Invoking AI Agents...")
+                print(f"Predicting match id: {parent_match_id} - Invoking AI Agents...")
                 response, model = self.grok.get_response(query) 
                 # if not response:
                 #     response, model = self.gemini.get_response(query)   
@@ -141,7 +140,7 @@ class Predict:
                     
                 return predicted_match, model
             else:
-                print(f"No query prepared for match id: {parent_match_id}")
+                print(f"Skipped match id: {parent_match_id}")
                 return None, None
         except Exception as e:
             return None, None
