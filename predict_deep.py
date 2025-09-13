@@ -116,12 +116,15 @@ class Predict:
             if query:
                 print(f"Invoking AI Agents...")
                 response, model = self.grok.get_response(query) 
-                if not response:
-                    response, model = self.gemini.get_response(query)                    
-                clean_response = response.replace('```json', '').strip('```')
-                filtered_match = json.loads(clean_response)
-                predicted_match = filtered_match if filtered_match["odd"] >= 1.20 and filtered_match["odd"] <= 1.60 and filtered_match["overall_prob"] >= 80 else None
-                
+                # if not response:
+                #     response, model = self.gemini.get_response(query)   
+                if response:                 
+                    clean_response = response.replace('```json', '').strip('```')
+                    filtered_match = json.loads(clean_response)
+                    predicted_match = filtered_match if filtered_match["odd"] >= 1.20 and filtered_match["odd"] <= 1.60 and filtered_match["overall_prob"] >= 80 else None
+                else:
+                    predicted_match, model = None, None
+                    
                 return predicted_match, model
             else:
                 print(f"No query prepared for match id: {parent_match_id}")

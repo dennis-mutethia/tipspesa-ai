@@ -12,28 +12,31 @@ class Grok():
             base_url = self.endpoint,
         )
         
-        self.models = ["xai/grok-3-mini", "xai/grok-3", "openai/gpt-4.1-nano", "openai/gpt-4.1-mini", "openai/gpt-4.1", "openai/gpt-4o-mini", "openai/gpt-4o"]
-        self.models = ["xai/grok-3-mini"] 
+        self.models = ["xai/grok-3-mini", "xai/grok-3", "openai/gpt-4.1-nano", "openai/gpt-4.1-mini", "openai/gpt-4.1"] #, "openai/gpt-4o-mini", "openai/gpt-4o"]
         
-    def get_response(self, query):        
-        try:
-            model = self.models[0]
-            print(f"Using Open AI model: {model}")
-            response = self.client.chat.completions.create(
-                model = model,
-                messages=[
-                    {"role": "user", "content": query}                
-                ],
-            )
-            content = response.choices[0].message.content
-            print(content)
-            return content, model
-        except Exception as e:
-            print(f"Error in Grok.get_response: {e}")
-            if "RateLimitReached" in str(e):
-                self.models.remove(model)
-                if self.models:                
-                    return self.get_response(query)
-                else:
-                    print("No more Open AI models to try.")
-            return None, None
+    def get_response(self, query):  
+        if self.models:      
+            try:            
+                model = self.models[0]
+                print(f"Using Open AI model: {model}")
+                response = self.client.chat.completions.create(
+                    model = model,
+                    messages=[
+                        {"role": "user", "content": query}                
+                    ],
+                )
+                content = response.choices[0].message.content
+                print(content)
+                return content, model
+            except Exception as e:
+                print(f"Error in Grok.get_response: {e}")
+                if "RateLimitReached" in str(e):
+                    self.models.remove(model)
+                    if self.models:                
+                        return self.get_response(query)
+                    else:
+                        print("No more Open AI models to try.")
+        else:
+            print("No more Open AI models to try.")
+            
+        return None, None
