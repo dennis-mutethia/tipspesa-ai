@@ -24,14 +24,14 @@ class Results:
             if (match.outcome_id == 1 and home_score < away_score) or \
                 (match.outcome_id == 2 and home_score != away_score) or \
                 (match.outcome_id == 3 and home_score > away_score):
-                    return ''
+                    return 'LOST'
         
         # Handle double chances        
         if int(match.sub_type_id) == 10:
             if (match.outcome_id == 9 and away_score < home_score) or \
                 (match.outcome_id == 10 and home_score == away_score) or \
                 (match.outcome_id == 11 and home_score > away_score):
-                    return ''   
+                    return 'LOST'   
                 
         # Handle overs/unders goals      
         if int(match.sub_type_id) == 18:
@@ -42,13 +42,13 @@ class Results:
                 (match.bet_pick == 'under 3.5' and home_score + away_score > 3) or \
                 (match.bet_pick == 'under 4.5' and home_score + away_score > 4) or \
                 (match.bet_pick == 'under 5.5' and home_score + away_score > 5):
-                    return ''
+                    return 'LOST'
         
         # Handle both teams to score      
         if int(match.sub_type_id) == 29:
             if (match.bet_pick == 'yes' and (home_score == 0 or away_score == 0)) or \
                 (match.bet_pick == 'no' and (home_score > 0 and away_score > 0)):
-                    return ''   
+                    return 'LOST'   
         
         # Handle corner bets
         if int(match.sub_type_id) == 166:
@@ -59,7 +59,7 @@ class Results:
                 (match.bet_pick == 'under 9.5' and home_score + away_score > 9) or \
                 (match.bet_pick == 'under 10.5' and home_score + away_score > 10) or \
                 (match.bet_pick == 'under 11.5' and home_score + away_score > 11):
-                    return ''
+                    return 'LOST'
         
         # Handle goal ranges
         if '-' in match.bet_pick:
@@ -93,7 +93,7 @@ class Results:
                 home_score = home_corners if match.sub_type_id == 166 else home_score
                 away_score = away_corners if match.sub_type_id == 166 else away_score
                 status = self.get_status(home_score, away_score, match)
-                status = status if mins >= 90 or (('over' in match.bet_pick or match.bet_pick == 'yes') and status == 'WON') else f"{mins}'"
+                status = status if mins >= 90 or ((('over' in match.bet_pick or match.bet_pick == 'yes') and status == 'WON') or (('under' in match.bet_pick or match.bet_pick == 'no') and status == 'LOST')) else f"{mins}'"
                 if home_score is not None and away_score is not None:
                     logger.info('%s vs %s [%s] = %d:%d - %s', match.home_team, match.away_team, match.bet_pick, home_score, away_score, status)
                 
