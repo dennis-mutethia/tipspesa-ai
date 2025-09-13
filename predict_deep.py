@@ -43,71 +43,71 @@ class Predict:
                 markets.append(market)
         start_time = meta.get('start_time') 
         
-        if datetime.now().date() == datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S").date():
-            # Define the query structure as a dictionary for cleaner JSON handling
-            query_dict = {
-                "instruction": "Analyze the following match using ALL available data from the internet including tweets, bookmarkers data, team histories, team forms, etc and return the probability percentage of the highest most probable outcome using the provided markets. Respond with ONLY the JSON object, with no additional text, prose, or explanation. The output must strictly adhere to the provided JSON schema for the 'expected_output_schema'.",
-                "match_details": meta,
-                "markets": markets,
-                "expected_output_schema": {
-                    "type": "object",
-                    "properties": {
-                        "parent_match_id": {
-                            "type": "string",
-                            "description": "Unique identifier for the match, as provided in the input match_details['parent_match_id']"
-                        },
-                        "match_id": {
-                            "type": "string",
-                            "description": "Also Unique identifier for the match, as provided in the input match_details['match_id']"
-                        },
-                        "start_time": {
-                            "type": "string",
-                            "description": "Match Start Time, as provided in the input match_details['start_time']"
-                        },
-                        "home_team": {
-                            "type": "string",
-                            "description": "Home Team, as provided in the input match_details['home_team']"
-                        },
-                        "away_team": {
-                            "type": "string",
-                            "description": "Away Team, as provided in the input match_details['away_team']"
-                        },
-                        "overall_prob": {
-                            "type": "integer",
-                            "pattern": "^(100|[1-9][0-9]?|[0-9])$",
-                            "description": "The probability percentage (0-100) as an integer."
-                        },
-                        "sub_type_id": {
-                            "type": "string",
-                            "description": "Unique identifier for the picked market, as provided in the input markets[i]['sub_type_id']"
-                        },
-                        "prediction": {
-                            "type": "string",
-                            "description": "The prediction name as provided in the input markets[i]['prediction']"
-                        },
-                        "bet_pick": {
-                            "type": "string",
-                            "description": "The predicted outcome display value as provided in the input markets[i]['odd_key']"
-                        },
-                        "odd": {
-                            "type": "float",
-                            "description": "The predicted outcome odd value as provided in the input markets[i]['odd_value']"
-                        },
-                        "special_bet_value": {
-                            "type": "string",
-                            "description": "The predicted outcome special_bet_value value as provided in the input markets[i]['special_bet_value']"
-                        },
-                        "outcome_id": {
-                            "type": "string",
-                            "description": "The predicted outcome outcome_id value as provided in the input markets[i]['outcome_id']"
-                        }
+        #if datetime.now().date() == datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S").date():
+        # Define the query structure as a dictionary for cleaner JSON handling
+        query_dict = {
+            "instruction": "Analyze the following match using ALL available data from the internet including tweets, bookmarkers data, team histories, team forms, etc and return the probability percentage of the highest most probable outcome using the provided markets. Respond with ONLY the JSON object, with no additional text, prose, or explanation. The output must strictly adhere to the provided JSON schema for the 'expected_output_schema'.",
+            "match_details": meta,
+            "markets": markets,
+            "expected_output_schema": {
+                "type": "object",
+                "properties": {
+                    "parent_match_id": {
+                        "type": "string",
+                        "description": "Unique identifier for the match, as provided in the input match_details['parent_match_id']"
+                    },
+                    "match_id": {
+                        "type": "string",
+                        "description": "Also Unique identifier for the match, as provided in the input match_details['match_id']"
+                    },
+                    "start_time": {
+                        "type": "string",
+                        "description": "Match Start Time, as provided in the input match_details['start_time']"
+                    },
+                    "home_team": {
+                        "type": "string",
+                        "description": "Home Team, as provided in the input match_details['home_team']"
+                    },
+                    "away_team": {
+                        "type": "string",
+                        "description": "Away Team, as provided in the input match_details['away_team']"
+                    },
+                    "overall_prob": {
+                        "type": "integer",
+                        "pattern": "^(100|[1-9][0-9]?|[0-9])$",
+                        "description": "The probability percentage (0-100) as an integer."
+                    },
+                    "sub_type_id": {
+                        "type": "string",
+                        "description": "Unique identifier for the picked market, as provided in the input markets[i]['sub_type_id']"
+                    },
+                    "prediction": {
+                        "type": "string",
+                        "description": "The prediction name as provided in the input markets[i]['prediction']"
+                    },
+                    "bet_pick": {
+                        "type": "string",
+                        "description": "The predicted outcome display value as provided in the input markets[i]['odd_key']"
+                    },
+                    "odd": {
+                        "type": "float",
+                        "description": "The predicted outcome odd value as provided in the input markets[i]['odd_value']"
+                    },
+                    "special_bet_value": {
+                        "type": "string",
+                        "description": "The predicted outcome special_bet_value value as provided in the input markets[i]['special_bet_value']"
+                    },
+                    "outcome_id": {
+                        "type": "string",
+                        "description": "The predicted outcome outcome_id value as provided in the input markets[i]['outcome_id']"
                     }
                 }
             }
-            
-            # Convert to JSON string with proper formatting
-            query = json.dumps(query_dict, indent=4)
-            return query
+        }
+        
+        # Convert to JSON string with proper formatting
+        query = json.dumps(query_dict, indent=4)
+        return query
     
     def is_valid_match(self, filtered_match):
         MIN_ODD, MAX_ODD, MIN_PROB = 1.20, 1.50, 80
@@ -128,8 +128,8 @@ class Predict:
             if query:
                 print(f"Predicting match id: {parent_match_id} - Invoking AI Agents...")
                 response, model = self.grok.get_response(query) 
-                # if not response:
-                #     response, model = self.gemini.get_response(query)   
+                if not response:
+                    response, model = self.gemini.get_response(query)   
                 if response:                 
                     clean_response = response.replace('```json', '').strip('```')
                     filtered_match = json.loads(clean_response)
