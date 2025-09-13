@@ -31,6 +31,7 @@ jobs:
       - name: Predict Ai
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+            GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
             DB_HOST: ${{ secrets.DB_HOST }} 
             DB_PORT: ${{ secrets.DB_PORT }} 
             DB_NAME: ${{ secrets.DB_NAME }} 

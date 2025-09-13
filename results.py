@@ -16,41 +16,54 @@ class Results:
         self.helper = Helper()
         self.db = PostgresCRUD()
 
-    def get_status(self, home_score, away_score, subtype_id, bet_pick):
+    def get_status(self, home_score, away_score, match):
         """Determine the match status based on scores and bet pick."""
         
-        # Handle double chances
-        if int(subtype_id) == 10:
-            if ('or draw' in bet_pick and away_score > home_score) or \
-                ('draw or' in bet_pick and home_score > away_score) or \
-                ('draw' not in bet_pick and home_score == away_score):
-                    return ''   
+        # Handle 1x2 bets
+        if int(match.subtype_id) == 1:
+            if (match.outcome_id == 1 and home_score < away_score) or \
+                (match.outcome_id == 2 and home_score != away_score) or \
+                (match.outcome_id == 3 and home_score > away_score):
+                    return ''
         
+        # Handle double chances        
+        if int(subtype_id) == 10:
+            if (match.outcome_id == 9 and away_score < home_score) or \
+                (match.outcome_id == 10 and home_score == away_score) or \
+                (match.outcome_id == 11 and home_score > away_score):
+                    return ''   
+                
         # Handle overs/unders goals      
         if int(subtype_id) == 18:
-            if (bet_pick == 'over 0.5' and home_score + away_score < 1) or \
-                (bet_pick == 'over 1.5' and home_score + away_score < 2) or \
-                (bet_pick == 'over 2.5' and home_score + away_score < 3) or \
-                (bet_pick == 'over 3.5' and home_score + away_score < 4) or \
-                (bet_pick == 'under 3.5' and home_score + away_score > 3) or \
-                (bet_pick == 'under 4.5' and home_score + away_score > 4) or \
-                (bet_pick == 'under 5.5' and home_score + away_score > 5):
+            if (match.bet_pick == 'over 0.5' and home_score + away_score < 1) or \
+                (match.bet_pick == 'over 1.5' and home_score + away_score < 2) or \
+                (match.bet_pick == 'over 2.5' and home_score + away_score < 3) or \
+                (match.bet_pick == 'over 3.5' and home_score + away_score < 4) or \
+                (match.bet_pick == 'under 3.5' and home_score + away_score > 3) or \
+                (match.bet_pick == 'under 4.5' and home_score + away_score > 4) or \
+                (match.bet_pick == 'under 5.5' and home_score + away_score > 5):
                     return ''
+        
+        # Handle both teams to score      
+        if int(subtype_id) == 29:
+            if (match.bet_pick == 'yes' and (away_score == 0 or home_score == 0)) or \
+                (match.bet_pick == 'no' and (away_score > 0 and home_score > 0)):
+                    return ''   
         
         # Handle corner bets
         if int(subtype_id) == 166:
-            if (bet_pick == 'over 6.5' and home_score + away_score < 7) or \
-                (bet_pick == 'over 7.5' and home_score + away_score < 8) or \
-                (bet_pick == 'over 8.5' and home_score + away_score < 9) or \
-                (bet_pick == 'over 8.5' and home_score + away_score < 9) or \
-                (bet_pick == 'under 9.5' and home_score + away_score > 9) or \
-                (bet_pick == 'under 10.5' and home_score + away_score > 10) or \
-                (bet_pick == 'under 11.5' and home_score + away_score > 11):
+            if (match.bet_pick == 'over 6.5' and home_score + away_score < 7) or \
+                (match.bet_pick == 'over 7.5' and home_score + away_score < 8) or \
+                (match.bet_pick == 'over 8.5' and home_score + away_score < 9) or \
+                (match.bet_pick == 'over 8.5' and home_score + away_score < 9) or \
+                (match.bet_pick == 'under 9.5' and home_score + away_score > 9) or \
+                (match.bet_pick == 'under 10.5' and home_score + away_score > 10) or \
+                (match.bet_pick == 'under 11.5' and home_score + away_score > 11):
                     return ''
         
         # Handle goal ranges
-        if '-' in bet_pick:
-            bet_pick = bet_pick.split('-')
+        if '-' in match.bet_pick:
+            bet_pick = match.bet_pick.split('-')
             if (home_score+away_score) not in range(int(bet_pick[0]), int(bet_pick[1])+1):
                 return 'LOST'
             
@@ -79,7 +92,7 @@ class Results:
                 away_corners = meta.get("away_corners", 0)
                 home_score = home_corners if match.sub_type_id == 166 else home_score
                 away_score = away_corners if match.sub_type_id == 166 else away_score
-                status = self.get_status(home_score, away_score, match.sub_type_id, match.bet_pick)
+                status = self.get_status(home_score, away_score, match)
                 status = status if mins >= 90 or ('over' in match.bet_pick and status == 'WON') else f"{mins}'"
                 if home_score is not None and away_score is not None:
                     logger.info('%s vs %s [%s] = %d:%d - %s', match.home_team, match.away_team, match.bet_pick, home_score, away_score, status)
