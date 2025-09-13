@@ -109,6 +109,19 @@ class Predict:
             query = json.dumps(query_dict, indent=4)
             return query
     
+    def is_valid_match(self, filtered_match):
+        MIN_ODD, MAX_ODD, MIN_PROB = 1.20, 1.50, 80
+        
+        return (
+            filtered_match
+            if filtered_match
+            and MIN_ODD <= filtered_match["odd"] <= MAX_ODD
+            and filtered_match["overall_prob"] >= MIN_PROB
+            and ' W' not in filtered_match["home_team"]
+            and ' W' not in filtered_match["away_team"]
+            else None
+        )
+    
     def predict_match(self, parent_match_id):   
         try:     
             print(f"Predicting match id: {parent_match_id}")
@@ -121,7 +134,8 @@ class Predict:
                 if response:                 
                     clean_response = response.replace('```json', '').strip('```')
                     filtered_match = json.loads(clean_response)
-                    predicted_match = filtered_match if filtered_match["odd"] >= 1.20 and filtered_match["odd"] <= 1.50 and filtered_match["overall_prob"] >= 80 else None
+                    predicted_match = self.is_valid_match(filtered_match)
+                    
                 else:
                     predicted_match, model = None, None
                     
