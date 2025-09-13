@@ -16,7 +16,9 @@ class Gemini():
                     model= self.model,
                     contents=str(query)
                 )
-                return response.text
+                content = response.text
+                print(content)
+                return content
             
             except Exception as e:
                 print(f"Error in Gemini.get_response: {e}")
