@@ -150,12 +150,15 @@ class Predict:
         upcoming_match_ids = self.get_upcoming_match_ids(live=False)
         
         for parent_match_id in upcoming_match_ids:
-            predicted_match, model = self.predict_match(parent_match_id)
-            if predicted_match:
-                print(predicted_match)
-                self.db.insert_matches([predicted_match]) 
-                self.db.update_source_model(parent_match_id, model)
-                time.sleep(6)
+            if parent_match_id not in self.db.fetch_upcoming_match_ids():
+                predicted_match, model = self.predict_match(parent_match_id)
+                if predicted_match:
+                    print(predicted_match)
+                    self.db.insert_matches([predicted_match]) 
+                    self.db.update_source_model(parent_match_id, model)
+                    time.sleep(6)
+            else:
+                print("Match already predicted")
                 
 if __name__ == "__main__":
     Predict()()

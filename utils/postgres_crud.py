@@ -206,6 +206,20 @@ class PostgresCRUD:
                 matches.append(match)
         return matches
     
+    def fetch_upcoming_match_ids(self): 
+        self.ensure_connection()  
+        parent_match_ids = []         
+        with self.conn.cursor() as cur:
+            query = """
+            SELECT parent_match_id
+            FROM matches
+            WHERE kickoff > (CURRENT_TIMESTAMP + INTERVAL '3 hours')
+            """
+            cur.execute(query) 
+            for datum in cur.fetchall():
+                parent_match_ids.append(datum[0])
+        return parent_match_ids
+    
     def add_bet_slip(self, profile_id, slips, code):
         """
         Add multiple bet slips for a profile.
