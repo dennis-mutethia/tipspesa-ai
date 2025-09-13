@@ -112,7 +112,7 @@ class Predict:
             if query:
                 response = self.grok.get_response(query).replace('```json', '').strip('```')
                 filtered_match = json.loads(response)
-                predicted_match = filtered_match if filtered_match["odd"] >= 1.10 and filtered_match["odd"] <= 1.60 and filtered_match["overall_prob"] >= 80 else None
+                predicted_match = filtered_match if filtered_match["odd"] >= 1.20 and filtered_match["odd"] <= 1.60 and filtered_match["overall_prob"] >= 80 else None
                 
                 return predicted_match
             else:

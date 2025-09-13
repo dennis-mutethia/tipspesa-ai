@@ -61,7 +61,7 @@ class Predict:
                     { **match, "overall_prob": int(f_m["probability"]) }
                     for match in predicted_matches
                     for f_m in filtered_matches
-                    if match["parent_match_id"] == f_m["match_id"] and int(f_m["probability"]) >= 75
+                    if match["parent_match_id"] == f_m["match_id"] and int(f_m["probability"]) >= 80
                 ]
                 print(beta_matches)
                 self.db.insert_matches(beta_matches)           
