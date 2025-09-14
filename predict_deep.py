@@ -131,16 +131,15 @@ class Predict:
                 if response:                 
                     clean_response = response.replace('```json', '').strip('```')
                     filtered_match = json.loads(clean_response)
-                    predicted_match = self.is_valid_match(filtered_match)
-                    
+                    self.db.update_source_model(parent_match_id, model, filtered_match["start_time"])
+                    predicted_match = self.is_valid_match(filtered_match)                    
                 else:
-                    predicted_match, model = None, None
                     sys.exit(0)
                     
-                return predicted_match, model
+                return predicted_match
             else:
                 print(f"Skipped match id: {parent_match_id}")
-                return None, None
+                return None
         except Exception as e:
             return None, None
     
@@ -163,11 +162,10 @@ class Predict:
         
         for parent_match_id in upcoming_match_ids:
             if parent_match_id not in self.db.fetch_upcoming_match_ids():
-                predicted_match, model = self.predict_match(parent_match_id)
+                predicted_match = self.predict_match(parent_match_id)
                 if predicted_match:
                     print(predicted_match)
                     self.db.insert_matches([predicted_match]) 
-                    self.db.update_source_model(parent_match_id, model)
                     time.sleep(6)
             else:
                 print("Match already predicted")
