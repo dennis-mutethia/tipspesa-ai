@@ -604,7 +604,7 @@ class PostgresCRUD:
             print(f"Error fetching active profiles: {e}")
             return []        
         
-    def update_source_model(self, parent_match_id, modelc, kickoff):         
+    def update_source_model(self, parent_match_id, model, kickoff):         
         self.ensure_connection()
         try:
             with self.conn.cursor() as cur:
