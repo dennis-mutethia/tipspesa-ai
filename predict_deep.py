@@ -1,7 +1,5 @@
 
-from datetime import datetime
-import json
-import time
+import json, time, sys
 
 from utils.betika import Betika
 from utils.gemini import Gemini
@@ -41,7 +39,7 @@ class Predict:
                 }            
             
                 markets.append(market)
-        start_time = meta.get('start_time') 
+        #start_time = meta.get('start_time') 
         
         #if datetime.now().date() == datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S").date():
         # Define the query structure as a dictionary for cleaner JSON handling
@@ -137,6 +135,7 @@ class Predict:
                     
                 else:
                     predicted_match, model = None, None
+                    sys.exit(0)
                     
                 return predicted_match, model
             else:
