@@ -152,23 +152,23 @@ class Predict:
             total, page, events = self.betika.get_events(limit, page, live)
             
             for event in events:
-                parent_match_id = event.get('parent_match_id')
+                parent_match_id = int(event.get('parent_match_id'))
                 matches_ids.add(parent_match_id)
         
         return matches_ids
               
     def __call__(self):
         upcoming_match_ids = self.get_upcoming_match_ids(live=False)
+        predicted_match_ids = self.db.fetch_predicted_match_ids()
         
-        for parent_match_id in upcoming_match_ids:
-            if parent_match_id not in self.db.fetch_upcoming_match_ids():
-                predicted_match = self.predict_match(parent_match_id)
-                if predicted_match:
-                    print(predicted_match)
-                    self.db.insert_matches([predicted_match]) 
-                    time.sleep(6)
-            else:
-                print("Match already predicted")
+        un_predicted_match_ids = upcoming_match_ids.difference(predicted_match_ids)
+        
+        for parent_match_id in un_predicted_match_ids:
+            predicted_match = self.predict_match(parent_match_id)
+            if predicted_match:
+                print(predicted_match)
+                self.db.insert_matches([predicted_match]) 
+                time.sleep(6)
                 
 if __name__ == "__main__":
     Predict()()
