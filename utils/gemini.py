@@ -6,7 +6,7 @@ class Gemini():
     def __init__(self):        
         load_dotenv()
         self.client = genai.Client(api_key=os.getenv('GEMINI_API_KEY'))
-        self.models = ["gemini-2.5-pro", "gemini-2.5-flash", "gemini-2.5-flash-lite"]                  
+        self.models = ["gemini-2.5-pro"] #, "gemini-2.5-flash", "gemini-2.5-flash-lite"]                  
                         
     def get_response(self, query):  
         if self.models:      
