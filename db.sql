@@ -94,3 +94,10 @@ CREATE TABLE IF NOT EXISTS betslips (
   parent_match_id INT,
   profile_id INT
 );
+
+-- Table structure for table source_model
+CREATE TABLE IF NOT EXISTS source_model (
+  parent_match_id INT PRIMARY KEY,
+  model TEXT,
+	kickoff TIMESTAMP
+);

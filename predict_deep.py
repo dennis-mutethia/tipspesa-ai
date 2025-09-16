@@ -131,8 +131,10 @@ class Predict:
                 if response:                 
                     clean_response = response.replace('```json', '').strip('```')
                     filtered_match = json.loads(clean_response)
-                    self.db.update_source_model(parent_match_id, model, filtered_match["start_time"])
-                    predicted_match = self.is_valid_match(filtered_match)                    
+                    predicted_match = self.is_valid_match(filtered_match)  
+                                      
+                    if predicted_match:
+                        self.db.update_source_model(parent_match_id, model, filtered_match["start_time"])
                 else:
                     sys.exit(0)
                     
