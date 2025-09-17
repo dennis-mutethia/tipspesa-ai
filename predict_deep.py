@@ -108,7 +108,7 @@ class Predict:
         return query
     
     def is_valid_match(self, filtered_match):
-        MIN_ODD, MAX_ODD, MIN_PROB = 1.20, 1.70, 50
+        MIN_ODD, MAX_ODD, MIN_PROB = 1.10, 2.5, 50
         
         return (
             filtered_match
