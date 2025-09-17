@@ -55,7 +55,7 @@ class AutobetRed:
         
     def __call__(self):
         upcoming_match_ids = self.get_upcoming_match_ids(live=False)
-        min_matches = 5
+        min_matches = 6
         betslips = []
         composite_betslip = None
         composite_betslips = [] 
