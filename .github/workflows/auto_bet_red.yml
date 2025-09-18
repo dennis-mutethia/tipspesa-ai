@@ -1,12 +1,12 @@
 name: Autobet Red Cards
-# This workflow is triggered on a schedule and manually
 
+# This workflow is triggered on a schedule and manually
 on:    
   workflow_dispatch: # Manually trigger the workflow
 
   schedule:
     - cron: '0 5 * * *'  # Runs at 5:00am UTC (8:00 EAT)
--
+
 jobs:
   execute:
     runs-on: ubuntu-latest
