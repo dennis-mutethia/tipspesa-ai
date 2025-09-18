@@ -32,12 +32,12 @@ class AutobetRed:
             if not match_details:
                 return None            
             meta = match_details.get('meta') 
-            markets = [] 
+            over = None
             for datum in match_details.get('data', []):
-                if int(datum.get('sub_type_id')) in [146]: # red
+                if int(datum.get('sub_type_id')) in [18]: # over 1.5
                     for odd in datum.get('odds'):
-                        if odd.get('odd_key') == 'no':
-                            return {
+                        if odd.get('odd_key') == 'over 1.5':
+                            over = {
                                 "sub_type_id": datum.get('sub_type_id'),
                                 "bet_pick": odd.get('odd_key'),
                                 "odd_value": odd.get('odd_value'),
@@ -47,21 +47,34 @@ class AutobetRed:
                                 "parent_match_id": meta.get('parent_match_id'),
                                 "bet_type": 7
                             }
+                    
+                if int(datum.get('sub_type_id')) in [146]: # red
+                    for odd in datum.get('odds'):
+                        if odd.get('odd_key') == 'no':
+                            red = {
+                                "sub_type_id": datum.get('sub_type_id'),
+                                "bet_pick": odd.get('odd_key'),
+                                "odd_value": odd.get('odd_value'),
+                                "outcome_id": odd.get('outcome_id'),
+                                "sport_id": '14',
+                                "special_bet_value": odd.get('special_bet_value'),
+                                "parent_match_id": meta.get('parent_match_id'),
+                                "bet_type": 7
+                            }
+                            return red, over
             
         except Exception as e:
-            return None
+            print(e)
         
-        return None
-        
-    def __call__(self):
-        upcoming_match_ids = self.get_upcoming_match_ids(live=False)
+        return None, None
+    
+    def place_bet(self, slips):
         min_matches = 6
         betslips = []
         composite_betslip = None
         composite_betslips = [] 
         total_odd = 1
-        for parent_match_id in upcoming_match_ids:
-            betslip = self.generate_betslip(parent_match_id)            
+        for betslip in slips:       
             if betslip:
                 betslips.append(betslip)
                 total_odd *= float(betslip.get('odd_value'))                                              
@@ -80,12 +93,12 @@ class AutobetRed:
             composite_betslips.append(composite_betslip)
                                               
         if len(composite_betslips) > 0:              
-            usable = self.betika.balance #+ self.betika.bonus
+            usable = self.betika.balance/2 #+ self.betika.bonus
             stake = int((usable/len(composite_betslips)))
             stake = max(1, stake)
             stake = 1 if (stake == 0 and int(usable)>0) else stake
             if stake > 0:
-                composite_betslips.sort(key=lambda cb: cb['total_odd'], reverse=True)
+                #composite_betslips.sort(key=lambda cb: cb['total_odd'], reverse=True)
                 for cb in composite_betslips:
                     ttl_odd = cb['total_odd']
                     slips = cb['betslips']
@@ -94,6 +107,22 @@ class AutobetRed:
                     time.sleep(2)
             else:
                 print("Insufficient balance to place bets.")
+         
+    def __call__(self):
+        slips_red = []
+        slips_over = []
+        upcoming_match_ids = self.get_upcoming_match_ids(live=False)
+        for parent_match_id in upcoming_match_ids:
+            betslip_red, betslip_over = self.generate_betslip(parent_match_id)
+            if betslip_red:
+                print(betslip_red)
+                slips_red.append(betslip_red)
+            if betslip_over:
+                print(betslip_over)
+                slips_over.append(betslip_over)
+                
+        self.place_bet(slips_red)
+        self.place_bet(slips_over)
 
 if __name__ == "__main__":
     AutobetRed()()
