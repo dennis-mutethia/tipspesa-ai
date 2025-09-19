@@ -68,8 +68,7 @@ class AutobetRed:
         
         return None, None
     
-    def place_bet(self, slips):
-        min_matches = 6
+    def place_bet(self, slips, min_matches=6, div_factor=1):        
         betslips = []
         composite_betslip = None
         composite_betslips = [] 
@@ -93,7 +92,7 @@ class AutobetRed:
             composite_betslips.append(composite_betslip)
                                               
         if len(composite_betslips) > 0:              
-            usable = self.betika.balance/2 #+ self.betika.bonus
+            usable = self.betika.balance * div_factor #+ self.betika.bonus
             stake = int((usable/len(composite_betslips)))
             stake = max(1, stake)
             stake = 1 if (stake == 0 and int(usable)>0) else stake
@@ -121,8 +120,8 @@ class AutobetRed:
                 print(betslip_over)
                 slips_over.append(betslip_over)
                 
-        self.place_bet(slips_red)
-        self.place_bet(slips_over)
+        self.place_bet(slips_red, 6, 0.5)
+        self.place_bet(slips_over, 5, 1)
 
 if __name__ == "__main__":
     AutobetRed()()
