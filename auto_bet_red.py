@@ -1,15 +1,14 @@
 import time
 from utils.betika import Betika
+from utils.postgres_crud import PostgresCRUD
 
 class AutobetRed:
     """
         main class
     """
     def __init__(self):
-        phone = '0105565532'
-        password = 'Mmxsp65$$$'
+        self.db = PostgresCRUD()
         self.betika = Betika()
-        self.betika.login(phone, password)
     
     def get_upcoming_match_ids(self, live=False):    
         total = 1001
@@ -48,7 +47,7 @@ class AutobetRed:
                                 "bet_type": 7
                             }
                     
-                if int(datum.get('sub_type_id')) in [146]: # red
+                if int(datum.get('sub_type_id')) in [146]: # over 1.5
                     for odd in datum.get('odds'):
                         if odd.get('odd_key') == 'no':
                             red = {
@@ -68,7 +67,7 @@ class AutobetRed:
         
         return None, None
     
-    def place_bet(self, slips, min_matches=6, div_factor=1):        
+    def get_composite_betslips(self, slips, min_matches=6):        
         betslips = []
         composite_betslip = None
         composite_betslips = [] 
@@ -90,19 +89,23 @@ class AutobetRed:
         
         if len(betslips) > min_matches/2:
             composite_betslips.append(composite_betslip)
-                                              
+            
+        return composite_betslips
+    
+    def place_bet(self, composite_betslips, profile):  
+        betika = Betika()
+        betika.login(profile[0], profile[1])                                         
         if len(composite_betslips) > 0:              
-            usable = self.betika.balance * div_factor #+ self.betika.bonus
+            usable = betika.balance * 0.5
             stake = int((usable/len(composite_betslips)))
             stake = max(1, stake)
             stake = 1 if (stake == 0 and int(usable)>0) else stake
             if stake > 0:
-                #composite_betslips.sort(key=lambda cb: cb['total_odd'], reverse=True)
                 for cb in composite_betslips:
                     ttl_odd = cb['total_odd']
                     slips = cb['betslips']
                     print(slips, ttl_odd, stake)
-                    code = self.betika.place_bet(slips, ttl_odd, stake)
+                    code = betika.place_bet(slips, ttl_odd, stake)
                     time.sleep(2)
             else:
                 print("Insufficient balance to place bets.")
@@ -120,8 +123,14 @@ class AutobetRed:
                 print(betslip_over)
                 slips_over.append(betslip_over)
                 
-        self.place_bet(slips_red, 6, 0.5)
-        self.place_bet(slips_over, 5, 1)
+        composite_betslips = self.get_composite_betslips(slips_red, 6) + self.get_composite_betslips(slips_over, 5)
+        
+        # Use ThreadPoolExecutor to spawn a thread for each profile
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            threads = [executor.submit(self.place_bet, composite_betslips, profile) for profile in self.db.get_active_profiles()]
+
+            # Wait for all threads to finish
+            concurrent.futures.wait(threads)
 
 if __name__ == "__main__":
     AutobetRed()()
