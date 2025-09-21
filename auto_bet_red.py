@@ -1,4 +1,6 @@
+import concurrent.futures
 import time
+
 from utils.betika import Betika
 from utils.postgres_crud import PostgresCRUD
 
@@ -124,6 +126,7 @@ class AutobetRed:
                 slips_over.append(betslip_over)
                 
         composite_betslips = self.get_composite_betslips(slips_red, 6) 
+        
         composite_betslips = self.get_composite_betslips(slips_over, 4)
         
         # Use ThreadPoolExecutor to spawn a thread for each profile
