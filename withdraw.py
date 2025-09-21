@@ -12,7 +12,7 @@ class Withdraw():
         phone = profile[0]
         password = profile[1]
         self.betika.login(phone, password)
-        amount = int(self.betika.balance/3) 
+        amount = int(self.betika.balance/2) 
         if amount >= 50 and amount <= 300000:
             self.betika.withdraw(amount)
     

@@ -37,3 +37,7 @@ jobs:
       - name: Autobet Red
         run: python auto_bet_red.py
 
+      - name: Withdraw
+        run: python withdraw.py
+
+
