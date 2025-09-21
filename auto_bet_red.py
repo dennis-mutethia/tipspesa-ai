@@ -31,7 +31,7 @@ class AutobetRed:
             url = f'https://api.betika.com/v1/uo/match?parent_match_id={parent_match_id}'
             match_details = self.betika.get_data(url)
             if not match_details:
-                return None            
+                return None, None            
             meta = match_details.get('meta') 
             over = None
             for datum in match_details.get('data', []):
