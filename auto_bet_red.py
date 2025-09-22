@@ -128,7 +128,7 @@ class AutobetRed:
         composite_betslips_red = self.get_composite_betslips(slips_red, 6)         
         composite_betslips_over = self.get_composite_betslips(slips_over, 5)
         
-        composite_betslips = composite_betslips_over #+ composite_betslips_red
+        composite_betslips = composite_betslips_over + composite_betslips_red
         
         # Use ThreadPoolExecutor to spawn a thread for each profile
         with concurrent.futures.ThreadPoolExecutor() as executor:
