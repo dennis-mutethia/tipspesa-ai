@@ -125,8 +125,8 @@ class AutobetRed:
                 print(betslip_over)
                 slips_over.append(betslip_over)
                 
-        composite_betslips_red = self.get_composite_betslips(slips_red, 6)         
-        composite_betslips_over = self.get_composite_betslips(slips_over, 5)
+        composite_betslips_red = self.get_composite_betslips(slips_red, 5)         
+        composite_betslips_over = self.get_composite_betslips(slips_over, 4)
         
         composite_betslips = composite_betslips_over + composite_betslips_red
         
