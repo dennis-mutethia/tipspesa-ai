@@ -154,8 +154,10 @@ class Predict:
             total, page, events = self.betika.get_events(limit, page, live)
             
             for event in events:
-                parent_match_id = int(event.get('parent_match_id'))
-                matches_ids.add(parent_match_id)
+                competition_name = event.get('competition_name')
+                if 'Women' not in competition_name:
+                    parent_match_id = int(event.get('parent_match_id'))
+                    matches_ids.add(parent_match_id)
         
         return matches_ids
               
