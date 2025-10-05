@@ -3,7 +3,7 @@ import json, time, sys
 
 from utils.betika import Betika
 from utils.gemini import Gemini
-from utils.grok import Grok
+from utils.github_models import GithubModels
 from utils.db import Db
 
 class Predict:
@@ -13,7 +13,7 @@ class Predict:
     def __init__(self):
         self.betika = Betika()
         self.gemini = Gemini()
-        self.grok = Grok()
+        self.github_models = GithubModels()
         self.db = Db()
     
     def prepare_query(self, parent_match_id):
@@ -125,7 +125,7 @@ class Predict:
             query = self.prepare_query(parent_match_id)
             if query:
                 print(f"Predicting match id: {parent_match_id} - Invoking AI Agents...")
-                response, model = self.grok.get_response(query) 
+                response, model = self.github_models.get_response(query) 
                 # if not response:
                 #     response, model = self.gemini.get_response(query)   
                 if response:                 

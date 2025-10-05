@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from openai import OpenAI
 
-class Grok():
+class GithubModels():
     def __init__(self):     
         load_dotenv()  
         self.endpoint = "https://models.github.ai/inference"
@@ -14,8 +14,10 @@ class Grok():
         
         #self.models = ["xai/grok-3-mini", "xai/grok-3", "openai/gpt-4.1-nano", "openai/gpt-4.1-mini", "openai/gpt-4.1"] #, "openai/gpt-4o-mini", "openai/gpt-4o"]
         #self.models = ["xai/grok-3", "openai/gpt-4.1"]
-        self.models = ['xai/grok-3', 'xai/grok-3-mini', 'openai/gpt-4.1']
+         #, 'openai/gpt-4.1']
         #, 'openai/gpt-5', 'openai/gpt-5', 'openai/gpt-5-mini']
+        
+        self.models = ['xai/grok-3', 'xai/grok-3-mini']
         
     def get_response(self, query):  
         if self.models:      
@@ -32,7 +34,7 @@ class Grok():
                 print(content)
                 return content, model
             except Exception as e:
-                print(f"Error in Grok.get_response: {e}")
+                print(f"Error in GithubModels.get_response: {e}")
                 #if "RateLimitReached" in str(e):
                 self.models.remove(model)
                 if self.models:                
