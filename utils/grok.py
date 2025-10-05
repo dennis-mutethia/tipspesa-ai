@@ -13,7 +13,8 @@ class Grok():
         )
         
         #self.models = ["xai/grok-3-mini", "xai/grok-3", "openai/gpt-4.1-nano", "openai/gpt-4.1-mini", "openai/gpt-4.1"] #, "openai/gpt-4o-mini", "openai/gpt-4o"]
-        self.models = ["xai/grok-3", "openai/gpt-4.1"]
+        #self.models = ["xai/grok-3", "openai/gpt-4.1"]
+        self.models = ["xai/grok-3"]
         
     def get_response(self, query):  
         if self.models:      

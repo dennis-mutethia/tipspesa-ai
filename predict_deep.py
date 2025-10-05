@@ -126,8 +126,8 @@ class Predict:
             if query:
                 print(f"Predicting match id: {parent_match_id} - Invoking AI Agents...")
                 response, model = self.grok.get_response(query) 
-                if not response:
-                    response, model = self.gemini.get_response(query)   
+                # if not response:
+                #     response, model = self.gemini.get_response(query)   
                 if response:                 
                     clean_response = response.replace('```json', '').strip('```')
                     filtered_match = json.loads(clean_response)
