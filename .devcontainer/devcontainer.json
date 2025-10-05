@@ -1,23 +1,15 @@
 {
     "name": "TIPSPESA-AI",
-    "runServices": ["app"],
-    "service": "app",
-    "workspaceFolder": "/workspace",
+    "dockerFile": "../Dockerfile",
     "customizations": {
         "vscode": {
             "extensions": [
                 "ms-azuretools.vscode-docker",
-                "github.vscode-github-actions",
-                "ms-python.pylint",
-                "mechatroner.rainbow-csv",
-                "eamodio.gitlens",
-                "Postman.postman-for-vscode"
+                "ms-python.pylint"
             ],
             "settings": {
                 "terminal.integrated.defaultProfile.linux#": "/bin/bash"
             }
         }
-    },
-    "dockerComposeFile": ["../docker-compose.yml"],
-    "forwardPorts": [5000]
+    }
 }

@@ -1,12 +1,12 @@
 
 import concurrent.futures
 from utils.betika import Betika
-from utils.postgres_crud import PostgresCRUD
+from utils.db import Db
 
 class Withdraw():
     def __init__(self):
         self.betika = Betika()
-        self.db = PostgresCRUD()
+        self.db = Db()
 
     def withdraw(self, profile):
         phone = profile[0]

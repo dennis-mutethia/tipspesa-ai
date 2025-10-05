@@ -1,19 +1,22 @@
 
-import json, pytz, random, requests, time
+import json
+import time
 from datetime import datetime
 
+import pytz
+import requests
+
 from utils.betika import Betika
+from utils.db import Db
 from utils.entities import Match
-from utils.postgres_crud import PostgresCRUD
 
 class Helper():   
     def __init__(self, phone=None, password=None):
         self.betika = Betika()
-        self.db = PostgresCRUD()
+        self.db = Db()
         if phone and password:
             self.betika.login(phone, password)
             
-
     def fetch_data(self, url, timeout=10):
         """
         Fetch data from the given URL.
@@ -176,20 +179,5 @@ class Helper():
             return link if link else ''              
         except Exception as e:
             print(f"Error in get share code: {e}")
-            
-            
-    def get_code(self):
-        # Define the allowed digits
-        digits = [1, 2, 5, 6, 8, 9]
-
-        # Generate a 6-digit code
-        code = ''.join(str(random.choice(digits)) for _ in range(6))
-
-        print(code)
-        return code
-    
-    
-
-
-
+        
 

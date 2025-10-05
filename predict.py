@@ -4,7 +4,7 @@ import json, time, sys
 from utils.betika import Betika
 from utils.gemini import Gemini
 from utils.grok import Grok
-from utils.postgres_crud import PostgresCRUD
+from utils.db import Db
 
 class Predict:
     """
@@ -14,7 +14,7 @@ class Predict:
         self.betika = Betika()
         self.gemini = Gemini()
         self.grok = Grok()
-        self.db = PostgresCRUD()
+        self.db = Db()
     
     def prepare_query(self, parent_match_id):
         print(f"Preparing query for match id: {parent_match_id}")

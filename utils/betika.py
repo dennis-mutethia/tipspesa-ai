@@ -1,5 +1,6 @@
 
-import cloudscraper, json, os
+import json
+import cloudscraper
 from dotenv import load_dotenv
 import requests
 

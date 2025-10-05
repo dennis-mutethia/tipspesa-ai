@@ -4,7 +4,7 @@ import logging
 from typing import List, Tuple
 from utils.betika import Betika
 from utils.helper import Helper
-from utils.postgres_crud import PostgresCRUD
+from utils.db import Db
 
 # Set up logging for GitHub Actions
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -14,7 +14,7 @@ class Results:
     def __init__(self):
         self.betika = Betika()
         self.helper = Helper()
-        self.db = PostgresCRUD()
+        self.db = Db()
 
     def get_status(self, home_score, away_score, match):
         """Determine the match status based on scores and bet pick."""

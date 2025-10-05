@@ -2,14 +2,14 @@
 import concurrent.futures
 
 from utils.helper import Helper
-from utils.postgres_crud import PostgresCRUD
+from utils.db import Db
 
 class Autobet:
     """
         main class
     """
     def __init__(self):
-        self.db = PostgresCRUD()
+        self.db = Db()
     
     def bet(self, profile):
         phone = profile[0]
@@ -18,9 +18,9 @@ class Autobet:
         matches = self.db.fetch_unplaced_matches(profile_id)
         helper = Helper(phone, password)
         #helper.auto_bet(profile_id, matches, 1)
-        # helper.auto_bet(profile_id, matches, 2)
-        #helper.auto_bet(profile_id, matches, 3)
-        helper.auto_bet(profile_id, matches, 4)
+        helper.auto_bet(profile_id, matches, 2)
+        helper.auto_bet(profile_id, matches, 3)
+        #helper.auto_bet(profile_id, matches, 4)
         #helper.auto_bet(profile_id, matches, 5)
                     
     def __call__(self):
