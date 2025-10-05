@@ -111,8 +111,9 @@ class Betika():
             is_esport = datum.get("is_esport")
             is_srl = datum.get("is_srl")
             category = datum.get("category")
+            competition_name = datum.get('competition_name')
             
-            if not is_esport and not is_srl and 'Simulated' not in category:
+            if not is_esport and not is_srl and 'Simulated' not in category and 'Women' not in competition_name:
                 event = {
                     "home_team": home,
                     "away_team": away,
