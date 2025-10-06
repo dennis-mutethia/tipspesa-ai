@@ -108,13 +108,13 @@ class Predict:
         return query
     
     def is_valid_match(self, filtered_match):
-        MIN_ODD, MIN_PROB, EXCEPTED_SUBTYPES = 1.10, 83, [1]
+        MIN_ODD, MAX_ODD, MIN_PROB = 1.10, 1.9, 83
         
         return (
             filtered_match
             if filtered_match
             and filtered_match["odd"] >= MIN_ODD
-            and (filtered_match["overall_prob"] >= MIN_PROB or filtered_match["sub_type_id"] in EXCEPTED_SUBTYPES)
+            and (filtered_match["odd"] >= MAX_ODD or filtered_match["overall_prob"] >= MIN_PROB)
             else None
         )
     
