@@ -108,15 +108,13 @@ class Predict:
         return query
     
     def is_valid_match(self, filtered_match):
-        MIN_ODD, MAX_ODD, MIN_PROB = 1.10, 2.5, 50
+        MIN_ODD, MIN_PROB, EXCEPTED_SUBTYPES = 1.10, 83, [1]
         
         return (
             filtered_match
             if filtered_match
-            and MIN_ODD <= filtered_match["odd"] <= MAX_ODD
-            and filtered_match["overall_prob"] >= MIN_PROB
-            and ' W' not in filtered_match["home_team"]
-            and ' W' not in filtered_match["away_team"]
+            and filtered_match["odd"] >= MIN_ODD
+            and (filtered_match["overall_prob"] >= MIN_PROB or filtered_match["sub_type_id"] in EXCEPTED_SUBTYPES)
             else None
         )
     
@@ -134,7 +132,7 @@ class Predict:
                     predicted_match = self.is_valid_match(filtered_match)  
                                       
                     if predicted_match:
-                        self.db.update_source_model(parent_match_id, model, filtered_match["start_time"])
+                        self.db.update_source_model(parent_match_id, model, predicted_match["start_time"])
                 else:
                     sys.exit(0)
                     
