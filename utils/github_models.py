@@ -17,7 +17,7 @@ class GithubModels():
          #, 'openai/gpt-4.1']
         #, 'openai/gpt-5', 'openai/gpt-5', 'openai/gpt-5-mini']
         
-        self.models = ['xai/grok-3', 'xai/grok-3-mini']
+        self.models = ['xai/grok-3', 'xai/grok-3-mini', 'openai/gpt-4.1']
         
     def get_response(self, query):  
         if self.models:      
