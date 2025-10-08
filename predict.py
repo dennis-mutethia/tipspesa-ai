@@ -117,6 +117,7 @@ class Predict:
             if filtered_match
             and filtered_match["odd"] >= MIN_ODD
             and (MID_ODD <= filtered_match["odd"] < MAX_ODD or filtered_match["overall_prob"] >= MIN_PROB)
+            and 'under' not in filtered_match["bet_pick"].lower()
             else None
         )
         if filtered_match:
