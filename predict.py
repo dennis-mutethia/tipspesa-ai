@@ -154,7 +154,7 @@ class Predict:
                 print(f"Skipped match id: {parent_match_id}")
                 return None
         except Exception as e:
-            return None, None
+            return None
     
     def get_upcoming_match_ids(self, live=False):    
         total = 1001
