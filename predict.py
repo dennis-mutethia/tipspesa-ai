@@ -185,13 +185,11 @@ class Predict:
                 new_matches += 1
                 time.sleep(6)
                 
-        # if new_matches > 0:
-        #     OneSignal().send_push_notification(f"{new_matches} New Predictions have Just been Posted!. Click to see more! Refresh App if you don't see them (Pull to Refresh )")
-                
-if __name__ == "__main__":
-    #Predict()()
+        if new_matches > 0:
+            OneSignal().send_push_notification(f"{len(new_matches)} New Predictions have Just been Posted! Refresh to see them (Pull to Refresh)!!!")
     
-    OneSignal().send_push_notification("New Predictions have Just been Posted! Refresh to see them (Pull to Refresh)!!!")
+if __name__ == "__main__":
+    Predict()()    
 
     
     
