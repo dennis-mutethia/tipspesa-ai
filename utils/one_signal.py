@@ -14,6 +14,7 @@ class OneSignal():
         }     
          
     def send_push_notification(self, message):
+        print(f'sending push notification... {message}')
         try:
             url = f"{self.base_url}/notifications"
             payload ={
