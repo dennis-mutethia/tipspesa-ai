@@ -111,13 +111,23 @@ class Predict:
         MIN_ODD, MID_ODD, MAX_ODD, MIN_PROB = 1.12, 1.4, 2.0, 82
         #AND (overall_prob >= 82 OR (odd >= 1.4 AND odd<2))
         
-        return (
+        m = (
             filtered_match
             if filtered_match
             and filtered_match["odd"] >= MIN_ODD
             and (MID_ODD <= filtered_match["odd"] < MAX_ODD or filtered_match["overall_prob"] >= MIN_PROB)
             else None
         )
+        if m:
+            m = (
+                None 
+                if int(m['sub_type_id']) == 1 
+                and int(m['outcome_id'] == 1
+                and m['odd'] >= 1.45
+                else m
+            )
+        
+        return m  
     
     def predict_match(self, parent_match_id):   
         try:     
