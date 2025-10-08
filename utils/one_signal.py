@@ -1,6 +1,7 @@
 
 import json
 import os
+import uuid
 import requests
 from dotenv import load_dotenv
 
@@ -20,19 +21,21 @@ class OneSignal():
             payload ={
                 "app_id": os.getenv('ONE_SIGNAL_APP_ID'),
                 "target_channel": "push",
-                "name": "Testing basic setup",
+                "name": uuid.uuid4().hex,
                 "headings": {
-                    "en": "👋 NEW GAMES POSTED"
+                    "en": "🔥 New Predictions Just Dropped! 🔥"
                 },
                 "contents": {
                     "en": message
                 },
+                "big_picture": "https://i.postimg.cc/6QsKZWD3/soccer-predictions-pic.png",
                 "included_segments": [
                     "Total Subscriptions"
-                ],          
+                ],
             }
             # Sending the POST request
             response = requests.post(url, data=json.dumps(payload), headers=self.headers)
+            print(response.json())
             return response.json()
             
         except requests.exceptions.HTTPError as http_err:
