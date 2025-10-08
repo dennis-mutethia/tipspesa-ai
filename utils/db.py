@@ -93,6 +93,7 @@ class Db:
                 SELECT kickoff, home_team, away_team, odd, parent_match_id, sub_type_id, bet_pick, special_bet_value, outcome_id 
                 FROM matches
                 WHERE kickoff > (CURRENT_TIMESTAMP + INTERVAL '3 hours')
+                AND sub_type_id = 1
             ),
             placed AS(
               SELECT parent_match_id 
