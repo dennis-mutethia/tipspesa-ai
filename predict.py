@@ -5,6 +5,7 @@ from utils.betika import Betika
 from utils.gemini import Gemini
 from utils.github_models import GithubModels
 from utils.db import Db
+from utils.one_signal import OneSignal
 
 class Predict:
     """
@@ -174,13 +175,19 @@ class Predict:
         
         un_predicted_match_ids = upcoming_match_ids.difference(predicted_match_ids)
         
+        new_matches = 0
         for parent_match_id in un_predicted_match_ids:
             predicted_match = self.predict_match(parent_match_id)
             if predicted_match:
                 print(predicted_match)
                 self.db.insert_matches([predicted_match]) 
+                new_matches += 1
                 time.sleep(6)
+                
+        if new_matches > 0:
+            OneSignal().send_push_notification(f"{new_matches} New Predictions have Just been Posted!. Click to see more! Refresh App if you don't see them (Pull to Refresh )")
                 
 if __name__ == "__main__":
     Predict()()
+    
     

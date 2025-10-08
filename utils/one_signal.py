@@ -1,0 +1,47 @@
+
+import json
+import os
+import requests
+from dotenv import load_dotenv
+
+class OneSignal():
+    def __init__(self):
+        load_dotenv()        
+        self.base_url = "https://api.onesignal.com"
+        self.headers = {
+            "content-type": "application/json; charset=utf-8",
+            "authorization": f"Key {os.getenv('ONE_SIGNAL_API_KEY')}"
+        }     
+         
+    def send_push_notification(self, message):
+        try:
+            url = f"{self.base_url}/notifications"
+            payload ={
+                "app_id": os.getenv('ONE_SIGNAL_APP_ID'),
+                "target_channel": "push",
+                "name": "Testing basic setup",
+                "headings": {
+                    "en": "👋 NEW GAMES POSTED"
+                },
+                "contents": {
+                    "en": message
+                },
+                "included_segments": [
+                    "Total Subscriptions"
+                ],          
+            }
+            # Sending the POST request
+            response = requests.post(url, data=json.dumps(payload), headers=self.headers)
+            return response.json()
+            
+        except requests.exceptions.HTTPError as http_err:
+            print(f"HTTP error occurred: {http_err}")
+        except requests.exceptions.ConnectionError as conn_err:
+            print(f"Connection error occurred: {conn_err}")
+        except requests.exceptions.Timeout as timeout_err:
+            print(f"Timeout error occurred: {timeout_err}")
+        except requests.exceptions.RequestException as req_err:
+            print(f"An error occurred: {req_err}")
+        except Exception as err:
+            print(f"Unexpected error: {err}")
+
