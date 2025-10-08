@@ -109,7 +109,7 @@ class Predict:
         return query
     
     def is_valid_match(self, filtered_match):
-        MIN_ODD, MID_ODD, MAX_ODD, MIN_PROB = 1.12, 1.4, 2.0, 82
+        MIN_ODD, MID_ODD, MAX_ODD, MIN_PROB = 1.12, 1.4, 1.9, 82
         #AND (overall_prob >= 82 OR (odd >= 1.4 AND odd<2))
         
         filtered_match = (
