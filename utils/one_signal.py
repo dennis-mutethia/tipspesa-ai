@@ -21,7 +21,7 @@ class OneSignal():
             payload ={
                 "app_id": os.getenv('ONE_SIGNAL_APP_ID'),
                 "target_channel": "push",
-                "name": uuid.uuid4().hex,
+                "name": str(uuid.uuid4()),
                 "headings": {
                     "en": "🔥 New Predictions Just Dropped! 🔥"
                 },
@@ -30,6 +30,9 @@ class OneSignal():
                 },
                 "big_picture": "https://i.postimg.cc/6QsKZWD3/soccer-predictions-pic.png",
                 "included_segments": [
+                    "Active Subscriptions", #Session within the last 7 days
+                    "Engaged Subscriptions", #4+ Sessions within the last 7 days
+                    "Inactive Subscriptions", #No Session within the last 7 days
                     "Total Subscriptions"
                 ],
             }
