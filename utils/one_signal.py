@@ -28,7 +28,7 @@ class OneSignal():
                 "contents": {
                     "en": message
                 },
-                "big_picture": "https://i.postimg.cc/6QsKZWD3/soccer-predictions-pic.png",
+                "big_picture": "https://i.postimg.cc/9MmQpMRr/cropped-circle-image-1.png",
                 "included_segments": [
                     "Active Subscriptions", #Session within the last 7 days
                     "Engaged Subscriptions", #4+ Sessions within the last 7 days
