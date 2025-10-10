@@ -177,20 +177,19 @@ class Predict:
         
         un_predicted_match_ids = upcoming_match_ids.difference(predicted_match_ids)
         
-        to_send_push = False
         for parent_match_id in un_predicted_match_ids:
             predicted_match = self.predict_match(parent_match_id)
             if predicted_match:
                 print(predicted_match)
                 self.db.insert_matches([predicted_match]) 
                 time.sleep(6)
-                to_send_push = True
         
-        if to_send_push:
-            OneSignal().send_push_notification("New Predictions have Just been Posted! Refresh to see them (Pull to Refresh)!!!")
                     
 if __name__ == "__main__":
     Predict()()
+    
+    #send push notification
+    OneSignal().send_push_notification("New Predictions have Just been Posted! Refresh to see them (Pull to Refresh)!!!")
 
     
 
