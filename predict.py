@@ -109,12 +109,12 @@ class Predict:
         return query
     
     def is_valid_match(self, filtered_match):
-        MIN_ODD, MAX_ODD, MIN_PROB = 1.12, 1.8, 70
+        MIN_ODD, MAX_ODD, MIN_PROB = 1.15, 1.79, 70
         
         filtered_match = (
             filtered_match
             if filtered_match
-            and MIN_ODD <= filtered_match["odd"] < MAX_ODD #or filtered_match["overall_prob"] >= MAX_PROB)
+            and MIN_ODD <= filtered_match["odd"] <= MAX_ODD #or filtered_match["overall_prob"] >= MAX_PROB)
             and filtered_match["overall_prob"] >= MIN_PROB
             and 'under' not in filtered_match["bet_pick"].lower()
             else None
