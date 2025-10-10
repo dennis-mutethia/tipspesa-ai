@@ -184,7 +184,7 @@ class Predict:
         
                     
 if __name__ == "__main__":
-    Predict()()
+    #Predict()()
     
     #send push notification
     OneSignal().send_push_notification("New Predictions have Just been Posted! Refresh to see them (Pull to Refresh)!!!")
