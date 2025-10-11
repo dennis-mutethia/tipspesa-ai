@@ -192,8 +192,4 @@ if __name__ == "__main__":
     #send push notification
     OneSignal()()
 
-
-    
-
-    
     
