@@ -5,7 +5,6 @@ from utils.betika import Betika
 from utils.gemini import Gemini
 from utils.github_models import GithubModels
 from utils.db import Db
-from utils.one_signal import OneSignal
 
 class Predict:
     """
@@ -189,7 +188,3 @@ if __name__ == "__main__":
     except Exception as e:
         print(e)
         
-    #send push notification
-    OneSignal()()
-
-    

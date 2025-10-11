@@ -59,3 +59,10 @@ class OneSignal():
     def __call__(self):
         self.send_push_notification("New Predictions have Just been Posted! Open App & Refresh to see them (Pull to Refresh)!!!")
 
+            
+if __name__ == "__main__":
+    try: 
+        OneSignal()()
+    except Exception as e:
+        print(e)
+        
