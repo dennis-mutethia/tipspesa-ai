@@ -1,4 +1,5 @@
 
+from datetime import datetime
 import json
 import os
 import uuid
@@ -21,7 +22,7 @@ class OneSignal():
             payload ={
                 "app_id": os.getenv('ONE_SIGNAL_APP_ID'),
                 "target_channel": "push",
-                "name": str(uuid.uuid4()),
+                "name": f"Predictions - {datetime.now()}",
                 "headings": {
                     "en": "🔥 New Predictions Just Dropped! 🔥"
                 },
@@ -37,7 +38,11 @@ class OneSignal():
                 ],
             }
             # Sending the POST request
-            response = requests.post(url, data=json.dumps(payload), headers=self.headers)
+            response = requests.post(
+                url,                 
+                headers=self.headers,
+                data=json.dumps(payload)
+            )
             print(response.json())
             return response.json()
             
@@ -51,4 +56,7 @@ class OneSignal():
             print(f"An error occurred: {req_err}")
         except Exception as err:
             print(f"Unexpected error: {err}")
+    
+    def __call__(self):
+        self.send_push_notification("New Predictions have Just been Posted! Open App & Refresh to see them (Pull to Refresh)!!!")
 
