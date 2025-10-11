@@ -126,7 +126,7 @@ class Predict:
                 and int(filtered_match['outcome_id']) == 1
                 and filtered_match['odd'] >= 1.45
                 ) or (filtered_match["bet_pick"].lower() == 'over 1.5'
-                and filtered_match['odd'] >= 1.25 
+                and filtered_match['odd'] >= 1.27 
                 )
                 else filtered_match
             )
