@@ -108,7 +108,7 @@ class Predict:
         return query
     
     def is_valid_match(self, filtered_match):
-        MIN_ODD, MAX_ODD, MIN_PROB = 1.15, 1.79, 75
+        MIN_ODD, MAX_ODD, MIN_PROB = 1.15, 1.79, 80
         
         filtered_match = (
             filtered_match
@@ -124,8 +124,8 @@ class Predict:
                 None 
                 if (int(filtered_match['sub_type_id']) == 1  and int(filtered_match['outcome_id']) == 1 and filtered_match['odd'] >= 1.45) 
                 or (filtered_match["bet_pick"].lower() == 'over 1.5' and filtered_match['odd'] >= 1.27)
-                or (filtered_match["bet_pick"].lower() == 'double chance' and filtered_match['odd'] >= 1.2)
-                or (int(filtered_match['sub_type_id']) == 29 and filtered_match["odd"] >= 1.3)
+                or (int(filtered_match['sub_type_id']) == 10 and filtered_match["odd"] >= 1.2)
+                #or (int(filtered_match['sub_type_id']) == 29 and filtered_match["odd"] >= 1.3)
                 else filtered_match
             )
         
