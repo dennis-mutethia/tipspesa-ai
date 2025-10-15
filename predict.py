@@ -155,6 +155,7 @@ class Predict:
             else:
                 print(f"Skipped match id: {parent_match_id}")
                 return None
+            
         except Exception as e:
             return None
     
@@ -177,7 +178,6 @@ class Predict:
         predicted_match_ids = self.db.fetch_predicted_match_ids()
         
         un_predicted_match_ids = upcoming_match_ids.difference(predicted_match_ids)
-        send_notification = False
         
         for parent_match_id in un_predicted_match_ids:
             predicted_match = self.predict_match(parent_match_id)
@@ -187,7 +187,7 @@ class Predict:
                 time.sleep(6)
                 un_predicted_match_ids = True
         
-        if send_notification:
+        if predicted_match:
             OneSignal()()
         
                     
