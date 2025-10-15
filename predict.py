@@ -146,8 +146,12 @@ class Predict:
             if query:
                 logger.info("Predicting match id: %s - Invoking AI Agents...", parent_match_id)
                 response, model = self.github_models.get_response(query) 
-                if not response:
+                if response:
+                    time.sleep(6) #10 requests per minute
+                else:
                     response, model = self.gemini.get_response(query)   
+                    time.sleep(30) #2 requests per minute
+                    
                 if response:                 
                     clean_response = response.replace('```json', '').strip('```')
                     filtered_match = json.loads(clean_response)
@@ -195,7 +199,6 @@ class Predict:
                 self.db.insert_matches([predicted_match]) 
                 
                 un_predicted_match_ids = True
-            time.sleep(15)
         
         if predicted_match:
             logger.info("Sending Notification to app users")
