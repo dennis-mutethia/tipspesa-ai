@@ -7,7 +7,7 @@ from utils.helper import Helper
 from utils.db import Db
 
 # Set up logging for GitHub Actions
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class Results:
