@@ -1,6 +1,11 @@
+import logging
 import os
 from dotenv import load_dotenv
 from google import genai
+
+# Configure logging for debugging and monitoring
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class Gemini():
     def __init__(self):        
@@ -12,16 +17,16 @@ class Gemini():
         if self.models:      
             try:            
                 model = self.models[0]
-                print(f"Using Open GenAI model: {model}")
+                logger.info("Using Open GenAI model: %s", model)
                 response = self.client.models.generate_content(
                     model= model,
                     contents=str(query)
                 )
                 content = response.text
-                print(content)
+                logger.info(content)
                 return content, model
             except Exception as e:
-                print(f"Error in Gemini.get_response: {e}")
+                logger.error("Error in Gemini.get_response: %s", e)
                 if "overloaded" in str(e):
                     return self.get_response(query)
                 elif "RESOURCE_EXHAUSTED" in str(e):
@@ -29,9 +34,9 @@ class Gemini():
                     if self.models:                
                         return self.get_response(query)
                     else:
-                        print("No more GenAI models to try.")
+                        logger.warning("No more GenAI models to try.")
         else:
-            print("No more GenAI AI models to try.")
+            logger.warning("No more GenAI AI models to try.")
             
         return None, None
     

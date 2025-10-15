@@ -1,8 +1,13 @@
 
 import json
+import logging
 import cloudscraper
 from dotenv import load_dotenv
 import requests
+
+# Configure logging for debugging and monitoring
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 load_dotenv()   
 
@@ -28,15 +33,15 @@ class Betika():
             return response.json()  # Assuming the response is JSON
         
         except requests.exceptions.HTTPError as http_err:
-            print(f"HTTP error occurred: {http_err}")
+            logger.error("HTTP error occurred: %s", http_err)
         except requests.exceptions.ConnectionError as conn_err:
-            print(f"Connection error occurred: {conn_err}")
+            logger.error("Connection error occurred: %s", conn_err)
         except requests.exceptions.Timeout as timeout_err:
-            print(f"Timeout error occurred: {timeout_err}")
+            logger.error("Timeout error occurred: %s", timeout_err)
         except requests.exceptions.RequestException as req_err:
-            print(f"An error occurred: {req_err}")
+            logger.error("An error occurred: %s", req_err)
         except Exception as err:
-            print(f"Unexpected error: {err}")
+            logger.error("Unexpected error: %s", err)
         
     def post_data(self, url, payload):
         try:
@@ -45,15 +50,15 @@ class Betika():
             return response.json()
             
         except requests.exceptions.HTTPError as http_err:
-            print(f"HTTP error occurred: {http_err}")
+            logger.error("HTTP error occurred: %s", http_err)
         except requests.exceptions.ConnectionError as conn_err:
-            print(f"Connection error occurred: {conn_err}")
+            logger.error("Connection error occurred: %s", conn_err)
         except requests.exceptions.Timeout as timeout_err:
-            print(f"Timeout error occurred: {timeout_err}")
+            logger.error("Timeout error occurred: %s", timeout_err)
         except requests.exceptions.RequestException as req_err:
-            print(f"An error occurred: {req_err}")
+            logger.error("An error occurred: %s", req_err)
         except Exception as err:
-            print(f"Unexpected error: {err}")
+            logger.error("Unexpected error: %s", err)
                 
     def login(self, phone, password):
         url = f'{self.base_url}/v1/login'
@@ -76,11 +81,11 @@ class Betika():
                     self.bonus = float(response_json.get('data').get('user').get('bonus'))
                     self.token = response_json.get('token')                
             else:
-                print("Response is not JSON. Likely an HTML error page.")
+                logger.warning("Response is not JSON. Likely an HTML error page.")
         except requests.exceptions.RequestException as e:
-            print(f"Error: {e}")
+            logger.error("Error: %s", e)
         except ValueError as e:
-            print(f"JSON Parsing Error: {e}")
+            logger.error("JSON Parsing Error: %s", e)
     
     def get_balance(self):
         url = f'{self.base_url}/v1/balance'
@@ -91,7 +96,7 @@ class Betika():
         }
 
         response = self.post_data(url, payload)
-        print(response)
+        logger.info(response)
 
         data = response.get('data')
         if data:
@@ -140,7 +145,7 @@ class Betika():
         }
 
         response = self.post_data(url, payload)
-        print(response)
+        logger.info(response)
         if "params" in response:
             return response.get("params").get("short_bet_id")
         else:
@@ -198,7 +203,7 @@ class Betika():
         }
 
         response = self.post_data(url, payload)
-        print(response)
+        logger.info(response)
     
 
     

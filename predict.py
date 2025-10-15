@@ -1,11 +1,18 @@
 
-import json, time, sys
+import json
+import logging
+import time
+import sys
 
 from utils.betika import Betika
 from utils.db import Db
 from utils.gemini import Gemini
 from utils.github_models import GithubModels
 from utils.one_signal import OneSignal
+
+# Configure logging for debugging and monitoring
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class Predict:
     """
@@ -18,7 +25,7 @@ class Predict:
         self.db = Db()
     
     def prepare_query(self, parent_match_id):
-        print(f"Preparing query for match id: {parent_match_id}")
+        logger.info("Preparing query for match id: %s", parent_match_id)
         url = f'https://api.betika.com/v1/uo/match?parent_match_id={parent_match_id}'
         match_details = self.betika.get_data(url)
         if not match_details:
@@ -137,26 +144,28 @@ class Predict:
         try:     
             query = self.prepare_query(parent_match_id)
             if query:
-                print(f"Predicting match id: {parent_match_id} - Invoking AI Agents...")
+                logger.info("Predicting match id: %s - Invoking AI Agents...", parent_match_id)
                 response, model = self.github_models.get_response(query) 
                 if not response:
                     response, model = self.gemini.get_response(query)   
                 if response:                 
                     clean_response = response.replace('```json', '').strip('```')
                     filtered_match = json.loads(clean_response)
-                    predicted_match = self.is_valid_match(filtered_match)  
                                       
-                    if predicted_match:
-                        self.db.update_source_model(parent_match_id, model, predicted_match["start_time"])
+                    if filtered_match:
+                        self.db.update_source_model(parent_match_id, model, filtered_match["start_time"])
+                        
+                    predicted_match = self.is_valid_match(filtered_match)  
                 else:
                     sys.exit(0)
                     
                 return predicted_match
             else:
-                print(f"Skipped match id: {parent_match_id}")
+                logger.info("Skipped match id: %s", parent_match_id)
                 return None
             
         except Exception as e:
+            logger.error(e)
             return None
     
     def get_upcoming_match_ids(self, live=False):    
@@ -182,18 +191,22 @@ class Predict:
         for parent_match_id in un_predicted_match_ids:
             predicted_match = self.predict_match(parent_match_id)
             if predicted_match:
-                print(predicted_match)
+                logger.info(predicted_match)
                 self.db.insert_matches([predicted_match]) 
-                time.sleep(6)
+                
                 un_predicted_match_ids = True
+            time.sleep(15)
         
         if predicted_match:
+            logger.info("Sending Notification to app users")
             OneSignal()()
-        
-                    
+        else:
+            logger.warning("No matches predicted")
+            
+                        
 if __name__ == "__main__":
     try: 
         Predict()()
     except Exception as e:
-        print(e)
+        logger.error(e)
         

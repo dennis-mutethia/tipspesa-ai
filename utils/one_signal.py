@@ -1,9 +1,15 @@
 
 from datetime import datetime
 import json
+import logging
 import os
 import requests
 from dotenv import load_dotenv
+
+
+# Configure logging for debugging and monitoring
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class OneSignal():
     def __init__(self):
@@ -15,7 +21,7 @@ class OneSignal():
         }     
          
     def send_push_notification(self, message):
-        print(f'sending push notification... {message}')
+        logger.info('sending push notification... %s', message)
         try:
             url = f"{self.base_url}/notifications"
             payload ={
@@ -42,19 +48,19 @@ class OneSignal():
                 headers=self.headers,
                 data=json.dumps(payload)
             )
-            print(response.json())
+            logger.info(response.json())
             return response.json()
-            
+        
         except requests.exceptions.HTTPError as http_err:
-            print(f"HTTP error occurred: {http_err}")
+            logger.error("HTTP error occurred: %s", http_err)
         except requests.exceptions.ConnectionError as conn_err:
-            print(f"Connection error occurred: {conn_err}")
+            logger.error("Connection error occurred: %s", conn_err)
         except requests.exceptions.Timeout as timeout_err:
-            print(f"Timeout error occurred: {timeout_err}")
+            logger.error("Timeout error occurred: %s", timeout_err)
         except requests.exceptions.RequestException as req_err:
-            print(f"An error occurred: {req_err}")
+            logger.error("An error occurred: %s", req_err)
         except Exception as err:
-            print(f"Unexpected error: {err}")
+            logger.error("Unexpected error: %s", err)
     
     def __call__(self):
         self.send_push_notification("New Predictions have Just been Posted! Open App & Refresh to see them (Pull to Refresh)!!!")
@@ -64,5 +70,5 @@ if __name__ == "__main__":
     try: 
         OneSignal()()
     except Exception as e:
-        print(e)
+        logger.error(e)
         

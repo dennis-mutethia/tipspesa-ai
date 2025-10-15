@@ -1,8 +1,13 @@
 
+import logging
 import os
 import uuid
 import psycopg2
 from dotenv import load_dotenv
+
+# Configure logging for debugging and monitoring
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class Db:
     def __init__(self):
@@ -155,7 +160,7 @@ class Db:
                 cur.executemany(query, values)
                 self.conn.commit()
         except Exception as e:
-            print(f"Error adding bet slips: {e}")
+            logger.error("Error adding bet slips: %s", e)
     
     def update_match_results(self, match_id, home_results, away_results, status):        
         self.ensure_connection()
@@ -183,7 +188,7 @@ class Db:
                 cursor.execute(query)
                 return cursor.fetchall()
         except Exception as e:
-            print(f"Error fetching active profiles: {e}")
+            logger.error("Error fetching active profiles: %s", e)
             return []        
         
     def update_source_model(self, parent_match_id, model, kickoff):         
@@ -198,7 +203,7 @@ class Db:
                 cur.execute(query, (parent_match_id, model, kickoff)) 
                 self.conn.commit()  
         except Exception as e:
-            print(f"Error updating source model: {e}")
+            logger.error("Error updating source model: %s", e)
                   
 if __name__ == "__main__":
     crud = Db()

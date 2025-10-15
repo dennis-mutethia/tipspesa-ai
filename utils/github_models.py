@@ -1,6 +1,11 @@
+import logging
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
+
+# Configure logging for debugging and monitoring
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class GithubModels():
     def __init__(self):     
@@ -25,7 +30,7 @@ class GithubModels():
         if self.models:      
             try:            
                 model = self.models[0]
-                print(f"Using Open AI model: {model}")
+                logger.info("Using Open AI model: %s", model)
                 response = self.client.chat.completions.create(
                     model = model,
                     messages=[
@@ -33,17 +38,17 @@ class GithubModels():
                     ],
                 )
                 content = response.choices[0].message.content
-                print(content)
+                logger.info(content)
                 return content, model
             except Exception as e:
-                print(f"Error in GithubModels.get_response: {e}")
+                logger.error("Error in GithubModels.get_response: %s", e)
                 #if "RateLimitReached" in str(e):
                 self.models.remove(model)
                 if self.models:                
                     return self.get_response(query)
                 else:
-                    print("No more Open AI models to try.")
+                    logger.warning("No more Open AI models to try.")
         else:
-            print("No more Open AI models to try.")
+            logger.warning("No more Open AI models to try.")
             
         return None, None

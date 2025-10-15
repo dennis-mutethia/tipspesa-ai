@@ -1,5 +1,6 @@
 
 import json
+import logging
 import time
 from datetime import datetime
 
@@ -9,6 +10,10 @@ import requests
 from utils.betika import Betika
 from utils.db import Db
 from utils.entities import Match
+
+# Configure logging for debugging and monitoring
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class Helper():   
     def __init__(self, phone=None, password=None):
@@ -37,9 +42,9 @@ class Helper():
             json_data = response.json()
             if json_data:
                 return json_data
-            print("Invalid JSON data format")
+            logger.warning("Invalid JSON data format")
         else:
-            print(f"{response}")
+            logger.warning(response)
 
         return None
     
@@ -143,16 +148,16 @@ class Helper():
                     for cb in composite_betslips:
                         ttl_odd = cb['total_odd']
                         slips = cb['betslips']
-                        print(slips, ttl_odd, stake)
+                        logger.info("Slips: %s, Total Odds: %s, Stake: %s", slips, ttl_odd, stake)
                         code = self.betika.place_bet(slips, ttl_odd, stake)
                         if code:
                             self.db.add_bet_slip(profile_id, slips, code)
                         time.sleep(2)
                 else:
-                    print("Insufficient balance to place bets.")
+                    logger.warning("Insufficient balance to place bets.")
                             
         except Exception as e:
-            print(f"Error in auto_bet: {e}")
+            logging.error("Error in auto_bet: %s", e)
             
     def get_share_code(self, matches):
         link = ''
@@ -178,6 +183,6 @@ class Helper():
 
             return link if link else ''              
         except Exception as e:
-            print(f"Error in get share code: {e}")
+            logger.error("Error in get share code: %s", e)
         
 
