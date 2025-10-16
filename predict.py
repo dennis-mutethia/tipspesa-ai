@@ -192,7 +192,7 @@ class Predict:
         
         un_predicted_match_ids = upcoming_match_ids.difference(predicted_match_ids)
         
-        for parent_match_id in un_predicted_match_ids:
+        for parent_match_id in upcoming_match_ids:
             predicted_match = self.predict_match(parent_match_id)
             if predicted_match:
                 logger.info(predicted_match)
