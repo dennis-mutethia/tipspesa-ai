@@ -197,8 +197,6 @@ class Predict:
             if predicted_match:
                 logger.info(predicted_match)
                 self.db.insert_matches([predicted_match]) 
-                
-                un_predicted_match_ids = True
         
         if predicted_match:
             logger.info("Sending Notification to app users")
