@@ -116,7 +116,7 @@ class Predict:
         return query
     
     def is_valid_match(self, filtered_match):
-        MIN_ODD, MAX_ODD, MIN_PROB = 1.15, 1.79, 80
+        MIN_ODD, MAX_ODD, MIN_PROB = 1.15, 1.79, 75
         
         filtered_match = (
             filtered_match
@@ -192,7 +192,7 @@ class Predict:
         
         un_predicted_match_ids = upcoming_match_ids.difference(predicted_match_ids)
         
-        for parent_match_id in un_predicted_match_ids:
+        for parent_match_id in upcoming_match_ids:
             predicted_match = self.predict_match(parent_match_id)
             if predicted_match:
                 logger.info(predicted_match)
