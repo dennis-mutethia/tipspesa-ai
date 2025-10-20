@@ -62,8 +62,8 @@ class OneSignal():
         except Exception as err:
             logger.error("Unexpected error: %s", err)
     
-    def __call__(self):
-        self.send_push_notification("New Predictions have Just been Posted! Open App & Refresh to see them (Pull to Refresh)!!!")
+    def __call__(self, predictions):
+        self.send_push_notification(f"{predictions} New Predictions have Just been Posted! Open App & Refresh to see them (Pull to Refresh)!!!")
 
             
 if __name__ == "__main__":

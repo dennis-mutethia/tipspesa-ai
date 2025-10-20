@@ -192,15 +192,17 @@ class Predict:
         
         un_predicted_match_ids = upcoming_match_ids.difference(predicted_match_ids)
         
+        predictions = 0
         for parent_match_id in upcoming_match_ids:
             predicted_match = self.predict_match(parent_match_id)
             if predicted_match:
                 logger.info(predicted_match)
                 self.db.insert_matches([predicted_match]) 
+                predictions += 1
         
-        if predicted_match:
+        if predictions>0:
             logger.info("Sending Notification to app users")
-            OneSignal()()
+            OneSignal()(predictions)
         else:
             logger.warning("No matches predicted")
             
