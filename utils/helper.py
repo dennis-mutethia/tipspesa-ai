@@ -110,7 +110,7 @@ class Helper():
             composite_betslips = [] 
             total_odd = 1
             
-            for match in sorted(matches, key=lambda x: x['start_time']):   
+            for match in matches:  
                 if not any(betslip["parent_match_id"] == match.get("parent_match_id") for betslip in betslips):
                     betslip = {
                         "sub_type_id": match.get("sub_type_id"),
@@ -157,7 +157,7 @@ class Helper():
                     logger.warning("Insufficient balance to place bets.")
                             
         except Exception as e:
-            logging.error("Error in auto_bet: %s", e)
+            logger.error("Error in auto_bet: %s", e)
             
     def get_share_code(self, matches):
         link = ''
