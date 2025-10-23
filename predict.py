@@ -78,6 +78,10 @@ class Predict:
                         "type": "string",
                         "description": "Away Team, as provided in the input match_details['away_team']"
                     },
+                    "category": {
+                        "type": "string",
+                        "description": "Category, as provided in the input match_details['category']"
+                    },
                     "overall_prob": {
                         "type": "integer",
                         "pattern": "^(100|[1-9][0-9]?|[0-9])$",

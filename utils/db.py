@@ -41,8 +41,8 @@ class Db:
         self.ensure_connection()
         with self.conn.cursor() as cursor:
             query = """
-                INSERT INTO matches(match_id, kickoff, home_team, away_team, prediction, odd, overall_prob, parent_match_id, sub_type_id, bet_pick, special_bet_value, outcome_id)
-                VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                INSERT INTO matches(match_id, kickoff, home_team, away_team, league, prediction, odd, overall_prob, parent_match_id, sub_type_id, bet_pick, special_bet_value, outcome_id)
+                VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 ON CONFLICT (match_id) DO UPDATE SET
                     prediction = %s,
                     odd = %s,
@@ -55,6 +55,7 @@ class Db:
                     match['start_time'],
                     match['home_team'].replace("'","''"),
                     match['away_team'].replace("'","''"),
+                    match['category'].replace("'","''"),
                     match['prediction'],
                     match['odd'],
                     match['overall_prob'],

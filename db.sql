@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS matches (
 	kickoff TIMESTAMP,
 	home_team TEXT,
 	away_team TEXT,
+  league TEXT,
 	prediction TEXT,
 	odd DOUBLE PRECISION,
 	home_results INT,
