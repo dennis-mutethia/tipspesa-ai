@@ -78,9 +78,9 @@ class Predict:
                         "type": "string",
                         "description": "Away Team, as provided in the input match_details['away_team']"
                     },
-                    "category": {
+                    "competition_name": {
                         "type": "string",
-                        "description": "Category, as provided in the input match_details['category']"
+                        "description": "Competition Name, as provided in the input match_details['competition_name']"
                     },
                     "overall_prob": {
                         "type": "integer",
