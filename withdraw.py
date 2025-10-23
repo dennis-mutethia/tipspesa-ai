@@ -1,5 +1,7 @@
 
 import concurrent.futures
+import logging 
+
 from utils.betika import Betika
 from utils.db import Db
 
