@@ -136,9 +136,9 @@ class Predict:
                 None 
                 if (int(filtered_match['sub_type_id']) == 1  and int(filtered_match['outcome_id']) == 1 and filtered_match['odd'] >= 1.45)
                 or (int(filtered_match['sub_type_id']) == 1  and int(filtered_match['outcome_id']) == 3 and filtered_match['odd'] <= 1.3) 
-                or (filtered_match["bet_pick"].lower() == 'over 1.5' and not 1.2 <= filtered_match['odd'] >= 1.27)
-                or (filtered_match["bet_pick"].lower() == 'yes' and not 1.3 <= filtered_match['odd'] >= 1.4)
-                or (int(filtered_match['sub_type_id']) == 10 and not 1.15 <= filtered_match['odd'] >= 1.19) #double chance
+                or (filtered_match["bet_pick"].lower() == 'over 1.5' and (filtered_match['odd'] < 1.2 or filtered_match['odd'] > 1.27))
+                or (filtered_match["bet_pick"].lower() == 'yes' and and (filtered_match['odd'] < 1.3 or filtered_match['odd'] > 1.4))
+                or (int(filtered_match['sub_type_id']) == 10 and (filtered_match['odd'] < 1.15 or filtered_match['odd'] > 1.19)) #double chance
                 #or (int(filtered_match['sub_type_id']) == 29 and filtered_match["odd"] >= 1.3)
                 else filtered_match
             )
