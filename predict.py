@@ -192,19 +192,23 @@ class Predict:
         return matches_ids
               
     def __call__(self):
-        upcoming_match_ids = self.get_upcoming_match_ids(live=False)
-        predicted_match_ids = self.db.fetch_predicted_match_ids()
-        
-        un_predicted_match_ids = upcoming_match_ids.difference(predicted_match_ids)
-        
         predictions = 0
-        for parent_match_id in un_predicted_match_ids:
-            predicted_match = self.predict_match(parent_match_id)
-            if predicted_match:
-                logger.info(predicted_match)
-                self.db.insert_matches([predicted_match]) 
-                predictions += 1
+        try:
+            upcoming_match_ids = self.get_upcoming_match_ids(live=False)
+            predicted_match_ids = self.db.fetch_predicted_match_ids()
+            
+            un_predicted_match_ids = upcoming_match_ids.difference(predicted_match_ids)
+            
+            for parent_match_id in un_predicted_match_ids:
+                predicted_match = self.predict_match(parent_match_id)
+                if predicted_match:
+                    logger.info(predicted_match)
+                    self.db.insert_matches([predicted_match]) 
+                    predictions += 1
         
+        except Exception as e:
+            logger.error(e)
+                
         if predictions>0:
             logger.info("Sending Notification to app users")
             OneSignal()(predictions)
