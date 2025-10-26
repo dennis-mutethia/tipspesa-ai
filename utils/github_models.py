@@ -22,8 +22,8 @@ class GithubModels():
          #, 'openai/gpt-4.1']
         #, 'openai/gpt-5', 'openai/gpt-5', 'openai/gpt-5-mini']
         
-        #self.models = ['openai/gpt-4.1', 'openai/gpt-4.1-mini', 'xai/grok-3']
-        self.models = ['openai/gpt-4.1', 'openai/gpt-4.1-mini']
+        self.models = ['openai/gpt-4.1', 'openai/gpt-4.1-mini', 'xai/grok-3']
+        #self.models = ['openai/gpt-4.1', 'openai/gpt-4.1-mini']
 
         
     def get_response(self, query):  
