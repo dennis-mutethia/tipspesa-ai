@@ -129,3 +129,17 @@ class Results():
                     results.append((None, None, None, 'Error: %s' % e))
 
         return results
+
+
+if __name__ == "__main__":
+    logger.info('>>>>>>>> Starting Results task >>>>>>>>')
+    try:
+        results_processor = Results()
+        matches = results_processor.helper.fetch_matches('', '=', '', limit=1000)
+        logger.info('Fetched %d matches to process', len(matches))    
+        results = results_processor(matches)
+        logger.info('Updated %d matches updated', len(results))        
+    except Exception as e:
+        logger.error('Error in cycle: %s', e)
+        
+    logger.info('<<<<<<<< Results Task completed >>>>>>>>')

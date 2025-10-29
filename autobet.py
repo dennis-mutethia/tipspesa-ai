@@ -1,8 +1,14 @@
 
 import concurrent.futures
+import logging
 
+from utils.withdraw import Withdraw
 from utils.helper import Helper
 from utils.db import Db
+
+# Configure logging for debugging and monitoring
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class Autobet:
     """
@@ -31,7 +37,14 @@ class Autobet:
             # Wait for all threads to finish
             concurrent.futures.wait(threads)
              
-
+if __name__ == "__main__":
+    logger.info('>>>>>>>> Starting Withdraw & Autobet task >>>>>>>>')
+    try: 
+        Withdraw()()
+        Autobet()()
+    except Exception as e:
+        logger.error(e)
+    logger.info('<<<<<<<< Withdraw & Autobet Task completed >>>>>>>>')
 
 
 

@@ -216,3 +216,10 @@ class Predict():
             logger.warning("No matches predicted")
             
                  
+if __name__ == "__main__":
+    logger.info('>>>>>>>> Starting Prediction task >>>>>>>>')
+    try: 
+        Predict()()
+    except Exception as e:
+        logger.error(e)
+    logger.info('<<<<<<<< Prediction Task completed >>>>>>>>')

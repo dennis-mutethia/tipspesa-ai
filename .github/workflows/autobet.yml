@@ -34,9 +34,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Withdraw
-        run: python withdraw.py
-
       - name: Autobet
         run: python autobet.py
 
