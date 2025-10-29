@@ -136,9 +136,19 @@ if __name__ == "__main__":
     try:
         results_processor = Results()
         matches = results_processor.helper.fetch_matches('', '=', '', limit=1000)
-        logger.info('Fetched %d matches to process', len(matches))    
-        results = results_processor(matches)
-        logger.info('Updated %d matches updated', len(results))        
+        logger.info('Fetched %d matches to process', len(matches))  
+        while True:
+            logger.info('Starting new cycle')
+            
+            try:
+                results = results_processor(matches)
+                logger.info('Cycle completed with %d matches updated', len(results))
+            except Exception as e:
+                logger.error('Error in cycle: %s', e)
+                
+            logger.info('Sleeping for 1 minute')
+            logger.info('--------------------------------------------------------------')
+            time.sleep(60)    
     except Exception as e:
         logger.error('Error in cycle: %s', e)
         
