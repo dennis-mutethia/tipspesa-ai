@@ -30,9 +30,7 @@ class Autobet:
 
             # Wait for all threads to finish
             concurrent.futures.wait(threads)
-                
-if __name__ == "__main__":
-    Autobet()()
+             
 
 
 

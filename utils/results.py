@@ -10,7 +10,7 @@ from utils.db import Db
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-class Results:
+class Results():
     def __init__(self):
         self.betika = Betika()
         self.helper = Helper()
@@ -129,22 +129,3 @@ class Results:
                     results.append((None, None, None, 'Error: %s' % e))
 
         return results
-
-def main():
-    """Run forever, processing matches every 1 minute."""
-    results_processor = Results()
-    matches = results_processor.helper.fetch_matches('', '=', '', limit=1000)
-    logger.info('Fetched %d matches to process', len(matches))
-    while True:
-        logger.info('Starting new cycle')
-        try:
-            results = results_processor(matches)
-            logger.info('Cycle completed with %d matches updated', len(results))
-        except Exception as e:
-            logger.error('Error in cycle: %s', e)
-        logger.info('Sleeping for 1 minute')
-        logger.info('--------------------------------------------------------------')
-        time.sleep(60)
-
-if __name__ == "__main__":
-    main()

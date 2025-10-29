@@ -1,4 +1,6 @@
+apscheduler
 cloudscraper
+flask
 google-genai
 openai
 psycopg2-binary

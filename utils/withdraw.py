@@ -17,11 +17,13 @@ class Withdraw():
 
     def withdraw(self, profile):
         try:
+            logger.info("Initiating withdraw for %s", profile)
             phone = profile[0]
             password = profile[1]
             self.betika.login(phone, password)
             amount = min(int(self.betika.balance/3), 300000) 
             while amount >= 50 and amount <= 300000:
+                logger.info("Requesting withdraw phone=%s, amount=%s", phone, amount)
                 self.betika.withdraw(amount)
                 amount = min(int(self.betika.balance/3), 300000) 
                 
@@ -37,8 +39,3 @@ class Withdraw():
         except Exception as e:
             logger.error(e)
 
-if __name__ == "__main__":
-    try: 
-        Withdraw()()
-    except Exception as e:
-        logger.error(e)

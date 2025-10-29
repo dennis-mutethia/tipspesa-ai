@@ -14,7 +14,7 @@ from utils.one_signal import OneSignal
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-class Predict:
+class Predict():
     """
         main class
     """
@@ -215,10 +215,4 @@ class Predict:
         else:
             logger.warning("No matches predicted")
             
-                        
-if __name__ == "__main__":
-    try: 
-        Predict()()
-    except Exception as e:
-        logger.error(e)
-        
+                 
