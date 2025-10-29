@@ -1,12 +1,10 @@
 
 
-import atexit
 import os
 from dotenv import load_dotenv
 import logging
 
-from apscheduler.schedulers.background import BackgroundScheduler
-from flask import Flask
+from flask import Flask, jsonify
 
 from tasks import predict, results, withdraw_and_autobet
 
@@ -19,22 +17,41 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
-# Start the scheduler
-scheduler = BackgroundScheduler()
-scheduler.add_job(func=predict, trigger="interval", hours=1)
-scheduler.add_job(func=results, trigger="interval", minutes=5)
-scheduler.add_job(func=withdraw_and_autobet, trigger="interval", minutes=4)
-scheduler.start()
-
-# Shut down the scheduler when exiting the app
-atexit.register(lambda: scheduler.shutdown())
-
         
 # Routes
 @app.route('/')
 def index():    
     return 'Running...'
 
+@app.route('/cron/predict')
+def predict_job():
+    try:
+        predict()  # Your existing scheduler function
+        logger.info("Predict job completed successfully")
+        return jsonify({"status": "success"}), 200
+    except Exception as e:
+        logger.error("Predict job failed: %s", e)
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/cron/results')
+def results_job():
+    try:
+        results()  # Your existing scheduler function
+        logger.info("Results job completed successfully")
+        return jsonify({"status": "success"}), 200
+    except Exception as e:
+        logger.error("Results job failed: %s", e)
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/cron/withdraw-autobet')
+def withdraw_and_autobet_job():
+    try:
+        withdraw_and_autobet()  # Your existing scheduler function
+        logger.info("Withdraw & Autobet job completed successfully")
+        return jsonify({"status": "success"}), 200
+    except Exception as e:
+        logger.error("Withdraw & Autobet job failed: %s", e)
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 if __name__ == '__main__':
     debug_mode = os.getenv('IS_DEBUG', 'False') in ['True', '1', 't']

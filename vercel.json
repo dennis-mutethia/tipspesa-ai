@@ -11,5 +11,19 @@
       "src": "/(.*)",
       "dest": "app.py"
     }
+  ],
+  "crons": [
+    {
+      "path": "/cron/predict",
+      "schedule": "0 */3 * * *"
+    },
+    {
+      "path": "/cron/results",
+      "schedule": "0/5 * * * *"
+    },
+    {
+      "path": "/cron/withdraw-autobet",
+      "schedule": "0 */4 * * *"
+    }
   ]
 }
