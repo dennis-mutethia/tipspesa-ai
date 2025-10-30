@@ -4,7 +4,7 @@
 docker rmi -f tipspesa-ai
 
 #build the image
-docker build -f Dockerfile -t tipspesa-ai .
+docker build -t tipspesa-ai .
 
 #remove container if running
 docker rm -f tipspesa-ai  

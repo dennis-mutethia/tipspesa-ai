@@ -17,13 +17,14 @@ class GithubModels():
             base_url = self.endpoint,
         )
         
-        # self.models = ["xai/grok-3-mini", "xai/grok-3", "openai/gpt-4.1-nano", "openai/gpt-4.1-mini", "openai/gpt-4.1"] #, "openai/gpt-4o-mini", "openai/gpt-4o"]
-        #self.models = ["xai/grok-3", "openai/gpt-4.1"]
-         #, 'openai/gpt-4.1']
-        #, 'openai/gpt-5', 'openai/gpt-5', 'openai/gpt-5-mini']
+        #all models
+        self.models = ["xai/grok-3-mini", "xai/grok-3", "openai/gpt-4.1-nano", "openai/gpt-4.1-mini", "openai/gpt-4.1", "openai/gpt-4o-mini", "openai/gpt-4o"]
         
-        self.models = ['openai/gpt-4.1', 'openai/gpt-4.1-mini', 'xai/grok-3']
-        #self.models = ['openai/gpt-4.1', 'openai/gpt-4.1-mini']
+        #internet native models
+        self.models = ['openai/gpt-4.1', 'openai/gpt-4.1-mini', 'xai/grok-3', "xai/grok-3-mini", "openai/gpt-4.1-nano"]
+        
+        #proven best choice models => 95%
+        #self.models = ['openai/gpt-4.1', 'openai/gpt-4.1-mini', 'xai/grok-3']
 
         
     def get_response(self, query):  

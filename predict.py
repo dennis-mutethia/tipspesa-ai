@@ -91,6 +91,10 @@ Be data-driven, objective, and concise."
                         "type": "string",
                         "description": "Away Team, as provided in the input match_details['away_team']"
                     },
+                    "category": {
+                        "type": "string",
+                        "description": "Competition Category, as provided in the input match_details['category']"
+                    },
                     "competition_name": {
                         "type": "string",
                         "description": "Competition Name, as provided in the input match_details['competition_name']"
