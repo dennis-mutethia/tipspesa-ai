@@ -1,4 +1,4 @@
-import atexit
+
 import logging
 import time
 import signal
