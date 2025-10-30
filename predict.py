@@ -47,12 +47,25 @@ class Predict():
                 }            
             
                 markets.append(market)
-        #start_time = meta.get('start_time') 
-        
-        #if datetime.now().date() == datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S").date():
-        # Define the query structure as a dictionary for cleaner JSON handling
         query_dict = {
-            "instruction": "Analyze the following match using ALL available data from the internet including tweets, bookmarkers data, team histories, team forms, etc and return the probability percentage of the highest most probable outcome using the provided markets. Respond with ONLY the JSON object, with no additional text, prose, or explanation. The output must strictly adhere to the provided JSON schema for the 'expected_output_schema'.",
+            "instruction": f"""
+You are a soccer betting analyst. For the upcoming match provided in match_details, predict the most probable betting market with the highest implied probability (>75% if possible).
+Step 1: Gather Data (Use your search tools)
+Web Search: Query `{meta['home_team']} vs {meta['away_team']} preview stats H2H injuries` (top 10 results). Extract recent form (last 5 games), head-to-head (last 5), key injuries/suspensions, and average goals.
+Betting Odds: Search `{meta['home_team']} vs {meta['away_team']} betting odds` from sites like Oddspedia/Bet365. List top markets with odds from 3+ bookies. Calculate implied probabilities (prob = 1/decimal odds; average and adjust for ~8% vig).
+X/Tweets Search: Use semantic/keyword search for `{meta['home_team']} vs {meta['away_team']}` prediction OR tip OR bet` (latest 15-20 posts). Analyze sentiment (e.g., % favoring Legia win) from fans/pundits. Flag viral takes.
+Pundits/Experts: Browse 2-3 sites:
+Soccerway/Sofascore for previews.
+Flashscore or Transfermarkt for lineups/predictions.
+Search `{meta['home_team']} pundit prediction {meta['away_team']} experts` for opinions from Polish media.
+Step 2: Analyze
+Weigh factors: Home or Away advantage, team forms, H2H, weather/motivation.
+Rank markets by probability: Use odds as base, adjust +5-10% for positive sentiment/expert consensus (e.g., if 70% tweets predict a particular market, boost it).
+Identify the 'best' outcome: Highest prob market with value (prob > implied odds suggest).
+Step 3: Output
+Respond with ONLY the JSON object, with no additional text, prose, or explanation. The output must strictly adhere to the provided JSON schema for the 'expected_output_schema'.
+Be data-driven, objective, and concise."            
+            """,
             "match_details": meta,
             "markets": markets,
             "expected_output_schema": {
@@ -120,28 +133,27 @@ class Predict():
         return query
     
     def is_valid_match(self, filtered_match):
-        MIN_ODD, MAX_ODD, MIN_PROB = 1.10, 1.79, 80
+        MIN_ODD, MIN_PROB = 1.10, 80
         
         filtered_match = (
             filtered_match
-            if filtered_match
-            and MIN_ODD <= filtered_match["odd"] <= MAX_ODD #or filtered_match["overall_prob"] >= MAX_PROB)
-            and filtered_match["overall_prob"] >= MIN_PROB
-            and 'under' not in filtered_match["bet_pick"].lower()
+                if filtered_match
+                    and MIN_ODD <= filtered_match["odd"]
+                    and filtered_match["overall_prob"] >= MIN_PROB
             else None
         )
         
-        if filtered_match:
-            filtered_match = (
-                None 
-                if (int(filtered_match['sub_type_id']) == 1  and int(filtered_match['outcome_id']) == 1 and filtered_match['odd'] >= 1.45)
-                or (int(filtered_match['sub_type_id']) == 1  and int(filtered_match['outcome_id']) == 3 and filtered_match['odd'] <= 1.3) 
-                or (int(filtered_match['sub_type_id']) == 10 and (filtered_match['odd'] < 1.15 or filtered_match['odd'] >= 1.2))            #double chance
-                or (filtered_match["bet_pick"].lower() == 'over 0.5' and filtered_match['odd'] >= 1.15)                                     #OV0.5
-                or (filtered_match["bet_pick"].lower() == 'over 1.5' and (filtered_match['odd'] <= 1.2 or filtered_match['odd'] >= 1.28))   #OV1.5
-                or (filtered_match["bet_pick"].lower() == 'yes' and (filtered_match['odd'] < 1.3 or filtered_match['odd'] > 1.4))           #GG
-                else filtered_match
-            )
+        # if filtered_match:
+        #     filtered_match = (
+        #         None 
+        #         if (int(filtered_match['sub_type_id']) == 1  and int(filtered_match['outcome_id']) == 1 and filtered_match['odd'] >= 1.45)
+        #         or (int(filtered_match['sub_type_id']) == 1  and int(filtered_match['outcome_id']) == 3 and filtered_match['odd'] <= 1.3) 
+        #         or (int(filtered_match['sub_type_id']) == 10 and (filtered_match['odd'] < 1.15 or filtered_match['odd'] >= 1.2))            #double chance
+        #         or (filtered_match["bet_pick"].lower() == 'over 0.5' and filtered_match['odd'] >= 1.15)                                     #OV0.5
+        #         or (filtered_match["bet_pick"].lower() == 'over 1.5' and (filtered_match['odd'] <= 1.2 or filtered_match['odd'] >= 1.28))   #OV1.5
+        #         or (filtered_match["bet_pick"].lower() == 'yes' and (filtered_match['odd'] < 1.3 or filtered_match['odd'] > 1.4))           #GG
+        #         else filtered_match
+        #     )
         
         return filtered_match  
     
@@ -160,11 +172,11 @@ class Predict():
                 if response:                 
                     clean_response = response.replace('```json', '').strip('```')
                     filtered_match = json.loads(clean_response)
-                                      
-                    if filtered_match:
-                        self.db.update_source_model(parent_match_id, model, filtered_match["start_time"])
-                        
-                    predicted_match = self.is_valid_match(filtered_match)  
+                       
+                    predicted_match = self.is_valid_match(filtered_match)                
+                    if predicted_match:
+                        self.db.update_source_model(parent_match_id, model, predicted_match["start_time"])                        
+                    
                 else:
                     sys.exit(0)
                     
