@@ -22,10 +22,14 @@ class Withdraw():
             password = profile[1]
             self.betika.login(phone, password)
             amount = min(int(self.betika.balance/3), 300000) 
-            while amount >= 50 and amount <= 300000:
+            
+            if amount >= 50:
                 logger.info("Requesting withdraw phone=%s, amount=%s", phone, amount)
-                self.betika.withdraw(amount)
                 amount = min(int(self.betika.balance/3), 300000) 
+            
+                if amount==300000:
+                    self.withdraw(profile)
+                
                 
         except Exception as e:
             logger.error(e)

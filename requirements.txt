@@ -1,3 +1,4 @@
+apscheduler
 cloudscraper
 google-genai
 openai
