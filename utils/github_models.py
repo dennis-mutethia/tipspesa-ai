@@ -24,7 +24,7 @@ class GithubModels():
         self.models = ['openai/gpt-4.1', 'openai/gpt-4.1-mini', 'xai/grok-3', "xai/grok-3-mini", "openai/gpt-4.1-nano"]
         
         #proven best choice models => 95%
-        #self.models = ['openai/gpt-4.1', 'openai/gpt-4.1-mini', 'xai/grok-3']
+        self.models = ['openai/gpt-4.1', 'openai/gpt-4.1-mini', 'xai/grok-3']
 
         
     def get_response(self, query):  
