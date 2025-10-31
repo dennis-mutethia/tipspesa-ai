@@ -23,7 +23,7 @@ app = Flask(__name__)
 scheduler = BackgroundScheduler()
 scheduler.add_job(func=predict, trigger="interval", hours=1)
 scheduler.add_job(func=results, trigger="interval", minutes=5)
-scheduler.add_job(func=withdraw_and_autobet, trigger="interval", minutes=4)
+scheduler.add_job(func=withdraw_and_autobet, trigger="interval", hours=4)
 scheduler.start()
 
 # Shut down the scheduler when exiting the app
