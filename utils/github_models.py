@@ -12,10 +12,17 @@ class GithubModels():
         load_dotenv()  
         self.endpoint = "https://models.github.ai/inference"
         
-        self.client = OpenAI(
-            api_key = os.getenv("GITHUB_TOKEN"),
-            base_url = self.endpoint,
-        )
+        self.clients = [
+            OpenAI(
+                api_key = os.getenv("GITHUB_TOKEN"),
+                base_url = self.endpoint,
+            ),
+            OpenAI(
+                api_key = os.getenv("GITHUB_TOKEN_2"),
+                base_url = self.endpoint,
+            )
+        ]
+            
         
         # self.models = ["xai/grok-3-mini", "xai/grok-3", "openai/gpt-4.1-nano", "openai/gpt-4.1-mini", "openai/gpt-4.1"] #, "openai/gpt-4o-mini", "openai/gpt-4o"]
         #self.models = ["xai/grok-3", "openai/gpt-4.1"]
@@ -28,10 +35,11 @@ class GithubModels():
         
     def get_response(self, query):  
         if self.models:      
-            try:            
+            try:   
+                client = self.clients[0]         
                 model = self.models[0]
                 logger.info("Using Open AI model: %s", model)
-                response = self.client.chat.completions.create(
+                response = client.chat.completions.create(
                     model = model,
                     messages=[
                         {"role": "user", "content": query}                
@@ -42,7 +50,12 @@ class GithubModels():
                 return content, model
             except Exception as e:
                 logger.error("Error in GithubModels.get_response: %s", e)
-                #if "RateLimitReached" in str(e):
+                
+                if len(self.clients) > 1:
+                    self.clients.remove(client)
+                else:                        
+                    self.models.remove(model)
+                        
                 self.models.remove(model)
                 if self.models:                
                     return self.get_response(query)

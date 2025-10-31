@@ -10,15 +10,19 @@ logger = logging.getLogger(__name__)
 class Gemini():
     def __init__(self):        
         load_dotenv()
-        self.client = genai.Client(api_key=os.getenv('GEMINI_API_KEY'))
+        self.clients = [
+            genai.Client(api_key=os.getenv('GEMINI_API_KEY')), 
+            genai.Client(api_key=os.getenv('GEMINI_API_KEY_2'))
+        ]
         self.models = ["gemini-2.5-pro"] #, "gemini-2.5-flash", "gemini-2.5-flash-lite"]                  
                         
     def get_response(self, query):  
         if self.models:      
-            try:            
+            try:           
+                client = self.clients[0] 
                 model = self.models[0]
                 logger.info("Using Open GenAI model: %s", model)
-                response = self.client.models.generate_content(
+                response = client.models.generate_content(
                     model= model,
                     contents=str(query)
                 )
@@ -30,7 +34,11 @@ class Gemini():
                 if "overloaded" in str(e):
                     return self.get_response(query)
                 elif "RESOURCE_EXHAUSTED" in str(e):
-                    self.models.remove(model)
+                    if len(self.clients) > 1:
+                        self.clients.remove(client)
+                    else:                        
+                        self.models.remove(model)
+                        
                     if self.models:                
                         return self.get_response(query)
                     else:
