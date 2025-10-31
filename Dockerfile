@@ -1,9 +1,8 @@
 # Use python base image
 FROM python:3.13-slim-bullseye
 
-# Update packages, install uuidgen, and clean up
+# Update packages and clean up
 RUN apt-get update \
-    && apt-get install -y uuid-runtime git \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
