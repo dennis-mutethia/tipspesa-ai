@@ -11,3 +11,10 @@ docker rm -f tipspesa-ai
 
 #run the container
 docker run -d --name tipspesa-ai tipspesa-ai
+
+
+##optional tag and push to dockerhub
+docker tag tipspesa-ai:latest dennismuga/tipspesa-ai:latest
+
+#push
+docker push dennismuga/tipspesa-ai:latest
