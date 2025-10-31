@@ -18,4 +18,4 @@ RUN ln -sf /usr/share/zoneinfo/Africa/Nairobi /etc/localtime
 COPY . .
 
 # Use the startup script as entrypoint to run both services
-ENTRYPOINT ["python", "main.py"]
+ENTRYPOINT ["python", "tasks.py"]

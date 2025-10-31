@@ -55,7 +55,7 @@ class Db:
                     match['start_time'],
                     match['home_team'].replace("'","''"),
                     match['away_team'].replace("'","''"),
-                    match['competition_name'].replace("'","''"),
+                    f'{match['category'].replace("'","''")} - {match['competition_name'].replace("'","''")}',
                     match['prediction'],
                     match['odd'],
                     match['overall_prob'],
