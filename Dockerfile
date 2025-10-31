@@ -15,8 +15,8 @@ RUN pip install --upgrade pip \
 # Set the timezone to Africa/Nairobi
 RUN ln -sf /usr/share/zoneinfo/Africa/Nairobi /etc/localtime
 
-EXPOSE 5000
+EXPOSE 8080
 
 COPY . .
 
-ENTRYPOINT [ "python", "app.py" ]
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "app:app"]

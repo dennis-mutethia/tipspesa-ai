@@ -1,10 +1,10 @@
 
 
 import atexit
-import os
-from dotenv import load_dotenv
 import logging
+import os
 
+from dotenv import load_dotenv
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask
 
@@ -35,9 +35,3 @@ atexit.register(lambda: scheduler.shutdown())
 def index():    
     return 'Running...'
 
-
-if __name__ == '__main__':
-    debug_mode = os.getenv('IS_DEBUG', 'False') in ['True', '1', 't']
-        
-    # Run the Flask app
-    app.run(debug=debug_mode)

@@ -2,6 +2,7 @@ apscheduler
 cloudscraper
 flask
 google-genai
+gunicorn
 openai
 psycopg2-binary
 python-dotenv
