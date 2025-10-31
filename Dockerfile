@@ -17,4 +17,6 @@ RUN ln -sf /usr/share/zoneinfo/Africa/Nairobi /etc/localtime
 
 EXPOSE 5000
 
+COPY . .
+
 ENTRYPOINT [ "python", "app.py" ]
