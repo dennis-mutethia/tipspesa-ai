@@ -145,7 +145,8 @@ Be data-driven, objective, and concise."
                 if filtered_match
                     and MIN_ODD <= filtered_match["odd"] <= MAX_ODD
                     and filtered_match["overall_prob"] >= MIN_PROB   
-                    and filtered_match["bet_pick"].lower() != 'under 3.5'                 
+                    and filtered_match["bet_pick"].lower() != 'over 0.5'    #remove over 0.5 
+                    and 'under' in filtered_match["bet_pick"].lower()       #remove unders               
             else None
         )                   
         
@@ -155,7 +156,6 @@ Be data-driven, objective, and concise."
                 if (int(filtered_match['sub_type_id']) == 1  and int(filtered_match['outcome_id']) == 1 and filtered_match['odd'] >= 1.45)  #home win
                 or (int(filtered_match['sub_type_id']) == 1  and int(filtered_match['outcome_id']) == 3 and filtered_match['odd'] <= 1.3)   #away win
                 or (int(filtered_match['sub_type_id']) == 10 and (filtered_match['odd'] < 1.15 or filtered_match['odd'] >= 1.2))            #double chance
-                or (filtered_match["bet_pick"].lower() == 'over 0.5' and filtered_match['odd'] >= 1.15)                                     #OV0.5
                 or (filtered_match["bet_pick"].lower() == 'over 1.5' and (filtered_match['odd'] <= 1.2 or filtered_match['odd'] >= 1.28))   #OV1.5
                 or (filtered_match["bet_pick"].lower() == 'yes' and (filtered_match['odd'] < 1.3 or filtered_match['odd'] > 1.4))           #GG
                 or ('under' in filtered_match["bet_pick"].lower() and filtered_match['odd'] >= 1.28)                                        #UNDER
