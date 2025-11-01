@@ -31,34 +31,37 @@ class GithubModels():
 
         
     def get_response(self, query):  
-        if self.models:      
-            try:   
-                client = self.clients[0]         
-                model = self.models[0]
-                logger.info("Using Open AI model: %s", model)
-                response = client.chat.completions.create(
-                    model = model,
-                    messages=[
-                        {"role": "user", "content": query}                
-                    ],
-                )
-                content = response.choices[0].message.content
-                logger.info(content)
-                return content, model
-            except Exception as e:
-                logger.error("Error in GithubModels.get_response: %s", e)
-                
-                if len(self.clients) > 1:
-                    self.clients.remove(client)
-                else:                        
-                    self.models.remove(model)
-                        
-                self.models.remove(model)
-                if self.models:                
-                    return self.get_response(query)
-                else:
-                    logger.warning("No more Open AI models to try.")
+        if self.clients:
+            client = self.clients[0] 
+            if self.models:      
+                try:    
+                    model = self.models[0]
+                    logger.info("Using Open AI model: %s", model)
+                    response = client.chat.completions.create(
+                        model = model,
+                        messages=[
+                            {"role": "user", "content": query}                
+                        ],
+                    )
+                    content = response.choices[0].message.content
+                    logger.info(content)
+                    return content, model
+                except Exception as e:
+                    logger.error("Error in GithubModels.get_response: %s", e)
+                    
+                    self.models.remove(model)        
+                    if self.models:                
+                        return self.get_response(query)                    
+                    else:
+                        logger.warning("No more Open AI models to try.")
+                        self.clients.remove(client)
+                        if self.clients:
+                            return self.get_response(query)
+                        else:
+                            logger.warning("No more Open AI accounts to try.")
+            else:
+                logger.warning("No more Open AI models to try.")
         else:
-            logger.warning("No more Open AI models to try.")
-            
+            logger.warning("No more Open AI accounts to try.")
+                
         return None, None

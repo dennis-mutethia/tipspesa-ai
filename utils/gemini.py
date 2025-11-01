@@ -19,34 +19,39 @@ class Gemini():
         self.models = ["gemini-2.5-pro"] #, "gemini-2.5-flash", "gemini-2.5-flash-lite"]                  
                         
     def get_response(self, query):  
-        if self.models:      
-            try:           
-                client = self.clients[0] 
-                model = self.models[0]
-                logger.info("Using Open GenAI model: %s", model)
-                response = client.models.generate_content(
-                    model= model,
-                    contents=str(query)
-                )
-                content = response.text
-                logger.info(content)
-                return content, model
-            except Exception as e:
-                logger.error("Error in Gemini.get_response: %s", e)
-                if "overloaded" in str(e):
-                    return self.get_response(query)
-                elif "RESOURCE_EXHAUSTED" in str(e):
-                    if len(self.clients) > 1:
-                        self.clients.remove(client)
-                    else:                        
-                        self.models.remove(model)
-                        
-                    if self.models:                
+        if self.clients:
+            client = self.clients[0] 
+            if self.models:      
+                try:
+                    model = self.models[0]
+                    logger.info("Using Open GenAI model: %s", model)
+                    response = client.models.generate_content(
+                        model= model,
+                        contents=str(query)
+                    )
+                    content = response.text
+                    logger.info(content)
+                    return content, model
+                except Exception as e:
+                    logger.error("Error in Gemini.get_response: %s", e)
+                    if "overloaded" in str(e):
                         return self.get_response(query)
-                    else:
-                        logger.warning("No more GenAI models to try.")
+                    elif "RESOURCE_EXHAUSTED" in str(e):
+                        self.models.remove(model)                            
+                        if self.models:                
+                            return self.get_response(query)
+                        else:
+                            logger.warning("No more GenAI models to try.")
+                            if self.clients:
+                                self.clients.remove(client)
+                                if self.clients:                
+                                    return self.get_response(query)
+                                else:
+                                    logger.warning("No more GenAI acounts to try.")
+            else:
+                logger.warning("No more GenAI AI models to try.")        
         else:
-            logger.warning("No more GenAI AI models to try.")
-            
+            logger.warning("No more GenAI acounts to try.")
+                
         return None, None
     
