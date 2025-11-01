@@ -143,7 +143,8 @@ Be data-driven, objective, and concise."
             filtered_match
                 if filtered_match
                     and MIN_ODD <= filtered_match["odd"] <= MAX_ODD
-                    and filtered_match["overall_prob"] >= MIN_PROB                    
+                    and filtered_match["overall_prob"] >= MIN_PROB   
+                    and filtered_match["bet_pick"].lower() != 'under 3.5'                 
             else None
         )                   
         
@@ -156,8 +157,17 @@ Be data-driven, objective, and concise."
                 or (filtered_match["bet_pick"].lower() == 'over 0.5' and filtered_match['odd'] >= 1.15)                                     #OV0.5
                 or (filtered_match["bet_pick"].lower() == 'over 1.5' and (filtered_match['odd'] <= 1.2 or filtered_match['odd'] >= 1.28))   #OV1.5
                 or (filtered_match["bet_pick"].lower() == 'yes' and (filtered_match['odd'] < 1.3 or filtered_match['odd'] > 1.4))           #GG
+                or ('under' in filtered_match["bet_pick"].lower() and filtered_match['odd'] >= 1.28)                                        #UNDER
                 else filtered_match
             )
+        
+        if int(filtered_match['outcome_id']) == 74: #GG to OV1.5
+            filtered_match['sub_type_id'] = '18'
+            filtered_match['outcome_id'] = '12'
+            filtered_match["prediction"] = 'TOTAL'
+            filtered_match["bet_pick"] = 'over 1.5'
+            filtered_match["special_bet_value"] = 'total=1.5'
+            filtered_match['odd'] = (float(filtered_match['odd']) - 1)/2 + 1
         
         return filtered_match  
     
