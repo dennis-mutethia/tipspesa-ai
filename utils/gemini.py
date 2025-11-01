@@ -44,6 +44,7 @@ class Gemini():
                             logger.warning("No more GenAI models to try.")
                             if self.clients:
                                 self.clients.remove(client)
+                                self.models = ["gemini-2.5-pro"]
                                 if self.clients:                
                                     return self.get_response(query)
                                 else:

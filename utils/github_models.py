@@ -55,6 +55,7 @@ class GithubModels():
                     else:
                         logger.warning("No more Open AI models to try.")
                         self.clients.remove(client)
+                        self.models = ['openai/gpt-4.1', 'openai/gpt-4.1-mini', 'xai/grok-3']
                         if self.clients:
                             return self.get_response(query)
                         else:
