@@ -187,11 +187,12 @@ Be data-driven, objective, and concise."
                     
                 if response:                 
                     clean_response = response.replace('```json', '').strip('```')
-                    filtered_match = json.loads(clean_response)
+                    filtered_match = json.loads(clean_response) 
+                              
+                    if filtered_match:
+                        self.db.update_source_model(parent_match_id, model, filtered_match["start_time"])     
                        
-                    predicted_match = self.is_valid_match(filtered_match)                
-                    if predicted_match:
-                        self.db.update_source_model(parent_match_id, model, predicted_match["start_time"])                        
+                    predicted_match = self.is_valid_match(filtered_match)                        
                     
                 else:
                     sys.exit(0)
