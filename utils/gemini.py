@@ -10,9 +10,11 @@ logger = logging.getLogger(__name__)
 class Gemini():
     def __init__(self):        
         load_dotenv()
+        api_keys = os.getenv("GITHUB_TOKEN").split(",")
         self.clients = [
-            genai.Client(api_key=os.getenv('GEMINI_API_KEY')), 
-            genai.Client(api_key=os.getenv('GEMINI_API_KEY_2'))
+            genai.Client(
+                api_key=api_key.strip()
+            ) for api_key in api_keys
         ]
         self.models = ["gemini-2.5-pro"] #, "gemini-2.5-flash", "gemini-2.5-flash-lite"]                  
                         

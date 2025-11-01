@@ -161,13 +161,13 @@ Be data-driven, objective, and concise."
                 else filtered_match
             )
         
-        if int(filtered_match['outcome_id']) == 74: #GG to OV1.5
-            filtered_match['sub_type_id'] = '18'
-            filtered_match['outcome_id'] = '12'
-            filtered_match["prediction"] = 'TOTAL'
-            filtered_match["bet_pick"] = 'over 1.5'
-            filtered_match["special_bet_value"] = 'total=1.5'
-            filtered_match['odd'] = (float(filtered_match['odd']) - 1)/2 + 1
+            if int(filtered_match['outcome_id']) == 74: #GG to OV1.5
+                filtered_match['sub_type_id'] = '18'
+                filtered_match['outcome_id'] = '12'
+                filtered_match["prediction"] = 'TOTAL'
+                filtered_match["bet_pick"] = 'over 1.5'
+                filtered_match["special_bet_value"] = 'total=1.5'
+                filtered_match['odd'] = (float(filtered_match['odd']) - 1)/2 + 1
         
         return filtered_match  
     

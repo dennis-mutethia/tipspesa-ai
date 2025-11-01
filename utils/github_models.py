@@ -11,16 +11,13 @@ class GithubModels():
     def __init__(self):     
         load_dotenv()  
         self.endpoint = "https://models.github.ai/inference"
+        api_keys = os.getenv("GITHUB_TOKEN").split(",")
         
         self.clients = [
             OpenAI(
-                api_key = os.getenv("GITHUB_TOKEN"),
+                api_key = api_key.strip(),
                 base_url = self.endpoint,
-            ),
-            OpenAI(
-                api_key = os.getenv("GITHUB_TOKEN_2"),
-                base_url = self.endpoint,
-            )
+            ) for api_key in api_keys
         ]
             
         
