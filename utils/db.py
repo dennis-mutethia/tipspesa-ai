@@ -142,6 +142,18 @@ class Db:
                 parent_match_ids.add(datum[0])
         return parent_match_ids
     
+    def fetch_last_prediction(self): 
+        self.ensure_connection()       
+        with self.conn.cursor() as cur:
+            query = """
+            SELECT MAX(kickoff)
+            FROM source_model
+            WHERE kickoff > (CURRENT_TIMESTAMP + INTERVAL '3 hours')
+            """
+            cur.execute(query) 
+            datum = cur.fetchone()
+        return datum[0]
+    
     def add_bet_slip(self, profile_id, slips, code):
         """
         Add multiple bet slips for a profile.

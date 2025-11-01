@@ -1,4 +1,5 @@
 
+from datetime import datetime
 import json
 import logging
 import time
@@ -203,7 +204,7 @@ Be data-driven, objective, and concise."
             logger.error(e)
             return None
     
-    def get_upcoming_match_ids(self, live=False):    
+    def get_upcoming_match_ids(self, live=False, last_prediction=None):    
         total = 1001
         limit = 1000
         page = 1
@@ -212,15 +213,18 @@ Be data-driven, objective, and concise."
             total, page, events = self.betika.get_events(limit, page, live)
             
             for event in events:
-                parent_match_id = int(event.get('parent_match_id'))
-                matches_ids.add(parent_match_id)
+                start_time = datetime.strptime(event.get('start_time'), '%Y-%m-%d %H:%M:%S')
+                parent_match_id = (int(event.get('parent_match_id')) if start_time >= last_prediction else None) if last_prediction else int(event.get('parent_match_id')) 
+                if parent_match_id:
+                    matches_ids.add(parent_match_id)
         
         return matches_ids
               
     def __call__(self):
         predictions = 0
         try:
-            upcoming_match_ids = self.get_upcoming_match_ids(live=False)
+            last_prediction = self.db.fetch_last_prediction()
+            upcoming_match_ids = self.get_upcoming_match_ids(live=False, last_prediction=last_prediction)
             predicted_match_ids = self.db.fetch_predicted_match_ids()
             
             un_predicted_match_ids = upcoming_match_ids.difference(predicted_match_ids)
