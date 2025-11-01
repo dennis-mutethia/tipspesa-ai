@@ -228,6 +228,7 @@ Be data-driven, objective, and concise."
             predicted_match_ids = self.db.fetch_predicted_match_ids()
             
             un_predicted_match_ids = upcoming_match_ids.difference(predicted_match_ids)
+            logger.info("Found %s new matches", len(un_predicted_match_ids))
             
             for parent_match_id in un_predicted_match_ids:
                 predicted_match = self.predict_match(parent_match_id)
