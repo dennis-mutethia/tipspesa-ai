@@ -146,7 +146,7 @@ Be data-driven, objective, and concise."
                     and MIN_ODD <= filtered_match["odd"] <= MAX_ODD
                     and filtered_match["overall_prob"] >= MIN_PROB   
                     and filtered_match["bet_pick"].lower() != 'over 0.5'    #remove over 0.5 
-                    and 'under' in filtered_match["bet_pick"].lower()       #remove unders               
+                    and 'under' not in filtered_match["bet_pick"].lower()   #remove unders               
             else None
         )                   
         
@@ -162,6 +162,7 @@ Be data-driven, objective, and concise."
                 else filtered_match
             )
         
+        if filtered_match:
             if int(filtered_match['outcome_id']) == 74: #GG to OV1.5
                 filtered_match['sub_type_id'] = '18'
                 filtered_match['outcome_id'] = '12'
