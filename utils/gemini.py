@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 class Gemini():
     def __init__(self):        
         load_dotenv()
-        api_keys = os.getenv("GITHUB_TOKEN").split(",")
+        api_keys = os.getenv("GEMINI_API_KEY").split(",")
         self.clients = [
             genai.Client(
                 api_key=api_key.strip()
