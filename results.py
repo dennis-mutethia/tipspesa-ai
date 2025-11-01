@@ -28,7 +28,7 @@ class Results():
         
         # Handle double chances        
         if int(match.sub_type_id) == 10:
-            if (match.outcome_id == 9 and away_score < home_score) or \
+            if (match.outcome_id == 9 and home_score < away_score) or \
                 (match.outcome_id == 10 and home_score == away_score) or \
                 (match.outcome_id == 11 and home_score > away_score):
                     return ''   
