@@ -105,7 +105,7 @@ class Betika():
             return 0, 0
       
     def get_events(self, limit, page, live=False):
-        url = f'{self.live_url if live else self.base_url}/v1/uo/matches?tab=upcoming&sport_id=14&sort_id=2&esports=false&is_srl=false&limit={limit}&page={page}'
+        url = f'{self.live_url if live else self.base_url}/v1/uo/matches?tab=upcoming&period_id=-1&sport_id=14&sort_id=2&esports=false&is_srl=false&limit={limit}&page={page}'
         response = self.get_data(url)
         data = response.get('data')
         events = []

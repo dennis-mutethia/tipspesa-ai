@@ -225,7 +225,7 @@ Be data-driven, objective, and concise."
         predictions = 0
         try:
             last_prediction = self.db.fetch_last_prediction()
-            upcoming_match_ids = self.get_upcoming_match_ids(live=False, last_prediction=last_prediction)
+            upcoming_match_ids = self.get_upcoming_match_ids(live=False, last_prediction=None)
             predicted_match_ids = self.db.fetch_predicted_match_ids()
             
             un_predicted_match_ids = upcoming_match_ids.difference(predicted_match_ids)
