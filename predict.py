@@ -146,24 +146,25 @@ Be data-driven, objective, and concise."
                     and MIN_ODD <= filtered_match["odd"] <= MAX_ODD
                     and filtered_match["overall_prob"] >= MIN_PROB   
                     and filtered_match["bet_pick"].lower() != 'over 0.5'    #remove over 0.5 
-                    and 'under' not in filtered_match["bet_pick"].lower()   #remove unders               
+                    and 'under' not in filtered_match["bet_pick"].lower()   #remove unders    
+                    and int(filtered_match['sub_type_id']) != 10            #remove double chances       
             else None
         )                   
         
+        #apply condition for each bet pick
         if filtered_match:
             filtered_match = (
                 None 
                 if (int(filtered_match['sub_type_id']) == 1  and int(filtered_match['outcome_id']) == 1 and filtered_match['odd'] >= 1.45)  #home win
                 or (int(filtered_match['sub_type_id']) == 1  and int(filtered_match['outcome_id']) == 3 and filtered_match['odd'] <= 1.3)   #away win
-                or (int(filtered_match['sub_type_id']) == 10 and (filtered_match['odd'] < 1.15 or filtered_match['odd'] >= 1.2))            #double chance
                 or (filtered_match["bet_pick"].lower() == 'over 1.5' and (filtered_match['odd'] <= 1.2 or filtered_match['odd'] >= 1.28))   #OV1.5
                 or (filtered_match["bet_pick"].lower() == 'yes' and (filtered_match['odd'] < 1.3 or filtered_match['odd'] > 1.4))           #GG
-                or ('under' in filtered_match["bet_pick"].lower() and filtered_match['odd'] >= 1.28)                                        #UNDER
                 else filtered_match
             )
         
+        #Map GG to OV1.5
         if filtered_match:
-            if int(filtered_match['outcome_id']) == 74: #GG to OV1.5
+            if int(filtered_match['outcome_id']) == 74: 
                 filtered_match['sub_type_id'] = '18'
                 filtered_match['outcome_id'] = '12'
                 filtered_match["prediction"] = 'TOTAL'
@@ -210,26 +211,36 @@ Be data-driven, objective, and concise."
         total = 1001
         limit = 1000
         page = 1
-        matches_ids = set()
+        matches = []
         while limit*page < total:
             total, page, events = self.betika.get_events(limit, page, live)
             
-            for event in events:
-                start_time = datetime.strptime(event.get('start_time'), '%Y-%m-%d %H:%M:%S')
-                parent_match_id = (int(event.get('parent_match_id')) if start_time >= last_prediction else None) if last_prediction else int(event.get('parent_match_id')) 
-                if parent_match_id:
-                    matches_ids.add(parent_match_id)
+            matches.extend(
+                {
+                    "start_time": datetime.strptime(event.get('start_time'), '%Y-%m-%d %H:%M:%S'),
+                    "parent_match_id": int(event.get('parent_match_id'))
+                } for event in events
+            ) 
+            
+        sorted_matches = sorted(matches, key=lambda m: m['start_time'])  # Use key access
         
-        return matches_ids
+        return [
+            match['parent_match_id'] 
+            for match in sorted_matches 
+            if last_prediction is None or match['start_time'] >= last_prediction
+        ]
               
     def __call__(self):
         predictions = 0
         try:
             last_prediction = self.db.fetch_last_prediction()
-            upcoming_match_ids = self.get_upcoming_match_ids(live=False, last_prediction=None)
+            upcoming_match_ids = self.get_upcoming_match_ids(live=False, last_prediction=last_prediction)
             predicted_match_ids = self.db.fetch_predicted_match_ids()
             
-            un_predicted_match_ids = upcoming_match_ids.difference(predicted_match_ids)
+            un_predicted_match_ids = [
+                match_id for match_id in upcoming_match_ids
+                if match_id not in predicted_match_ids
+            ]
             logger.info("Found %s new matches", len(un_predicted_match_ids))
             
             for parent_match_id in un_predicted_match_ids:
