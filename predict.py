@@ -182,18 +182,18 @@ Be data-driven, objective, and concise."
                 response, model = self.github_models.get_response(query) 
                 if response:
                     time.sleep(6) #10 requests per minute
-                else:
-                    response, model = self.gemini.get_response(query)   
-                    time.sleep(30) #2 requests per minute
+                # else:
+                #     response, model = self.gemini.get_response(query)   
+                #     time.sleep(30) #2 requests per minute
                     
                 if response:                 
                     clean_response = response.replace('```json', '').strip('```')
                     filtered_match = json.loads(clean_response) 
-                              
-                    if filtered_match:
-                        self.db.update_source_model(parent_match_id, model, filtered_match["start_time"])     
                        
-                    predicted_match = self.is_valid_match(filtered_match)                        
+                    predicted_match = self.is_valid_match(filtered_match)    
+                              
+                    if predicted_match:
+                        self.db.update_source_model(parent_match_id, model, predicted_match["start_time"])                         
                     
                 else:
                     sys.exit(0)
@@ -234,7 +234,7 @@ Be data-driven, objective, and concise."
         predictions = 0
         try:
             last_prediction = self.db.fetch_last_prediction()
-            upcoming_match_ids = self.get_upcoming_match_ids(live=False, last_prediction=last_prediction)
+            upcoming_match_ids = self.get_upcoming_match_ids(live=False, last_prediction=None)
             predicted_match_ids = self.db.fetch_predicted_match_ids()
             
             un_predicted_match_ids = [
