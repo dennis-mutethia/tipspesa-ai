@@ -19,16 +19,9 @@ class GithubModels():
                 base_url = self.endpoint,
             ) for api_key in api_keys
         ]
+        
+        self.models = os.getenv("GITHUB_MODELS").split(",")
             
-        
-        # self.models = ["xai/grok-3-mini", "xai/grok-3", "openai/gpt-4.1-nano", "openai/gpt-4.1-mini", "openai/gpt-4.1"] #, "openai/gpt-4o-mini", "openai/gpt-4o"]
-        #self.models = ["xai/grok-3", "openai/gpt-4.1"]
-         #, 'openai/gpt-4.1']
-        #, 'openai/gpt-5', 'openai/gpt-5', 'openai/gpt-5-mini']
-        
-        self.models = ['openai/gpt-4.1', 'openai/gpt-4.1-mini', 'xai/grok-3']
-        #self.models = ['openai/gpt-4.1', 'openai/gpt-4.1-mini']
-
         
     def get_response(self, query):  
         if self.clients:
@@ -55,7 +48,7 @@ class GithubModels():
                     else:
                         logger.warning("No more Open AI models to try.")
                         self.clients.remove(client)
-                        self.models = ['openai/gpt-4.1', 'openai/gpt-4.1-mini', 'xai/grok-3']
+                        self.models = os.getenv("GITHUB_MODELS").split(",")
                         if self.clients:
                             return self.get_response(query)
                         else:
