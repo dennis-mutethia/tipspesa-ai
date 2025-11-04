@@ -1,10 +1,10 @@
-
 import logging
 import time
 import signal
 import sys
 
 from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger  # Add this import for CronTrigger
 
 from autobet import Autobet
 from predict import Predict
@@ -15,46 +15,32 @@ from utils.withdraw import Withdraw
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-
-def predict():
-    logger.info('>>>>>>>> Starting Prediction task >>>>>>>>')
-    try: 
-        Predict()()
-    except Exception as e:
-        logger.error(e)
-    logger.info('<<<<<<<< Prediction Task completed >>>>>>>>')
-        
-
-def results():
-    logger.info('>>>>>>>> Starting Results task >>>>>>>>')
-    try:
-        results_processor = Results()
-        matches = results_processor.helper.fetch_matches('', '=', '', limit=1000)
-        logger.info('Fetched %d matches to process', len(matches))    
-        results = results_processor(matches)
-        logger.info('Updated %d matches', len(results))  # Minor fix: removed redundant "updated"
-    except Exception as e:
-        logger.error('Error in cycle: %s', e)
-        
-    logger.info('<<<<<<<< Results Task completed >>>>>>>>')
-
-
-def withdraw_and_autobet():
-    logger.info('>>>>>>>> Starting Withdraw & Autobet task >>>>>>>>')
-    try: 
-        Withdraw()()
-        Autobet()()
-    except Exception as e:
-        logger.error(e)
-    logger.info('<<<<<<<< Withdraw & Autobet Task completed >>>>>>>>')
-    
     
 if __name__ == "__main__":
     # Start the scheduler
     scheduler = BackgroundScheduler()
-    scheduler.add_job(func=results, trigger="interval", minutes=1)
-    scheduler.add_job(func=predict, trigger="interval", hours=1)
-    scheduler.add_job(func=withdraw_and_autobet, trigger="interval", hours=4)
+    
+    # Use CronTrigger to align to clock times (won't start immediately)
+    scheduler.add_job(
+        func=Results(),
+        trigger="cron",
+        minute="*"  # Every minute, at the top (:00 seconds)
+    )
+    scheduler.add_job(
+        func=Predict(),
+        trigger="cron",
+        hour="*", minute="0"  # Every hour, at the top of the hour
+    )
+    scheduler.add_job(
+        func=Withdraw(),
+        trigger="cron",
+        hour="*/4", minute="0"  # Every 4 hours, at the top of those hours
+    )
+    scheduler.add_job(
+        func=Autobet(),
+        trigger="cron",
+        hour="*/4", minute="10"  # Every 4 hours, at the 10th min of those hours
+    )
     scheduler.start()
     
     # Graceful shutdown handler
