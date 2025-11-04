@@ -21,9 +21,9 @@ class Results():
         
         # Handle 1x2 bets
         if int(match.sub_type_id) == 1:
-            if (match.outcome_id == 1 and home_score < away_score) or \
+            if (match.outcome_id == 1 and home_score <= away_score) or \
                 (match.outcome_id == 2 and home_score != away_score) or \
-                (match.outcome_id == 3 and home_score > away_score):
+                (match.outcome_id == 3 and home_score >= away_score):
                     return ''
         
         # Handle double chances        

@@ -3,7 +3,6 @@ from datetime import datetime
 import json
 import logging
 import time
-import sys
 
 from utils.betika import Betika
 from utils.db import Db
@@ -194,8 +193,6 @@ Be data-driven, objective, and concise."
                     if predicted_match:
                         self.db.update_source_model(parent_match_id, model, predicted_match["start_time"])                         
                     
-                else:
-                    sys.exit(0)
                     
                 return predicted_match
             else:
@@ -232,8 +229,8 @@ Be data-driven, objective, and concise."
     def __call__(self):
         predictions = 0
         try:
-            last_prediction = self.db.fetch_last_prediction()
-            upcoming_match_ids = self.get_upcoming_match_ids(live=False, last_prediction=None)
+            last_prediction = None #self.db.fetch_last_prediction()
+            upcoming_match_ids = self.get_upcoming_match_ids(live=False, last_prediction=last_prediction)
             predicted_match_ids = self.db.fetch_predicted_match_ids()
             
             un_predicted_match_ids = [
@@ -262,4 +259,3 @@ Be data-driven, objective, and concise."
         else:
             logger.warning("No matches predicted")
             
-         
