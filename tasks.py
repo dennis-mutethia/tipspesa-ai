@@ -4,7 +4,6 @@ import signal
 import sys
 
 from apscheduler.schedulers.background import BackgroundScheduler
-from apscheduler.triggers.cron import CronTrigger  # Add this import for CronTrigger
 
 from autobet import Autobet
 from predict import Predict
