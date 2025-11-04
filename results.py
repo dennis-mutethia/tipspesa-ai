@@ -63,10 +63,10 @@ class Results():
                     return ''
         
         # Handle goal ranges
-        if '-' in match.bet_pick:
-            bet_pick = match.bet_pick.split('-')
-            if (home_score+away_score) not in range(int(bet_pick[0]), int(bet_pick[1])+1):
-                return ''
+        # if '-' in match.bet_pick:
+        #     bet_pick = match.bet_pick.split('-')
+        #     if (home_score+away_score) not in range(int(bet_pick[0]), int(bet_pick[1])+1):
+        #         return ''
             
         return 'WON'    
 
@@ -100,7 +100,7 @@ class Results():
                 
                 self.db.update_match_results(match.match_id, home_score, away_score, status)
                 
-                if status=="WON" and match.status != "WON":
+                if status == "WON" and match.status != "WON":
                     logger.info("Sending Notification to app users")
                     OneSignal().send_push_notification(
                         heading="🎉🎉 Predicted Match WON!!! 🎉🎉",
