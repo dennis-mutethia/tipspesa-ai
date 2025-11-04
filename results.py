@@ -5,6 +5,7 @@ from typing import List, Tuple
 from utils.betika import Betika
 from utils.helper import Helper
 from utils.db import Db
+from utils.one_signal import OneSignal
 
 # Set up logging for GitHub Actions
 logging.basicConfig(level=logging.INFO)
@@ -98,6 +99,15 @@ class Results():
                     logger.info('%s vs %s [%s] = %d:%d - %s', match.home_team, match.away_team, match.bet_pick, home_score, away_score, status)
                 
                 self.db.update_match_results(match.match_id, home_score, away_score, status)
+                
+                if status=="WON" and match.status != "WON":
+                    logger.info("Sending Notification to app users")
+                    OneSignal().send_push_notification(
+                        heading="🎉🎉 Predicted Match WON!!! 🎉🎉",
+                        message=f"{match.home_team} vs {match.away_team} :: {home_score}-{away_score} ({match.bet_pick})",
+                        image="https://tipspesa.vercel.app/static/prediction-won.jpg"
+                    )
+                    
                 return match.match_id, home_score, away_score, status
             else:
                 # logger.info('No current score for match %s vs %s', match.home_team, match.away_team)
@@ -106,7 +116,7 @@ class Results():
             logger.error('Error processing match %s: %s', match.match_id, e)
             return match.match_id, None, None, 'Error: %s' % e
 
-    def __call__(self, matches) -> List[Tuple[str, int, int, str]]:
+    def execute(self, matches) -> List[Tuple[str, int, int, str]]:
         """
         Fetch matches and process them concurrently.
         Returns list of (match_id, home_score, away_score, status) for each match.
@@ -130,15 +140,18 @@ class Results():
 
         return results
 
-
+    def __call__(self):
+        matches = self.helper.fetch_matches('', '=', '', limit=1000)
+        logger.info('Fetched %d matches to process', len(matches))    
+        results = self.execute(matches)
+        logger.info('Updated %d matches updated', len(results))    
+        
+        
 if __name__ == "__main__":
     logger.info('>>>>>>>> Starting Results task >>>>>>>>')
+    
     try:
-        results_processor = Results()
-        matches = results_processor.helper.fetch_matches('', '=', '', limit=1000)
-        logger.info('Fetched %d matches to process', len(matches))    
-        results = results_processor(matches)
-        logger.info('Updated %d matches updated', len(results))        
+        Results()()    
     except Exception as e:
         logger.error('Error in task: %s', e)
         

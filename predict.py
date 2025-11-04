@@ -255,7 +255,11 @@ Be data-driven, objective, and concise."
                 
         if predictions>0:
             logger.info("Sending Notification to app users")
-            OneSignal()(predictions)
+            OneSignal().send_push_notification(
+                heading="🔥 New Predictions Just Dropped! 🔥",
+                message=f"{predictions} New Predictions have Just been Posted! Open App & Refresh to see them (Pull to Refresh)!!!",
+                image="https://tipspesa.vercel.app/static/puh-notification-image.JPG"
+            )
         else:
             logger.warning("No matches predicted")
             

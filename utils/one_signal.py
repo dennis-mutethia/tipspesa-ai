@@ -20,7 +20,7 @@ class OneSignal():
             "authorization": f"Key {os.getenv('ONE_SIGNAL_API_KEY')}"
         }     
          
-    def send_push_notification(self, message):
+    def send_push_notification(self, heading, message, image):
         logger.info('sending push notification... %s', message)
         try:
             url = f"{self.base_url}/notifications"
@@ -29,12 +29,12 @@ class OneSignal():
                 "target_channel": "push",
                 "name": f"Predictions - {datetime.now()}",
                 "headings": {
-                    "en": "🔥 New Predictions Just Dropped! 🔥"
+                    "en": heading
                 },
                 "contents": {
                     "en": message
                 },
-                "big_picture": "https://tipspesa.vercel.app/static/puh-notification-image.JPG",
+                "big_picture": image,
                 "included_segments": [
                     "Active Subscriptions", #Session within the last 7 days
                     "Engaged Subscriptions", #4+ Sessions within the last 7 days
@@ -62,13 +62,3 @@ class OneSignal():
         except Exception as err:
             logger.error("Unexpected error: %s", err)
     
-    def __call__(self, predictions=''):
-        self.send_push_notification(f"{predictions} New Predictions have Just been Posted! Open App & Refresh to see them (Pull to Refresh)!!!")
-
-            
-if __name__ == "__main__":
-    try: 
-        OneSignal()()
-    except Exception as e:
-        logger.error(e)
-        
