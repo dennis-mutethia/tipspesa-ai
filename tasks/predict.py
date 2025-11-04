@@ -11,8 +11,7 @@ from utils.gemini import Gemini
 from utils.github_models import GithubModels
 from utils.one_signal import OneSignal
 
-# Configure logging for debugging and monitoring
-logging.basicConfig(level=logging.INFO)
+
 logger = logging.getLogger(__name__)
 
 class Predict():
@@ -263,11 +262,4 @@ Be data-driven, objective, and concise."
         else:
             logger.warning("No matches predicted")
             
-                 
-if __name__ == "__main__":
-    logger.info('>>>>>>>> Starting Prediction task >>>>>>>>')
-    try: 
-        Predict()()
-    except Exception as e:
-        logger.error(e)
-    logger.info('<<<<<<<< Prediction Task completed >>>>>>>>')
+         

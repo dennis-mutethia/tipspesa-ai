@@ -5,13 +5,17 @@ import sys
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
-from autobet import Autobet
-from predict import Predict
-from results import Results
-from utils.withdraw import Withdraw
+from tasks.autobet import Autobet
+from tasks.predict import Predict
+from tasks.results import Results
+from tasks.withdraw import Withdraw
 
-# Configure logging for debugging and monitoring
-logging.basicConfig(level=logging.INFO)
+# Global logging configuration (applies to all modules)
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'  # Optional: Custom date format (e.g., 2025-11-04 22:13:45)
+)
 logger = logging.getLogger(__name__)
 
     

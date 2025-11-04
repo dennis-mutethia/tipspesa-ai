@@ -5,8 +5,6 @@ import uuid
 import psycopg2
 from dotenv import load_dotenv
 
-# Configure logging for debugging and monitoring
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class Db:
@@ -216,7 +214,4 @@ class Db:
                 self.conn.commit()  
         except Exception as e:
             logger.error("Error updating source model: %s", e)
-                  
-if __name__ == "__main__":
-    crud = Db()
-
+       

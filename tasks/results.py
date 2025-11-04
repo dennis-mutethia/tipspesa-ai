@@ -7,8 +7,7 @@ from utils.helper import Helper
 from utils.db import Db
 from utils.one_signal import OneSignal
 
-# Set up logging for GitHub Actions
-logging.basicConfig(level=logging.INFO)
+
 logger = logging.getLogger(__name__)
 
 class Results():
@@ -145,14 +144,4 @@ class Results():
         logger.info('Fetched %d matches to process', len(matches))    
         results = self.execute(matches)
         logger.info('Updated %d matches updated', len(results))    
-        
-        
-if __name__ == "__main__":
-    logger.info('>>>>>>>> Starting Results task >>>>>>>>')
-    
-    try:
-        Results()()    
-    except Exception as e:
-        logger.error('Error in task: %s', e)
-        
-    logger.info('<<<<<<<< Results Task completed >>>>>>>>')
+       

@@ -3,8 +3,6 @@ import os
 from dotenv import load_dotenv
 from google import genai
 
-# Configure logging for debugging and monitoring
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class Gemini():

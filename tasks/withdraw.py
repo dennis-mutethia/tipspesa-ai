@@ -6,8 +6,6 @@ from utils.betika import Betika
 from utils.db import Db
 
 
-# Configure logging for debugging and monitoring
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class Withdraw():

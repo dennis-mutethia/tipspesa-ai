@@ -11,8 +11,7 @@ from utils.betika import Betika
 from utils.db import Db
 from utils.entities import Match
 
-# Configure logging for debugging and monitoring
-logging.basicConfig(level=logging.INFO)
+
 logger = logging.getLogger(__name__)
 
 class Helper():   
