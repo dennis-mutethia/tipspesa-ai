@@ -56,8 +56,9 @@ class Autobet:
                     stake = int((helper.betika.balance/len(grouped_matches)))
                                     
                     for matches in grouped_matches:
-                        helper.auto_bet(matches, max(1, stake))    
-                        time.sleep(2)    
+                        if len(matches) > bet_size/2:
+                            helper.auto_bet(matches, max(1, stake))    
+                            time.sleep(2)    
             else:
                 logger.info("Betika Balance is too low: %s", helper.betika.balance)
                 

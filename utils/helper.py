@@ -133,64 +133,8 @@ class Helper():
                             
         except Exception as e:
             logger.error("Error in auto_bet: %s", e)
-      
-       
-    def auto_bet_multi(self, profile_id, matches, min_matches=1):
-        try:
-            betslips = []
-            composite_betslip = None
-            composite_betslips = [] 
-            total_odd = 1
-            
-            for match in matches:  
-                if not any(betslip["parent_match_id"] == match.get("parent_match_id") for betslip in betslips):
-                    betslip = {
-                        "sub_type_id": match.get("sub_type_id"),
-                        "bet_pick": match.get("bet_pick"),
-                        "odd_value": match.get("odd"),
-                        "outcome_id": match.get("outcome_id"),
-                        "sport_id": 14,
-                        "special_bet_value": match.get("special_bet_value"),
-                        "parent_match_id": match.get("parent_match_id"),
-                        "bet_type": 7
-                    }
-                    betslips.append(betslip)
-                    total_odd *= float(betslip.get('odd_value'))                                              
-                    composite_betslip = {
-                        'total_odd': total_odd,
-                        'betslips': betslips
-                    }
-                    #if total_odd >= min_odd*1.31: 
-                    if len(betslips) == min_matches: #total_odd >= min_odd:
-                        composite_betslips.append(composite_betslip)
-                        betslips = []
-                        total_odd = 1
-                        composite_betslip = None  
-                        
-            if len(betslips) > min_matches/2:
-                composite_betslips.append(composite_betslip)
-                
-            if len(composite_betslips) > 0:              
-                usable = self.betika.balance #+ self.betika.bonus
-                stake = int((usable/len(composite_betslips)))
-                stake = max(1, stake)
-                stake = 1 if (stake == 0 and int(usable)>0) else stake
-                if stake > 0:
-                    composite_betslips.sort(key=lambda cb: cb['total_odd'], reverse=True)
-                    for cb in composite_betslips:
-                        ttl_odd = cb['total_odd']
-                        slips = cb['betslips']
-                        logger.info("Slips: %s, Total Odds: %s, Stake: %s", slips, ttl_odd, stake)
-                        code = self.betika.place_bet(slips, ttl_odd, stake)
-                        if code:
-                            self.db.add_bet_slip(profile_id, slips, code)
-                        time.sleep(2)
-                else:
-                    logger.warning("Insufficient balance to place bets.")
-                            
-        except Exception as e:
-            logger.error("Error in auto_bet: %s", e)
-            
+
+    
     def get_share_code(self, matches):
         link = ''
         # Get current time in Nairobi (EAT, UTC+3)
