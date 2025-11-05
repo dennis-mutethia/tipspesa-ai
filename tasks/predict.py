@@ -191,8 +191,8 @@ Be data-driven, objective, and concise."
                     predicted_match = self.is_valid_match(filtered_match)    
                               
                     if predicted_match:
-                        self.db.update_source_model(parent_match_id, model, predicted_match["start_time"])                         
-                    
+                        self.db.insert_matches([predicted_match])    
+                        self.db.update_source_model(parent_match_id, model, predicted_match["start_time"])    
                     
                     return predicted_match
             else:
@@ -242,8 +242,7 @@ Be data-driven, objective, and concise."
             for parent_match_id in un_predicted_match_ids:
                 predicted_match = self.predict_match(parent_match_id)
                 if predicted_match:
-                    logger.info(predicted_match)
-                    self.db.insert_matches([predicted_match]) 
+                    logger.info(predicted_match)                    
                     predictions += 1
         
         except Exception as e:
