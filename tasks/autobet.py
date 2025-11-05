@@ -49,11 +49,12 @@ class Autobet:
                 match = self.is_market_available(match)
                 if match:
                     matches.append(match)
-                                
+                     
             helper = Helper(phone, password)
             helper.auto_bet(profile_id, matches, 4)
         except Exception as e:
             logger.error(e)
+            
                     
     def __call__(self):
         # Use ThreadPoolExecutor to spawn a thread for each profile

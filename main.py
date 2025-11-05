@@ -37,12 +37,12 @@ if __name__ == "__main__":
     scheduler.add_job(
         func=Withdraw(),
         trigger="cron",
-        hour="*/4", minute="0"  # Every 4 hours, at the top of those hours
+        hour="*/3", minute="0"  # Every 3 hours, at the top of the hour
     )
     scheduler.add_job(
         func=Autobet(),
         trigger="cron",
-        hour="*/4", minute="10"  # Every 4 hours, at the 10th min of those hours
+        hour="*/3", minute="15"  # Every 3 hours, at the 15th min of the hour
     )
     scheduler.start()
     
