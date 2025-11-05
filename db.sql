@@ -83,8 +83,7 @@ CREATE TABLE IF NOT EXISTS odds (
 -- Table structure for table profiles
 CREATE TABLE IF NOT EXISTS profiles (
   phone TEXT PRIMARY KEY,
-  password TEXT,
-  profile_id INT
+  password TEXT
   is_active BOOLEAN DEFAULT 'TRUE'
 );
 

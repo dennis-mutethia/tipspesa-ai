@@ -38,29 +38,28 @@ class Autobet:
         return None
         
     
-    def bet(self, profile, size=4):
+    def bet(self, profile, bet_size=4):
         try:
-            phone = profile[0]
-            password = profile[1]
-            profile_id = profile[2]
-            unplaced_matches = self.db.fetch_unplaced_matches(profile_id)
+            helper = Helper(phone=profile[0], password=profile[1])
             
-            matches = []                    
-            for match in unplaced_matches:
-                match = self.is_market_available(match)
-                if match:
-                    matches.append(match)
-            
-            if matches:  
-                helper = Helper(phone, password)
-                grouped_matches = [matches[i:i+size] for i in range(0, len(matches), size)]
+            if helper.betika.balance>=1:
+                unplaced_matches = self.db.fetch_unplaced_matches(helper.betika.profile_id)
                 
-                usable_bal = self.betika.balance #+ self.betika.bonus
-                stake = int((usable_bal/len(grouped_matches)))
-                                
-                for group in grouped_matches:
-                    helper.auto_bet(profile_id, group, max(1, stake))    
-                    time.sleep(2)    
+                available_matches = []                    
+                for match in unplaced_matches:
+                    match = self.is_market_available(match)
+                    if match:
+                        available_matches.append(match)
+                
+                if available_matches: 
+                    grouped_matches = [available_matches[i:i+bet_size] for i in range(0, len(available_matches), bet_size)]
+                    stake = int((helper.betika.balance/len(grouped_matches)))
+                                    
+                    for matches in grouped_matches:
+                        helper.auto_bet(matches, max(1, stake))    
+                        time.sleep(2)    
+            else:
+                logger.info("Betika Balance is too low: %s", helper.betika.balance)
                 
         except Exception as e:
             logger.error(e)

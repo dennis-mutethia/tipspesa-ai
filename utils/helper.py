@@ -102,7 +102,7 @@ class Helper():
         
         return matches_ids
     
-    def auto_bet(self, profile_id, matches, stake):
+    def auto_bet(self, matches, stake):
         try:
             betslips = []
             total_odd = 1
@@ -126,7 +126,7 @@ class Helper():
                 logger.info("Betslips: %s, Total Odds: %s, Stake: %s", betslips, total_odd, stake)
                 code = self.betika.place_bet(betslips, total_odd, stake)
                 if code:
-                    self.db.add_bet_slip(profile_id, betslips, code)
+                    self.db.add_bet_slip(self.betika.profile_id, betslips, code)
                 
             else:
                 logger.warning("No Betslips Generated")
