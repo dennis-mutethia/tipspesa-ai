@@ -101,8 +101,41 @@ class Helper():
                 matches_ids.add(parent_match_id)
         
         return matches_ids
-     
-    def auto_bet(self, profile_id, matches, min_matches=1):
+    
+    def auto_bet(self, profile_id, matches, stake):
+        try:
+            betslips = []
+            total_odd = 1
+            
+            for match in matches:  
+                if not any(betslip["parent_match_id"] == match.get("parent_match_id") for betslip in betslips):
+                    betslip = {
+                        "sub_type_id": match.get("sub_type_id"),
+                        "bet_pick": match.get("bet_pick"),
+                        "odd_value": match.get("odd"),
+                        "outcome_id": match.get("outcome_id"),
+                        "sport_id": 14,
+                        "special_bet_value": match.get("special_bet_value"),
+                        "parent_match_id": match.get("parent_match_id"),
+                        "bet_type": 7
+                    }
+                    betslips.append(betslip)
+                    total_odd *= float(betslip.get('odd_value'))                     
+                
+            if betslips:    
+                logger.info("Betslips: %s, Total Odds: %s, Stake: %s", betslips, total_odd, stake)
+                code = self.betika.place_bet(betslips, total_odd, stake)
+                if code:
+                    self.db.add_bet_slip(profile_id, betslips, code)
+                
+            else:
+                logger.warning("No Betslips Generated")
+                            
+        except Exception as e:
+            logger.error("Error in auto_bet: %s", e)
+      
+       
+    def auto_bet_multi(self, profile_id, matches, min_matches=1):
         try:
             betslips = []
             composite_betslip = None

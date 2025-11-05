@@ -1,6 +1,7 @@
 
 import concurrent.futures
 import logging
+import time
 
 from utils.betika import Betika
 from utils.helper import Helper
@@ -37,7 +38,7 @@ class Autobet:
         return None
         
     
-    def bet(self, profile):
+    def bet(self, profile, size=4):
         try:
             phone = profile[0]
             password = profile[1]
@@ -49,9 +50,18 @@ class Autobet:
                 match = self.is_market_available(match)
                 if match:
                     matches.append(match)
-                     
-            helper = Helper(phone, password)
-            helper.auto_bet(profile_id, matches, 4)
+            
+            if matches:  
+                helper = Helper(phone, password)
+                grouped_matches = [matches[i:i+size] for i in range(0, len(matches), size)]
+                
+                usable_bal = self.betika.balance #+ self.betika.bonus
+                stake = int((usable_bal/len(grouped_matches)))
+                                
+                for group in grouped_matches:
+                    helper.auto_bet(profile_id, group, max(1, stake))    
+                    time.sleep(2)    
+                
         except Exception as e:
             logger.error(e)
             
