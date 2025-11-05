@@ -32,7 +32,7 @@ if __name__ == "__main__":
     scheduler.add_job(
         func=Predict(),
         trigger="cron",
-        hour="*", minute="0"  # Every hour, at the top of the hour
+        hour="*/2", minute="0"  # Every 2 hours, at the top of the hour
     )
     scheduler.add_job(
         func=Withdraw(),
