@@ -194,14 +194,14 @@ Be data-driven, objective, and concise."
                         self.db.update_source_model(parent_match_id, model, predicted_match["start_time"])                         
                     
                     
-                return predicted_match
+                    return predicted_match
             else:
                 logger.info("Skipped match id: %s", parent_match_id)
-                return None
             
         except Exception as e:
             logger.error(e)
-            return None
+        
+        return None
     
     def get_upcoming_match_ids(self, live=False, last_prediction=None):    
         total = 1001
