@@ -32,7 +32,7 @@ class Predict():
         meta = match_details.get('meta') 
         markets = [] 
         for datum in match_details.get('data', []):
-            if int(datum.get('sub_type_id')) in [1, 10, 29, 18]: # 1X2, DOUBLE CHANCE, BOTH TEAMS TO SCORE, TOTAL
+            if int(datum.get('sub_type_id')) in [1, 29, 18]: # 1X2, BOTH TEAMS TO SCORE, TOTAL
                 market = {
                     "sub_type_id": datum.get('sub_type_id'),
                     "prediction": datum.get('name'),
@@ -136,16 +136,16 @@ Be data-driven, objective, and concise."
         return query
     
     def is_valid_match(self, filtered_match):
-        MIN_ODD, MAX_ODD, MIN_PROB = 1.10, 1.50, 80
+        MIN_ODD, MAX_ODD, MIN_PROB = 1.15, 1.50, 80
         
         filtered_match = (
             filtered_match
                 if filtered_match
                     and MIN_ODD <= filtered_match["odd"] <= MAX_ODD
                     and filtered_match["overall_prob"] >= MIN_PROB   
+                    and int(filtered_match['outcome_id']) != 3              #remove away win
                     and filtered_match["bet_pick"].lower() != 'over 0.5'    #remove over 0.5 
-                    and 'under' not in filtered_match["bet_pick"].lower()   #remove unders    
-                    and int(filtered_match['sub_type_id']) != 10            #remove double chances       
+                    and 'under' not in filtered_match["bet_pick"].lower()   #remove unders       
             else None
         )                   
         
@@ -154,7 +154,7 @@ Be data-driven, objective, and concise."
             filtered_match = (
                 None 
                 if (int(filtered_match['sub_type_id']) == 1  and int(filtered_match['outcome_id']) == 1 and filtered_match['odd'] >= 1.45)  #home win
-                or (int(filtered_match['sub_type_id']) == 1  and int(filtered_match['outcome_id']) == 3 and filtered_match['odd'] <= 1.3)   #away win
+                #or (int(filtered_match['sub_type_id']) == 1  and int(filtered_match['outcome_id']) == 3 and filtered_match['odd'] <= 1.3)   #away win
                 or (filtered_match["bet_pick"].lower() == 'over 1.5' and (filtered_match['odd'] <= 1.2 or filtered_match['odd'] >= 1.28))   #OV1.5
                 or (filtered_match["bet_pick"].lower() == 'yes' and (filtered_match['odd'] < 1.3 or filtered_match['odd'] > 1.4))           #GG
                 else filtered_match
