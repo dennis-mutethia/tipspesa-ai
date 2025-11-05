@@ -9,7 +9,7 @@ class GithubModels():
     def __init__(self):     
         load_dotenv()  
         self.endpoint = "https://models.github.ai/inference"
-        api_keys = os.getenv("GITHUB_TOKEN").split(",")
+        api_keys = os.getenv("GITHUB_TOKENS").split(",")
         
         self.clients = [
             OpenAI(
