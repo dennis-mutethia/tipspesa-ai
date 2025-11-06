@@ -15,7 +15,6 @@ class Withdraw():
 
     def withdraw(self, profile):
         try:
-            logger.info("Initiating withdraw for %s", profile)
             phone = profile[0]
             password = profile[1]
             self.betika.login(phone, password)

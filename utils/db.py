@@ -191,7 +191,7 @@ class Db:
         try:
             with self.conn.cursor() as cursor:
                 query = """
-                    SELECT phone, password, profile_id
+                    SELECT phone, password
                     FROM profiles
                     WHERE is_active IS TRUE
                 """

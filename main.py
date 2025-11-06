@@ -4,6 +4,8 @@ import signal
 import sys
 
 from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
+import pytz  # pip install pytz if not installed
 
 from tasks.autobet import Autobet
 from tasks.predict import Predict
@@ -18,32 +20,82 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-    
+
+# Wrapper functions to ensure proper callable passing (avoids instant instantiation)
+def results_task():
+    results_instance = Results()
+    results_instance()  # Assuming __call__ or run method
+
+def predict_task():
+    predict_instance = Predict()
+    predict_instance()  # Assuming __call__ or run method
+
+def withdraw_task():
+    withdraw_instance = Withdraw()
+    withdraw_instance()  # Assuming __call__ or run method
+
+def autobet_task():
+    autobet_instance = Autobet()
+    autobet_instance()  # Assuming __call__ or run method (includes Withdraw if needed)
+
+
 if __name__ == "__main__":
-    # Start the scheduler
-    scheduler = BackgroundScheduler()
+    # Start the scheduler with explicit timezone
+    scheduler = BackgroundScheduler(timezone=pytz.timezone('Africa/Nairobi'))  # EAT/UTC+3 for Meru, KE
     
-    # Use CronTrigger to align to clock times (won't start immediately)
+    # Add jobs with explicit CronTrigger for absolute wall-clock scheduling
     scheduler.add_job(
-        func=Results(),
-        trigger="cron",
-        minute="*"  # Every minute, at the top (:00 seconds)
+        func=results_task,
+        trigger=CronTrigger(
+            minute="*",  # Every minute
+            second="0"   # At the start of the minute
+        ),
+        id="results_cron",
+        replace_existing=True,
+        misfire_grace_time=30,  # 30s grace for delays
+        coalesce=True  # Skip missed runs if piled up
     )
+    
     scheduler.add_job(
-        func=Predict(),
-        trigger="cron",
-        hour="*/2", minute="0"  # Every 2 hours, at the top of the hour
+        func=predict_task,
+        trigger=CronTrigger(
+            hour="*",      # Every hour
+            minute="0",
+            second="0"
+        ),
+        id="predict_cron",
+        replace_existing=True,
+        misfire_grace_time=60,  # 1min grace
+        coalesce=True
     )
+    
+    # Uncomment if needed; integrates into autobet_task if Withdraw is part of it
+    # scheduler.add_job(
+    #     func=withdraw_task,
+    #     trigger=CronTrigger(
+    #         hour="*/3",   # Every 3 hours from 00:00
+    #         minute="0",
+    #         second="0"
+    #     ),
+    #     id="withdraw_cron",
+    #     replace_existing=True,
+    #     misfire_grace_time=60,
+    #     coalesce=True
+    # )
+    
     scheduler.add_job(
-        func=Withdraw(),
-        trigger="cron",
-        hour="*/3", minute="0"  # Every 3 hours, at the top of the hour
+        func=autobet_task,  # Handles Withdraw then Autobet
+        trigger=CronTrigger(
+            hour="*/3",   # 00:00, 03:00, 06:00, etc. (absolute times)
+            minute="0",
+            second="0"
+        ),
+        id="autobet_cron",
+        replace_existing=True,
+        misfire_grace_time=60,  # 1min grace for startup lag
+        coalesce=True
     )
-    scheduler.add_job(
-        func=Autobet(),
-        trigger="cron",
-        hour="*/3", minute="10"  # Every 3 hours, at the 10th min of the hour
-    )
+        
     scheduler.start()
     
     # Graceful shutdown handler

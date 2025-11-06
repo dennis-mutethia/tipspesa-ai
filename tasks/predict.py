@@ -186,9 +186,9 @@ Be data-driven, objective, and concise."
                     response, model = self.gemini.get_response(query)   
                     if response:
                         time.sleep(30) #2 requests per minute
-                    else:
-                        response, model = self.azure_models.get_response(query)   
-                        time.sleep(6) #10 requests per minute
+                    # else:
+                    #     response, model = self.azure_models.get_response(query)   
+                    #     time.sleep(6) #10 requests per minute
                     
                 if response:                 
                     marker = '```json'
