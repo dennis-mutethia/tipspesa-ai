@@ -148,6 +148,8 @@ class Betika():
         logger.info(response)
         if "params" in response:
             return response.get("params").get("short_bet_id")
+        elif "ref" in response:
+            return response.get("ref")
         else:
             return None
      
