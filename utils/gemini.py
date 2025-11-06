@@ -28,7 +28,7 @@ class Gemini():
                         contents=str(query)
                     )
                     content = response.text
-                    logger.info(content)
+                    
                     return content, model
                 except Exception as e:
                     logger.error("Error in Gemini.get_response: %s", e)

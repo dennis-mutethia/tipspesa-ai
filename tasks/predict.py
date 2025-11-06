@@ -195,6 +195,7 @@ Be data-driven, objective, and concise."
                     index = response.find(marker)
                     clean_response = response[index + len(marker):].strip('```') if index != -1 else response.replace(marker, '').strip('```')
                     filtered_match = json.loads(clean_response) 
+                    logger.info(filtered_match)
                        
                     predicted_match = self.is_valid_match(filtered_match)    
                               

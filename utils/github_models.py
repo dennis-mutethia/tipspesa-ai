@@ -35,7 +35,7 @@ class GithubModels():
                         ],
                     )
                     content = response.choices[0].message.content
-                    logger.info(content)
+                    
                     return content, model
                 except Exception as e:
                     logger.error("Error in GithubModels.get_response: %s", e)
