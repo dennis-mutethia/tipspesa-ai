@@ -1,4 +1,5 @@
 apscheduler
+azure-ai-inference
 cloudscraper
 google-genai
 openai

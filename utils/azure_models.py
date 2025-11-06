@@ -1,24 +1,26 @@
 import logging
 import os
 from dotenv import load_dotenv
-from openai import OpenAI
+from azure.ai.inference import ChatCompletionsClient
+from azure.ai.inference.models import SystemMessage, UserMessage
+from azure.core.credentials import AzureKeyCredential
 
 logger = logging.getLogger(__name__)
 
-class GithubModels():
+class AzureModels():
     def __init__(self):     
         load_dotenv()  
         endpoint = "https://models.github.ai/inference"
         api_keys = os.getenv("GITHUB_TOKENS").split(",")
         
         self.clients = [
-            OpenAI(
-                api_key = api_key.strip(),
-                base_url = endpoint
+            ChatCompletionsClient(
+                endpoint=endpoint,
+                credential=AzureKeyCredential(api_key.strip())
             ) for api_key in api_keys
         ]
-        
-        self.models = os.getenv("GITHUB_MODELS").split(",")
+                
+        self.models = os.getenv("AZURE_MODELS").split(",")
             
         
     def get_response(self, query):  
@@ -27,12 +29,13 @@ class GithubModels():
             if self.models:      
                 try:    
                     model = self.models[0]
-                    logger.info("Using OpenAI model: %s", model)
-                    response = client.chat.completions.create(
-                        model = model,
+                    logger.info("Using Azure model: %s", model)
+                    response = client.complete(
                         messages=[
-                            {"role": "user", "content": query}                
+                            #SystemMessage("You are a helpful assistant."),
+                            UserMessage(query)
                         ],
+                        model=model
                     )
                     content = response.choices[0].message.content
                     logger.info(content)
@@ -44,15 +47,15 @@ class GithubModels():
                     if self.models:                
                         return self.get_response(query)                    
                     else:
-                        logger.warning("No more OpenAI models to try.")
+                        logger.warning("No more Azure models to try.")
                         self.clients.remove(client)
-                        self.models = os.getenv("GITHUB_MODELS").split(",")
+                        self.models = os.getenv("AZURE_MODELS").split(",")
                         if self.clients:
                             return self.get_response(query)
                         else:
                             logger.warning("No more GitHub accounts to try.")
             else:
-                logger.warning("No more OpenAI models to try.")
+                logger.warning("No more Azure models to try.")
         else:
             logger.warning("No more GitHub accounts to try.")
                 

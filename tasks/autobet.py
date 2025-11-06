@@ -52,13 +52,17 @@ class Autobet:
                         available_matches.append(match)
                 
                 if available_matches: 
-                    grouped_matches = [available_matches[i:i+bet_size] for i in range(0, len(available_matches), bet_size)]
-                    stake = int((helper.betika.balance/len(grouped_matches)))
-                                    
-                    for matches in grouped_matches:
-                        if len(matches) > bet_size/2:
-                            helper.auto_bet(matches, max(1, stake))    
-                            time.sleep(2)    
+                    grouped_matches = [available_matches[i:i+bet_size] for i in range(0, len(available_matches), bet_size)]                    
+                    grouped_matches = [matches for matches in grouped_matches if len(matches) > bet_size/2]
+                    
+                    if grouped_matches:
+                        stake = int((helper.betika.balance/len(grouped_matches)))                                    
+                        for matches in grouped_matches:
+                            if len(matches) > bet_size/2:
+                                helper.auto_bet(matches, max(1, stake))    
+                                time.sleep(2)   
+                    else:
+                        logger.info("No available matches for profile: %s", helper.betika.phone)
             else:
                 logger.info("Betika Balance is too low: %s", helper.betika.balance)
                 

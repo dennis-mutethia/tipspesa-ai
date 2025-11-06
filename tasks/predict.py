@@ -4,6 +4,7 @@ import json
 import logging
 import time
 
+from utils.azure_models import AzureModels
 from utils.betika import Betika
 from utils.db import Db
 from utils.gemini import Gemini
@@ -21,6 +22,7 @@ class Predict():
         self.betika = Betika()
         self.gemini = Gemini()
         self.github_models = GithubModels()
+        self.azure_models = AzureModels()
         self.db = Db()
     
     def prepare_query(self, parent_match_id):
@@ -182,10 +184,16 @@ Be data-driven, objective, and concise."
                     time.sleep(6) #10 requests per minute
                 else:
                     response, model = self.gemini.get_response(query)   
-                    time.sleep(30) #2 requests per minute
+                    if response:
+                        time.sleep(30) #2 requests per minute
+                    else:
+                        response, model = self.azure_models.get_response(query)   
+                        time.sleep(6) #10 requests per minute
                     
                 if response:                 
-                    clean_response = response.replace('```json', '').strip('```')
+                    marker = '```json'
+                    index = response.find(marker)
+                    clean_response = response[index + len(marker):].strip('```') if index != -1 else response.replace(marker, '').strip('```')
                     filtered_match = json.loads(clean_response) 
                        
                     predicted_match = self.is_valid_match(filtered_match)    
