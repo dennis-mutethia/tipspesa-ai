@@ -32,6 +32,9 @@ class Predict():
         if not match_details:
             return None            
         meta = match_details.get('meta') 
+        if meta['start_time'].split(' ')[1] < '14:00:00':
+            return None
+        
         markets = [] 
         for datum in match_details.get('data', []):
             if int(datum.get('sub_type_id')) in [1, 29, 18]: # 1X2, BOTH TEAMS TO SCORE, TOTAL
@@ -138,7 +141,7 @@ Be data-driven, objective, and concise."
         return query
     
     def is_valid_match(self, filtered_match):
-        MIN_ODD, MAX_ODD, MIN_PROB = 1.15, 1.50, 80
+        MIN_ODD, MAX_ODD, MIN_PROB = 1.15, 1.30, 81
         
         filtered_match = (
             filtered_match
