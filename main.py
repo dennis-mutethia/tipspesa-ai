@@ -68,21 +68,7 @@ if __name__ == "__main__":
         misfire_grace_time=60,  # 1min grace
         coalesce=True
     )
-    
-    # Uncomment if needed; integrates into autobet_task if Withdraw is part of it
-    # scheduler.add_job(
-    #     func=withdraw_task,
-    #     trigger=CronTrigger(
-    #         hour="*/3",   # Every 3 hours from 00:00
-    #         minute="0",
-    #         second="0"
-    #     ),
-    #     id="withdraw_cron",
-    #     replace_existing=True,
-    #     misfire_grace_time=60,
-    #     coalesce=True
-    # )
-    
+        
     scheduler.add_job(
         func=autobet_task,  # Handles Withdraw then Autobet
         trigger=CronTrigger(

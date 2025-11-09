@@ -3,7 +3,6 @@ import concurrent.futures
 import logging
 import time
 
-from tasks.withdraw import Withdraw
 from utils.betika import Betika
 from utils.helper import Helper
 from utils.db import Db
@@ -57,8 +56,8 @@ class Autobet:
                     grouped_matches = [matches for matches in grouped_matches if len(matches) > bet_size/2]
                     
                     if grouped_matches:
-                        Withdraw().withdraw(profile)
-                        stake = int((helper.betika.balance/len(grouped_matches)))                                    
+                        usable_balance = helper.betika.balance/2
+                        stake = int(usable_balance/len(grouped_matches))                                  
                         for matches in grouped_matches:
                             if len(matches) > bet_size/2:
                                 helper.auto_bet(matches, max(1, stake))    
