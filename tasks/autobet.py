@@ -65,7 +65,7 @@ class Autobet:
                     else:
                         logger.info("No available matches for profile: %s", helper.betika.phone)
             else:
-                logger.info("Betika Balance is too low: %s", helper.betika.balance)
+                logger.info("Betika Balance is too low: %s - for profile: %s", helper.betika.balance, helper.betika.phone)
                 
         except Exception as e:
             logger.error(e)
