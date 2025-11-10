@@ -72,8 +72,8 @@ if __name__ == "__main__":
     scheduler.add_job(
         func=autobet_task,  # Handles Withdraw then Autobet
         trigger=CronTrigger(
-            hour="*/2",   # 00:00, 03:00, 06:00, etc. (absolute times)
-            minute="0",
+            hour="*/2",   # 0, 2, 4, ..., 22
+            minute="30",
             second="0"
         ),
         id="autobet_cron",
