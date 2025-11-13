@@ -123,24 +123,19 @@ Be data-driven, objective, and concise."
                     if predicted_match:
                         self.db.insert_jackpot_match(match=predicted_match, model=model, event_id=event_id, event_name=event_name, provider='betika')    
                     
-                    return predicted_match
             else:
                 logger.info("Skipped match id: %s", match_details['parent_match_id'])
             
         except Exception as e:
             logger.error(e)
-        
-        return None
-    
+            
             
     def __call__(self):
         try:
             for jackpot_id in self.betika.get_jackpot_ids():            
                 event_name, matches = self.betika.get_jackpot_details(jackpot_id)
                 for match_details in matches:
-                    predicted_match = self.predict_match(match_details, event_id=jackpot_id, event_name=event_name)
-                    if predicted_match:
-                        logger.info(predicted_match)   
+                    self.predict_match(match_details, event_id=jackpot_id, event_name=event_name)
         
         except Exception as e:
             logger.error(e)
