@@ -208,6 +208,19 @@ class Betika():
 
         response = self.post_data(url, payload)
         logger.info(response)
+
+    def get_jackpot_ids(self):
+        url = f'{self.base_url}/v1/jackpot/events'
+        jackpots = self.get_data(url)
+        if jackpots:
+            return [jackpot.get('id') for jackpot in jackpots if 'id' in jackpot]
+        return []
+    
+    def get_jackpot_matches(self, id):
+        url = f'{self.base_url}/v1/jackpot/event?id={id}'
+        response = self.get_data(url)
+        return response.get('data')
+    
     
 
     

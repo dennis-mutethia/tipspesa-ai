@@ -214,4 +214,34 @@ class Db:
                 self.conn.commit()  
         except Exception as e:
             logger.error("Error updating source model: %s", e)
+            return []        
+        
+    def insert_jackpot_match(self, match, model, event_id, provider='betika'):    
+        '''Insert a predicted jackpot match into the database.'''     
+        self.ensure_connection()
+        try:
+            with self.conn.cursor() as cur:
+                query = """
+                    INSERT INTO jackpot_matches(provider, start_time, event_id, parent_match_id, home_team, away_team, sub_type_id, bet_pick, outcome_id, overall_prob, model)
+                    VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    ON CONFLICT (parent_match_id, model) 
+                        DO NOTHING
+                """
+                
+                cur.execute(query, (
+                        provider, 
+                        match['start_time'], 
+                        event_id, 
+                        match['parent_match_id'], 
+                        match['home_team'], 
+                        match['away_team'], 
+                        match['sub_type_id'], 
+                        match['bet_pick'], 
+                        match['outcome_id'], 
+                        match['overall_prob'], 
+                        model
+                    )) 
+                self.conn.commit()  
+        except Exception as e:
+            logger.error("Error inserting jackpot match: %s", e)
        

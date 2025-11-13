@@ -101,3 +101,23 @@ CREATE TABLE IF NOT EXISTS source_model (
   model TEXT,
 	kickoff TIMESTAMP
 );
+
+
+-- Table structure for table jackpot_matches
+CREATE TABLE IF NOT EXISTS jackpot_matches (
+  id SERIAL PRIMARY KEY,
+  provider TEXT,
+  start_time TIMESTAMP,
+  event_id BIGINT,
+  parent_match_id BIGINT,
+  home_team TEXT,
+  away_team TEXT,
+  sub_type_id INT,
+  bet_pick TEXT,
+  outcome_id INT,
+  overall_prob DOUBLE PRECISION,
+  model TEXT,
+  outcome TEXT,
+  status TEXT,
+  UNIQUE (parent_match_id, model)
+);

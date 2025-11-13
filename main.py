@@ -9,6 +9,7 @@ import pytz  # pip install pytz if not installed
 
 from tasks.autobet import Autobet
 from tasks.predict import Predict
+from tasks.predict_jackpot import PredictJackpot
 from tasks.results import Results
 from tasks.withdraw import Withdraw
 
@@ -38,6 +39,10 @@ def autobet_task():
     autobet_instance = Autobet()
     autobet_instance()  # Assuming __call__ or run method (includes Withdraw if needed)
 
+def predict_jackpot_task():
+    predict_jackpot_instance = PredictJackpot()
+    predict_jackpot_instance()  # Assuming __call__ or run method
+
 
 if __name__ == "__main__":
     # Start the scheduler with explicit timezone
@@ -59,7 +64,7 @@ if __name__ == "__main__":
     scheduler.add_job(
         func=predict_task,
         trigger=CronTrigger(
-            hour="*",      # Every hour
+            hour="1-21",      # Every hour from 1am to 9pm
             minute="0",
             second="0"
         ),
@@ -79,6 +84,19 @@ if __name__ == "__main__":
         id="autobet_cron",
         replace_existing=True,
         misfire_grace_time=60,  # 1min grace for startup lag
+        coalesce=True
+    )
+    
+    scheduler.add_job(
+        func=predict_jackpot_task,
+        trigger=CronTrigger(
+            hour="0",      # Every day at midnight
+            minute="0",
+            second="0"
+        ),
+        id="predict_jackpot_cron",
+        replace_existing=True,
+        misfire_grace_time=60,  # 1min grace
         coalesce=True
     )
         
