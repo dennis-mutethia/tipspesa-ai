@@ -225,7 +225,10 @@ class Db:
                     INSERT INTO jackpot_matches(provider, start_time, event_id, event_name, parent_match_id, home_team, away_team, sub_type_id, bet_pick, outcome_id, overall_prob, model)
                     VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                     ON CONFLICT (parent_match_id, model) 
-                        DO NOTHING
+                        UPDATE SET
+                            bet_pick = EXCLUDED.bet_pick,
+                            outcome_id = EXCLUDED.outcome_id,
+                            overall_prob = EXCLUDED.overall_prob
                 """
                 
                 cur.execute(query, (

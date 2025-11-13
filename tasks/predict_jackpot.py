@@ -34,7 +34,7 @@ class PredictJackpot():
                     "odd_key": market["odd_key"],
                     "outcome_id": market["outcome_id"]
                 })
-                 
+                   
         query_dict = {
             "instruction": f"""
 You are a soccer betting analyst. For the upcoming match provided in match_details, predict the most probable betting market with the highest implied probability (>75% if possible).
@@ -49,7 +49,7 @@ Search `{match_details['home_team']} pundit prediction {match_details['away_team
 Step 2: Analyze
 Weigh factors: Home or Away advantage, team forms, H2H, weather/motivation.
 Rank markets by probability: Use odds as base, adjust +5-10% for positive sentiment/expert consensus (e.g., if 70% tweets predict a particular market, boost it).
-Identify the 'best' outcome: Highest prob market with value (prob > implied odds suggest).
+Identify the 'best' outcome: Highest prob market with value (prob > implied odds suggest). Strictly NO DOUBLE CHANCES! 
 Step 3: Output
 Respond with ONLY the JSON object, with no additional text, prose, or explanation. The output must strictly adhere to the provided JSON schema for the 'expected_output_schema'.
 Be data-driven, objective, and concise."            
