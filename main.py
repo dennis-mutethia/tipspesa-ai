@@ -52,6 +52,7 @@ if __name__ == "__main__":
     scheduler.add_job(
         func=results_task,
         trigger=CronTrigger(
+            hour="0,1,14-23", # At midnight, 1am, and every hour from 2pm to 11pm 
             minute="*",  # Every minute
             second="0"   # At the start of the minute
         ),
@@ -75,7 +76,7 @@ if __name__ == "__main__":
     )
         
     scheduler.add_job(
-        func=autobet_task,  # Handles Withdraw then Autobet
+        func=autobet_task, 
         trigger=CronTrigger(
             hour="13,15,17,19,21", # At 1pm, 3pm, 5pm, 7pm, 9pm
             minute="30",
