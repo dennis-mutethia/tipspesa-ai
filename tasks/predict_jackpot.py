@@ -100,7 +100,7 @@ Be data-driven, objective, and concise."
         query = json.dumps(query_dict, indent=4)
         return query
 
-    def predict_match(self, match_details, event_id):   
+    def predict_match(self, match_details, event_id, event_name):   
         try:     
             query = self.prepare_query(match_details)
             if query:
@@ -121,7 +121,7 @@ Be data-driven, objective, and concise."
                     logger.info(predicted_match)
                        
                     if predicted_match:
-                        self.db.insert_jackpot_match(match=predicted_match, model=model, event_id=event_id)    
+                        self.db.insert_jackpot_match(match=predicted_match, model=model, event_id=event_id, event_name=event_name, provider='betika')    
                     
                     return predicted_match
             else:
@@ -136,9 +136,9 @@ Be data-driven, objective, and concise."
     def __call__(self):
         try:
             for jackpot_id in self.betika.get_jackpot_ids():            
-                matches = self.betika.get_jackpot_matches(jackpot_id)
+                event_name, matches = self.betika.get_jackpot_details(jackpot_id)
                 for match_details in matches:
-                    predicted_match = self.predict_match(match_details, event_id=jackpot_id)
+                    predicted_match = self.predict_match(match_details, event_id=jackpot_id, event_name=event_name)
                     if predicted_match:
                         logger.info(predicted_match)   
         

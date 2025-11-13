@@ -109,6 +109,7 @@ CREATE TABLE IF NOT EXISTS jackpot_matches (
   provider TEXT,
   start_time TIMESTAMP,
   event_id BIGINT,
+  event_name TEXT,
   parent_match_id BIGINT,
   home_team TEXT,
   away_team TEXT,

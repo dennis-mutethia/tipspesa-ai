@@ -216,14 +216,14 @@ class Db:
             logger.error("Error updating source model: %s", e)
             return []        
         
-    def insert_jackpot_match(self, match, model, event_id, provider='betika'):    
+    def insert_jackpot_match(self, match, model, event_id, event_name, provider):    
         '''Insert a predicted jackpot match into the database.'''     
         self.ensure_connection()
         try:
             with self.conn.cursor() as cur:
                 query = """
-                    INSERT INTO jackpot_matches(provider, start_time, event_id, parent_match_id, home_team, away_team, sub_type_id, bet_pick, outcome_id, overall_prob, model)
-                    VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    INSERT INTO jackpot_matches(provider, start_time, event_id, event_name, parent_match_id, home_team, away_team, sub_type_id, bet_pick, outcome_id, overall_prob, model)
+                    VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                     ON CONFLICT (parent_match_id, model) 
                         DO NOTHING
                 """
@@ -232,6 +232,7 @@ class Db:
                         provider, 
                         match['start_time'], 
                         event_id, 
+                        event_name,
                         match['parent_match_id'], 
                         match['home_team'], 
                         match['away_team'], 

@@ -216,10 +216,12 @@ class Betika():
             return [jackpot.get('id') for jackpot in jackpots if 'id' in jackpot]
         return []
     
-    def get_jackpot_matches(self, id):
+    def get_jackpot_details(self, id):
         url = f'{self.base_url}/v1/jackpot/event?id={id}'
         response = self.get_data(url)
-        return response.get('data')
+        event_name = response.get('meta').get('event_name')
+        matches = response.get('data')
+        return event_name, matches
     
     
 
