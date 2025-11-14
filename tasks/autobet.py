@@ -74,7 +74,10 @@ class Autobet:
     def __call__(self):
         # Use ThreadPoolExecutor to spawn a thread for each profile
         with concurrent.futures.ThreadPoolExecutor() as executor:
-            threads = [executor.submit(self.bet, profile) for profile in self.db.get_active_profiles()]
+            threads = [
+                executor.submit(self.bet, profile) 
+                for profile in self.db.get_active_profiles()
+            ]
 
             # Wait for all threads to finish
             concurrent.futures.wait(threads)
