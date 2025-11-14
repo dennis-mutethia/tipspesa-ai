@@ -52,7 +52,7 @@ if __name__ == "__main__":
     scheduler.add_job(
         func=results_task,
         trigger=CronTrigger(
-            hour="0,1,14-23", # At midnight, 1am, and every hour from 2pm to 11pm 
+            hour="0,1,15-23", # At midnight, 1am, and every hour from 3pm to 11pm 
             minute="*",  # Every minute
             second="0"   # At the start of the minute
         ),
