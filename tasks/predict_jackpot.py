@@ -8,6 +8,7 @@ from utils.betika import Betika
 from utils.db import Db
 from utils.gemini import Gemini
 from utils.github_models import GithubModels
+from utils.sportpesa import Sportpesa
 
 
 logger = logging.getLogger(__name__)
@@ -22,6 +23,7 @@ class PredictJackpot():
         self.github_models = GithubModels()
         self.azure_models = AzureModels()
         self.db = Db()
+        self.sportpesa = Sportpesa()
     
     def prepare_query(self, match_details):
         logger.info("Preparing query for match id: %s", match_details['parent_match_id'])
@@ -132,11 +134,17 @@ Be data-driven, objective, and concise."
             
     def __call__(self):
         try:
+            #sportpesa
+            event_id, matches = self.sportpesa.get_active_jackpot_matches()
+            for match_details in matches:
+                self.predict_match(match_details, event_id=event_id, event_name="Sportpesa Jackpot")
+                
+            #betika
             for jackpot_id in self.betika.get_jackpot_ids():            
                 event_name, matches = self.betika.get_jackpot_details(jackpot_id)
                 for match_details in matches:
                     self.predict_match(match_details, event_id=jackpot_id, event_name=event_name)
-        
+            
         except Exception as e:
             logger.error(e)
                 
