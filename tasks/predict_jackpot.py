@@ -102,7 +102,7 @@ Be data-driven, objective, and concise."
         query = json.dumps(query_dict, indent=4)
         return query
 
-    def predict_match(self, match_details, event_id, event_name):   
+    def predict_match(self, match_details, event_id, event_name, provider):   
         try:     
             query = self.prepare_query(match_details)
             if query:
@@ -123,7 +123,7 @@ Be data-driven, objective, and concise."
                     logger.info(predicted_match)
                        
                     if predicted_match:
-                        self.db.insert_jackpot_match(match=predicted_match, model=model, event_id=event_id, event_name=event_name, provider='betika')    
+                        self.db.insert_jackpot_match(match=predicted_match, model=model, event_id=event_id, event_name=event_name, provider=provider)    
                     
             else:
                 logger.info("Skipped match id: %s", match_details['parent_match_id'])
@@ -137,13 +137,13 @@ Be data-driven, objective, and concise."
             #sportpesa
             event_id, matches = self.sportpesa.get_active_jackpot_matches()
             for match_details in matches:
-                self.predict_match(match_details, event_id=event_id, event_name="Sportpesa Jackpot")
+                self.predict_match(match_details, event_id=event_id, event_name="Sportpesa Jackpot", provider="sportpesa")
                 
             #betika
             for jackpot_id in self.betika.get_jackpot_ids():            
                 event_name, matches = self.betika.get_jackpot_details(jackpot_id)
                 for match_details in matches:
-                    self.predict_match(match_details, event_id=jackpot_id, event_name=event_name)
+                    self.predict_match(match_details, event_id=jackpot_id, event_name=event_name, provider="betika")
             
         except Exception as e:
             logger.error(e)
