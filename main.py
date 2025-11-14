@@ -65,7 +65,7 @@ if __name__ == "__main__":
     scheduler.add_job(
         func=predict_task,
         trigger=CronTrigger(
-            hour="1-21",      # Every hour from 1am to 9pm
+            hour="3-21",      # Every hour from 3am to 9pm
             minute="0",
             second="0"
         ),
@@ -91,7 +91,7 @@ if __name__ == "__main__":
     scheduler.add_job(
         func=predict_jackpot_task,
         trigger=CronTrigger(
-            hour="23",      # Every day at 11pm
+            hour="1",      # Every day at 1 am
             minute="0",
             second="0"
         ),
