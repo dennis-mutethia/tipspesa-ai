@@ -44,8 +44,7 @@ class PredictDropping():
                 logger.info("Inserted event: %s", event)
                 if event['odd'] < 2:
                     predicted_match = Betika().search_match(event['id'], event['home_team'], event['away_team'], event['start_time'], event['bet_pick'])
-                    if predicted_match and predicted_match['parent_match_id'] not in predicted_match_ids:
-                        print(predicted_match)
+                    if predicted_match and int(predicted_match['parent_match_id']) not in predicted_match_ids:
                         self.db.insert_matches([predicted_match])
                         predictions += 1
                 
@@ -61,4 +60,4 @@ class PredictDropping():
                 image="https://tipspesa.vercel.app/static/puh-notification-image.JPG"
             )
         else:
-            logger.warning("No matches predicted")
+            logger.warning("No New predictions found")
