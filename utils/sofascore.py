@@ -62,19 +62,22 @@ class Sofascore:
             choice_1 = latest_odds.get("choice1")
             choice_2 = latest_odds.get("choice2")
             choice_3 = latest_odds.get("choice3")
+            choice = None
             if choice_3:
                 # Three-way market (e.g., Draw option)
                 choices = [choice_1, choice_2, choice_3]
                 choice = min(choices, key=lambda c: c.get("changeFromInitial", float('inf')))
-            else:
+            elif choice_1 and choice_2:
+                print(choice_1, choice_2)
                 # Two-way market
                 choice = choice_1 if choice_1.get("changeFromInitial") < choice_2.get("changeFromInitial") else choice_2
-                
-            bet_pick = choice.get("name", "N/A")
-            fractional_value = choice.get("fractionalValue", "N/A")
-            decimal_odds = round(int(fractional_value.split('/')[0]) / int(fractional_value.split('/')[1]) + 1, 2)
-            odd_change = choice.get("changeFromInitial", 0)
-            return bet_pick, decimal_odds, odd_change
+            
+            if choice:    
+                bet_pick = choice.get("name", "N/A")
+                fractional_value = choice.get("fractionalValue", "N/A")
+                decimal_odds = round(int(fractional_value.split('/')[0]) / int(fractional_value.split('/')[1]) + 1, 2)
+                odd_change = choice.get("changeFromInitial", 0)
+                return bet_pick, decimal_odds, odd_change
                 
         return None, None, None
     
@@ -106,3 +109,21 @@ class Sofascore:
             })
         
         return matches
+
+    def get_results(self, event_id, bet_pick=None):
+        endpoint = f"/event/{event_id}"
+        event = self.get_data(endpoint).get("event", {})
+        status = event.get("status", {}).get("type", None)
+        if status:
+            home_score = event.get("homeScore", {}).get("current", 0)
+            away_score = event.get("awayScore", {}).get("current", 0)
+            if status == "finished":
+                winner_code = event.get("winnerCode", 0)
+                status = "WON" if winner_code==bet_pick else "LOST"
+                
+            return {
+                "status": status,
+                "home_score": home_score,
+                "away_score": away_score
+            }
+        return None

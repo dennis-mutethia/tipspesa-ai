@@ -281,4 +281,51 @@ class Db:
                 self.conn.commit()  
         except Exception as e:
             logger.error("Error inserting event: %s", e)
+     
+    def get_started_events(self):
+        self.ensure_connection()
+        try:
+            events = []
+            with self.conn.cursor() as cursor:
+                query = """
+                    SELECT id, bet_pick, start_time, CURRENT_TIMESTAMP
+                    FROM events
+                    WHERE start_time < CURRENT_TIMESTAMP + INTERVAL '3 hours'
+                       AND (status IS NULL OR status = 'inprogress')
+                """
+                
+                cursor.execute(query)
+                for datum in cursor.fetchall():
+                    events.append({
+                        'id': datum[0],
+                        'bet_pick': datum[1]
+                    })
+            return events
+        except Exception as e:
+            logger.error("Error fetching started events: %s", e)
+            return []     
+        
+        
+    def update_event_results(self, id, home_results, away_results, status):    
+        '''Insert an event into the database.'''     
+        self.ensure_connection()
+        try:
+            with self.conn.cursor() as cur:
+                query = """
+                    UPDATE events SET
+                        home_results = %s,
+                        away_results = %s,
+                        status = %s
+                    WHERE id = %s
+                """
+                
+                cur.execute(query, (
+                        home_results, 
+                        away_results, 
+                        status,
+                        id
+                    )) 
+                self.conn.commit()  
+        except Exception as e:
+            logger.error("Error inserting event: %s", e)   
        

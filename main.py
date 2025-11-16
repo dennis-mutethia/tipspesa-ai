@@ -84,8 +84,8 @@ if __name__ == "__main__":
     scheduler.add_job(
         func=predict_dropping_task,
         trigger=CronTrigger(
-            hour="*",      # Every hour
-            minute="0",
+            hour="*",      # Every hour            
+            minute="*/10", #every 10 minutes
             second="0"
         ),
         id="predict_dropping_cron",
