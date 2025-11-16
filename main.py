@@ -55,18 +55,18 @@ if __name__ == "__main__":
     scheduler = BackgroundScheduler(timezone=pytz.timezone('Africa/Nairobi'))  # EAT/UTC+3 for Meru, KE
     
     # Add jobs with explicit CronTrigger for absolute wall-clock scheduling
-    scheduler.add_job(
-        func=results_task,
-        trigger=CronTrigger(
-            hour="0,1,15-23", # At midnight, 1am, and every hour from 3pm to 11pm 
-            minute="*",  # Every minute
-            second="0"   # At the start of the minute
-        ),
-        id="results_cron",
-        replace_existing=True,
-        misfire_grace_time=30,  # 30s grace for delays
-        coalesce=True  # Skip missed runs if piled up
-    )
+    # scheduler.add_job(
+    #     func=results_task,
+    #     trigger=CronTrigger(
+    #         hour="0,1,15-23", # At midnight, 1am, and every hour from 3pm to 11pm 
+    #         minute="*",  # Every minute
+    #         second="0"   # At the start of the minute
+    #     ),
+    #     id="results_cron",
+    #     replace_existing=True,
+    #     misfire_grace_time=30,  # 30s grace for delays
+    #     coalesce=True  # Skip missed runs if piled up
+    # )
     
     # scheduler.add_job(
     #     func=predict_task,
@@ -85,7 +85,7 @@ if __name__ == "__main__":
         func=predict_dropping_task,
         trigger=CronTrigger(
             hour="*",      # Every hour            
-            minute="*/10", #every 10 minutes
+            minute="*/5", #every 5 minutes
             second="0"
         ),
         id="predict_dropping_cron",
@@ -97,8 +97,8 @@ if __name__ == "__main__":
     scheduler.add_job(
         func=autobet_task, 
         trigger=CronTrigger(
-            hour="13,15,17,19,21", # At 1pm, 3pm, 5pm, 7pm, 9pm
-            minute="30",
+            hour="*", # Every hour
+            minute="*",
             second="0"
         ),
         id="autobet_cron",
