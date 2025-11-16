@@ -143,5 +143,5 @@ class Results():
         matches = self.helper.fetch_matches('', '=', '', limit=1000)
         logger.info('Fetched %d matches to process', len(matches))    
         results = self.execute(matches)
-        logger.info('Updated %d matches updated', len(results))    
+        logger.info('Updated %d matches', len(results))    
        

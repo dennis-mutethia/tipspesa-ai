@@ -291,7 +291,7 @@ class Db:
                     SELECT id, bet_pick, start_time, CURRENT_TIMESTAMP
                     FROM events
                     WHERE start_time < CURRENT_TIMESTAMP + INTERVAL '3 hours'
-                       AND (status IS NULL OR status = 'inprogress')
+                       AND (status IS NULL OR status IN ('notstarted','inprogress'))
                 """
                 
                 cursor.execute(query)
