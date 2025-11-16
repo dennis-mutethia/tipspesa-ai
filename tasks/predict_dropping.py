@@ -39,9 +39,10 @@ class PredictDropping():
         predictions = 0
         for event in dropping_odds:
             try:
-                self.db.insert_event(event=event)
-                logger.info("Inserted event: %s", event)
-                if event['odd'] < 1.8:
+                if event['odd'] < 1.8 and event['bet_pick']=='1':
+                    self.db.insert_event(event=event)
+                    logger.info("Inserted event: %s", event)
+                    
                     predicted_match = Betika().search_match(event)
                     if predicted_match and int(predicted_match['parent_match_id']) not in predicted_match_ids:
                         self.db.insert_matches([predicted_match])

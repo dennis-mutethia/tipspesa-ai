@@ -85,7 +85,7 @@ if __name__ == "__main__":
         func=predict_dropping_task,
         trigger=CronTrigger(
             hour="*",      # Every hour            
-            minute="*/10",   #Every 10 mins
+            minute="*/30",   #Every 30 mins
             second="0"
         ),
         id="predict_dropping_cron",
