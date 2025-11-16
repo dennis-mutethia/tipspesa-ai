@@ -85,50 +85,58 @@ class Sofascore:
         return None, None, 0
     
     def get_dropping_odds(self, category="all"):
-        endpoint = f"/odds/1/dropping/{category}"
-        events = self.get_data(endpoint).get("events", [])
         matches = []
-        for event in events:
-            event_id = str(event.get("id", "N/A"))
-            start_time = datetime.fromtimestamp(event.get("startTimestamp", "N/A")).strftime('%Y-%m-%d %H:%M:%S')
-            home_team = event.get("homeTeam", {}).get("name", "N/A")
-            away_team = event.get("awayTeam", {}).get("name", "N/A")
-            tournament = event.get("tournament", {}).get("name", "N/A")
-            category = event.get("tournament", {}).get("category", {}).get("name", "N/A")
-            sport = event.get("tournament", {}).get("category", {}).get("sport", {}).get("name", "N/A")
-            bet_pick, odd, odd_change = self.get_latest_odds(event_id)
+        try:
+            endpoint = f"/odds/1/dropping/{category}"
+            events = self.get_data(endpoint).get("events", [])
             
-            if odd_change != 0:
-                matches.append({
-                    "id": event_id,
-                    "start_time": start_time,
-                    "home_team": home_team,
-                    "away_team": away_team,
-                    "tournament": tournament,
-                    "category": category,
-                    "sport": sport,
-                    "bet_pick": bet_pick,
-                    "odd": odd,
-                    "odd_change": odd_change
-                })
+            for event in events:
+                event_id = str(event.get("id", "N/A"))
+                start_time = datetime.fromtimestamp(event.get("startTimestamp", "N/A")).strftime('%Y-%m-%d %H:%M:%S')
+                home_team = event.get("homeTeam", {}).get("name", "N/A")
+                away_team = event.get("awayTeam", {}).get("name", "N/A")
+                tournament = event.get("tournament", {}).get("name", "N/A")
+                category = event.get("tournament", {}).get("category", {}).get("name", "N/A")
+                sport = event.get("tournament", {}).get("category", {}).get("sport", {}).get("name", "N/A")
+                bet_pick, odd, odd_change = self.get_latest_odds(event_id)
+                
+                if odd_change != 0:
+                    matches.append({
+                        "id": event_id,
+                        "start_time": start_time,
+                        "home_team": home_team,
+                        "away_team": away_team,
+                        "tournament": tournament,
+                        "category": category,
+                        "sport": sport,
+                        "bet_pick": bet_pick,
+                        "odd": odd,
+                        "odd_change": odd_change
+                    })
+        except Exception as err:
+            logger.error("Error fetching dropping odds for category %s: %s", category, err)
         
         return matches
 
     def get_results(self, event_id, bet_pick=None):
-        endpoint = f"/event/{event_id}"
-        event = self.get_data(endpoint).get("event", {})
-        status = event.get("status", {}).get("type", None)
-        if status:
-            home_score = event.get("homeScore", {}).get("current", 0)
-            away_score = event.get("awayScore", {}).get("current", 0)
-            if status == "finished":
-                winner_code = event.get("winnerCode", 0)
-                status = "WON" if str(winner_code)==bet_pick else "LOST"
-                
-            return {
-                "home_score": home_score,
-                "away_score": away_score,
-                "bet_pick": bet_pick,
-                "status": status
-            }
+        try:
+            endpoint = f"/event/{event_id}"
+            event = self.get_data(endpoint).get("event", {})
+            status = event.get("status", {}).get("type", None)
+            if status:
+                home_score = event.get("homeScore", {}).get("current", 0)
+                away_score = event.get("awayScore", {}).get("current", 0)
+                if status == "finished":
+                    winner_code = event.get("winnerCode", 0)
+                    status = "WON" if str(winner_code)==bet_pick else "LOST"
+                    
+                return {
+                    "home_score": home_score,
+                    "away_score": away_score,
+                    "bet_pick": bet_pick,
+                    "status": status
+                }
+        except Exception as err:
+            logger.error("Error fetching results for event %s: %s", event_id, err)
+        
         return None
