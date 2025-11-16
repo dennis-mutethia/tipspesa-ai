@@ -78,6 +78,7 @@ class Sofascore:
                     decimal_odds = round(int(fractional_value.split('/')[0]) / int(fractional_value.split('/')[1]) + 1, 2)
                     odd_change = choice.get("changeFromInitial", 0)
                     return bet_pick, decimal_odds, odd_change
+                
         except Exception as err:
             logger.error("Error fetching latest odds for event %s: %s", event_id, err)
                     
