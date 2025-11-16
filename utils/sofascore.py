@@ -20,15 +20,15 @@ class Sofascore:
             "cache-control": "no-cache",
             "pragma": "no-cache",
             "priority": "u=1, i",
-            "sec-ch-ua": "\"Chromium\";v=\"142\", \"Brave\";v=\"142\", \"Not_A Brand\";v=\"99\"",
+            #"sec-ch-ua": "\"Chromium\";v=\"142\", \"Brave\";v=\"142\", \"Not_A Brand\";v=\"99\"",
             "sec-ch-ua-mobile": "?0",
-            "sec-ch-ua-platform": "\"Windows\"",
+            #"sec-ch-ua-platform": "\"Windows\"",
             "sec-fetch-dest": "empty",
             "sec-fetch-mode": "cors",
             "sec-fetch-site": "same-origin",
             "sec-gpc": "1",
-            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
-            "x-requested-with": "4b58a4"
+            #"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
+            #"x-requested-with": "4b58a4"
         })
 
     def get_data(self, endpoint, params=None):
