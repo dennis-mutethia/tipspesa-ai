@@ -225,7 +225,7 @@ class Betika():
         return event_name, matches
     
 
-    def search_match(self, home_team, away_team, start_time, bet_pick):
+    def search_match(self, match_id, home_team, away_team, start_time, bet_pick):
         keywords = f"{home_team} {away_team}".split()
         for keyword in keywords:
             url = f'{self.base_url}/v1/uo/matches?keyword={keyword}'
@@ -239,7 +239,7 @@ class Betika():
                     away_odd = datum.get('away_odd', 0)    
                                     
                     return {
-                        'match_id': datum.get('match_id'),
+                        'match_id': match_id,
                         'start_time': datum.get('start_time'),
                         'home_team': datum.get('home_team'),
                         'away_team': datum.get('away_team'),

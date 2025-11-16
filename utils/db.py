@@ -44,7 +44,7 @@ class Db:
 
         values = [
             {
-                'match_id': str(uuid.uuid5(uuid.NAMESPACE_DNS, f"{m['match_id']}{m['prediction']}")),
+                'match_id': m['match_id'], #str(uuid.uuid5(uuid.NAMESPACE_DNS, f"{m['match_id']}{m['prediction']}")),
                 'kickoff': m['start_time'],
                 'home_team': m['home_team'].replace("'", "''"),
                 'away_team': m['away_team'].replace("'", "''"),
