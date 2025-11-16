@@ -225,33 +225,34 @@ class Betika():
         return event_name, matches
     
 
-    def search_match(self, match_id, home_team, away_team, start_time, bet_pick):
-        keywords = f"{home_team} {away_team}".split()
+    def search_match(self, event):
+        #event['id'], event['home_team'], event['away_team'], event['start_time'], event['bet_pick']
+        keywords = f"{event['home_team']} {event['away_team']}".split()
         for keyword in keywords:
             url = f'{self.base_url}/v1/uo/matches?keyword={keyword}'
             response = self.get_data(url)
             
             for datum in response.get('data', []):
-                if start_time == datum.get('start_time', ''):
+                if event['start_time'] == datum.get('start_time', '') and event['category']==datum.get('category') and event['tournament'] in datum.get('competition_name'):
                     logger.info("Found match: %s", datum)    
                     home_odd = datum.get('home_odd', 0)
                     neutral_odd = datum.get('neutral_odd', 0)
                     away_odd = datum.get('away_odd', 0)    
                                     
                     return {
-                        'match_id': match_id,
+                        'match_id': event['id'],
                         'start_time': datum.get('start_time'),
                         'home_team': datum.get('home_team'),
                         'away_team': datum.get('away_team'),
                         'category': f"{datum.get('category')} - {datum.get('competition_name')}",
                         'prediction': '1X2',
-                        'odd': home_odd if bet_pick == "1" else away_odd if bet_pick == "2" else neutral_odd,
+                        'odd': home_odd if event['bet_pick'] == "1" else away_odd if event['bet_pick'] == "2" else neutral_odd,
                         'overall_prob': 80,
                         'parent_match_id': datum.get('parent_match_id'),
                         'sub_type_id': 1,
-                        'bet_pick': datum.get('home_team') if bet_pick == "1" else datum.get('away_team') if bet_pick == "2" else 'draw', 
+                        'bet_pick': datum.get('home_team') if event['bet_pick'] == "1" else datum.get('away_team') if event['bet_pick'] == "2" else 'draw', 
                         'special_bet_value': '',
-                        'outcome_id': 1 if bet_pick == "1" else 3 if bet_pick == "2" else 2
+                        'outcome_id': 1 if event['bet_pick'] == "1" else 3 if event['bet_pick'] == "2" else 2
                     }
         
         return None
