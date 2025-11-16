@@ -1,5 +1,7 @@
 
 import logging
+import uuid
+from utils.betika import Betika
 from utils.db import Db
 from utils.sofascore import Sofascore
 
@@ -27,7 +29,7 @@ class PredictDropping():
     
     def __call__(self):
         logger.info("Checking for results of started events")
-        self.get_results()
+        #self.get_results()
         logger.info("Results check completed")
         
         logger.info("Fetching dropping odds from Sofascore")
@@ -36,5 +38,11 @@ class PredictDropping():
             try:
                 self.db.insert_event(event=event)
                 logger.info("Inserted event: %s", event)
+                if event['odd'] < 2:
+                    predicted_match = Betika().search_match(event['home_team'], event['away_team'], event['start_time'], event['bet_pick'])
+                    if predicted_match:
+                        print(predicted_match)
+                        self.db.insert_matches([predicted_match])
+                
             except Exception as e:
                 logger.error("Error inserting event %s: %s", event, e)

@@ -1,6 +1,7 @@
 
 import json
 import logging
+import uuid
 import cloudscraper
 from dotenv import load_dotenv
 import requests
@@ -222,6 +223,40 @@ class Betika():
         event_name = response.get('meta').get('event_name')
         matches = response.get('data')
         return event_name, matches
+    
+
+    def search_match(self, home_team, away_team, start_time, bet_pick):
+        keywords = f"{home_team} {away_team}".split()
+        for keyword in keywords:
+            url = f'{self.base_url}/v1/uo/matches?keyword={keyword}'
+            response = self.get_data(url)
+            
+            for datum in response.get('data', []):
+                if start_time == datum.get('start_time', ''):
+                    logger.info("Found match: %s", datum)    
+                    home_odd = datum.get('home_odd', 0)
+                    neutral_odd = datum.get('neutral_odd', 0)
+                    away_odd = datum.get('away_odd', 0)    
+                                    
+                    return {
+                        'match_id': datum.get('match_id'),
+                        'start_time': datum.get('start_time'),
+                        'home_team': datum.get('home_team'),
+                        'away_team': datum.get('away_team'),
+                        'category': datum.get('category'),
+                        'prediction': '1X2',
+                        'odd': home_odd if bet_pick == "1" else away_odd if bet_pick == "2" else neutral_odd,
+                        'overall_prob': 80,
+                        'parent_match_id': datum.get('parent_match_id'),
+                        'sub_type_id': 1,
+                        'bet_pick': datum.get('home_team') if bet_pick == "1" else datum.get('away_team') if bet_pick == "2" else 'draw', 
+                        'special_bet_value': '',
+                        'outcome_id': 1 if bet_pick == "1" else 3 if bet_pick == "2" else 2
+                    }
+        
+        return None
+        
+    
     
     
 
