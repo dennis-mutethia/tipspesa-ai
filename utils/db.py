@@ -131,7 +131,7 @@ class Db:
     def fetch_predicted_match_ids(self) -> Set[str]:
         query = text("""
             SELECT parent_match_id
-            FROM source_model
+            FROM matches
             WHERE kickoff > (CURRENT_TIMESTAMP + INTERVAL '3 hours')
         """)
 

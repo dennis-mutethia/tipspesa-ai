@@ -243,7 +243,7 @@ class Betika():
                         'start_time': datum.get('start_time'),
                         'home_team': datum.get('home_team'),
                         'away_team': datum.get('away_team'),
-                        'category': datum.get('category'),
+                        'category': f"{datum.get('category')} - {datum.get('competition_name')}",
                         'prediction': '1X2',
                         'odd': home_odd if bet_pick == "1" else away_odd if bet_pick == "2" else neutral_odd,
                         'overall_prob': 80,
