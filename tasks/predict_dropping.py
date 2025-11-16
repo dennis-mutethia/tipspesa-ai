@@ -1,6 +1,5 @@
 
 import logging
-import uuid
 from utils.betika import Betika
 from utils.db import Db
 from utils.one_signal import OneSignal
