@@ -24,7 +24,7 @@ class PredictDropping():
             results = self.sofascore.get_results(event_id, bet_pick)
             if results:
                 self.db.update_event_results(event_id, results['home_score'], results['away_score'], results['status'])
-                self.db.update_match_results(event_id, results['home_score'], results['away_score'], results['status'])
+                self.db.update_match_results(str(event_id), results['home_score'], results['away_score'], results['status'])
                 logger.info("Updated result for event_id=%s, %s", event_id, results)
             else:
                 logger.info("No result available yet for event_id=%s", event_id)
