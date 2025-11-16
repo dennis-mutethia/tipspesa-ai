@@ -68,7 +68,6 @@ class Sofascore:
                 choices = [choice_1, choice_2, choice_3]
                 choice = min(choices, key=lambda c: c.get("changeFromInitial", float('inf')))
             elif choice_1 and choice_2:
-                print(choice_1, choice_2)
                 # Two-way market
                 choice = choice_1 if choice_1.get("changeFromInitial") < choice_2.get("changeFromInitial") else choice_2
             
