@@ -1,7 +1,6 @@
 
 import json
 import logging
-import uuid
 import cloudscraper
 from dotenv import load_dotenv
 import requests
@@ -73,16 +72,17 @@ class Betika():
 
         try:
             response = scraper.post(url, json=payload, headers=self.headers)
-            if "application/json" in response.headers.get("Content-Type", "").lower():
-                response_json = response.json()
-                if response_json:
-                    self.phone = phone
-                    self.profile_id = response_json.get('data').get('user').get('id')
-                    self.balance = float(response_json.get('data').get('user').get('balance'))
-                    self.bonus = float(response_json.get('data').get('user').get('bonus'))
-                    self.token = response_json.get('token')                
-            else:
-                logger.warning("Response is not JSON. Likely an HTML error page.")
+            response_json = response.json()
+            if response_json.get("error"):
+                logger.error(response_json)
+                return
+            
+            self.phone = phone
+            self.profile_id = response_json.get('data').get('user').get('id')
+            self.balance = float(response_json.get('data').get('user').get('balance'))
+            self.bonus = float(response_json.get('data').get('user').get('bonus'))
+            self.token = response_json.get('token')                
+            
         except requests.exceptions.RequestException as e:
             logger.error("Error: %s", e)
         except ValueError as e:

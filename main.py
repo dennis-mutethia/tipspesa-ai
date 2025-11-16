@@ -98,7 +98,7 @@ if __name__ == "__main__":
         func=autobet_task, 
         trigger=CronTrigger(
             hour="*", # Every hour
-            minute="*",
+            minute="0",
             second="0"
         ),
         id="autobet_cron",
