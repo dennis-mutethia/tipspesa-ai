@@ -55,30 +55,33 @@ class Sofascore:
         return None
 
     def get_latest_odds(self, event_id):
-        endpoint = f"/event/{event_id}/odds/1/changes"
-        changed_odds = self.get_data(endpoint).get("changedOdds", [])
-        latest_odds = changed_odds[-1] if changed_odds else None
-        if latest_odds:
-            choice_1 = latest_odds.get("choice1")
-            choice_2 = latest_odds.get("choice2")
-            choice_3 = latest_odds.get("choice3")
-            choice = None
-            if choice_3:
-                # Three-way market (e.g., Draw option)
-                choices = [choice_1, choice_2, choice_3]
-                choice = min(choices, key=lambda c: c.get("changeFromInitial", float('inf')))
-            elif choice_1 and choice_2:
-                # Two-way market
-                choice = choice_1 if choice_1.get("changeFromInitial") < choice_2.get("changeFromInitial") else choice_2
-            
-            if choice:    
-                bet_pick = choice.get("name", "N/A")
-                fractional_value = choice.get("fractionalValue", "N/A")
-                decimal_odds = round(int(fractional_value.split('/')[0]) / int(fractional_value.split('/')[1]) + 1, 2)
-                odd_change = choice.get("changeFromInitial", 0)
-                return bet_pick, decimal_odds, odd_change
+        try:
+            endpoint = f"/event/{event_id}/odds/1/changes"
+            changed_odds = self.get_data(endpoint).get("changedOdds", [])
+            latest_odds = changed_odds[-1] if changed_odds else None
+            if latest_odds:
+                choice_1 = latest_odds.get("choice1")
+                choice_2 = latest_odds.get("choice2")
+                choice_3 = latest_odds.get("choice3")
+                choice = None
+                if choice_3:
+                    # Three-way market (e.g., Draw option)
+                    choices = [choice_1, choice_2, choice_3]
+                    choice = min(choices, key=lambda c: c.get("changeFromInitial", float('inf')))
+                elif choice_1 and choice_2:
+                    # Two-way market
+                    choice = choice_1 if choice_1.get("changeFromInitial") < choice_2.get("changeFromInitial") else choice_2
                 
-        return None, None, None
+                if choice:    
+                    bet_pick = choice.get("name", "N/A")
+                    fractional_value = choice.get("fractionalValue", "N/A")
+                    decimal_odds = round(int(fractional_value.split('/')[0]) / int(fractional_value.split('/')[1]) + 1, 2)
+                    odd_change = choice.get("changeFromInitial", 0)
+                    return bet_pick, decimal_odds, odd_change
+        except Exception as err:
+            logger.error("Error fetching latest odds for event %s: %s", event_id, err)
+                    
+        return None, None, 0
     
     def get_dropping_odds(self, category="all"):
         endpoint = f"/odds/1/dropping/{category}"
@@ -119,11 +122,12 @@ class Sofascore:
             away_score = event.get("awayScore", {}).get("current", 0)
             if status == "finished":
                 winner_code = event.get("winnerCode", 0)
-                status = "WON" if winner_code==bet_pick else "LOST"
+                status = "WON" if str(winner_code)==bet_pick else "LOST"
                 
             return {
-                "status": status,
                 "home_score": home_score,
-                "away_score": away_score
+                "away_score": away_score,
+                "bet_pick": bet_pick,
+                "status": status
             }
         return None
