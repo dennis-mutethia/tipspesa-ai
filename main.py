@@ -9,6 +9,7 @@ import pytz  # pip install pytz if not installed
 
 from tasks.autobet import Autobet
 from tasks.predict import Predict
+from tasks.predict_dropping import PredictDropping
 from tasks.predict_jackpot import PredictJackpot
 from tasks.results import Results
 from tasks.withdraw import Withdraw
@@ -30,6 +31,11 @@ def results_task():
 def predict_task():
     predict_instance = Predict()
     predict_instance()  # Assuming __call__ or run method
+
+
+def predict_dropping_task():
+    predict_dropping_instance = PredictDropping()
+    predict_dropping_instance()  # Assuming __call__ or run method
 
 def withdraw_task():
     withdraw_instance = Withdraw()
@@ -74,6 +80,19 @@ if __name__ == "__main__":
         misfire_grace_time=60,  # 1min grace
         coalesce=True
     )
+    
+    scheduler.add_job(
+        func=predict_dropping_task,
+        trigger=CronTrigger(
+            hour="*",      # Every hour
+            minute="0",
+            second="0"
+        ),
+        id="predict_dropping_cron",
+        replace_existing=True,
+        misfire_grace_time=60,  # 1min grace
+        coalesce=True
+    )
         
     scheduler.add_job(
         func=autobet_task, 
@@ -88,18 +107,18 @@ if __name__ == "__main__":
         coalesce=True
     )
     
-    scheduler.add_job(
-        func=predict_jackpot_task,
-        trigger=CronTrigger(
-            hour="1",      # Every day at 1 am
-            minute="0",
-            second="0"
-        ),
-        id="predict_jackpot_cron",
-        replace_existing=True,
-        misfire_grace_time=60,  # 1min grace
-        coalesce=True
-    )
+    # scheduler.add_job(
+    #     func=predict_jackpot_task,
+    #     trigger=CronTrigger(
+    #         hour="1",      # Every day at 1 am
+    #         minute="0",
+    #         second="0"
+    #     ),
+    #     id="predict_jackpot_cron",
+    #     replace_existing=True,
+    #     misfire_grace_time=60,  # 1min grace
+    #     coalesce=True
+    # )
         
     scheduler.start()
     

@@ -2,6 +2,7 @@
 import logging
 import os
 import uuid
+from xml.parsers.expat import model
 import psycopg2
 from dotenv import load_dotenv
 
@@ -248,4 +249,36 @@ class Db:
                 self.conn.commit()  
         except Exception as e:
             logger.error("Error inserting jackpot match: %s", e)
+        
+        
+    def insert_event(self, event):    
+        '''Insert an event into the database.'''     
+        self.ensure_connection()
+        try:
+            with self.conn.cursor() as cur:
+                query = """
+                    INSERT INTO events(id, start_time, home_team, away_team, bet_pick, odd, odd_change, tournament, category, sport)
+                    VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    ON CONFLICT (id) 
+                        DO UPDATE SET
+                            bet_pick = EXCLUDED.bet_pick,
+                            odd = EXCLUDED.odd,
+                            odd_change = EXCLUDED.odd_change
+                """
+                
+                cur.execute(query, (
+                        event['id'], 
+                        event['start_time'], 
+                        event['home_team'], 
+                        event['away_team'], 
+                        event['bet_pick'], 
+                        event['odd'], 
+                        event['odd_change'],
+                        event['tournament'],
+                        event['category'],
+                        event['sport']
+                    )) 
+                self.conn.commit()  
+        except Exception as e:
+            logger.error("Error inserting event: %s", e)
        

@@ -1,4 +1,4 @@
--- Table structure for table subscribers
+-- Table structure for table matches
 CREATE TABLE IF NOT EXISTS matches (
 	match_id TEXT PRIMARY KEY,
 	kickoff TIMESTAMP,
@@ -121,4 +121,22 @@ CREATE TABLE IF NOT EXISTS jackpot_matches (
   outcome TEXT,
   status TEXT,
   UNIQUE (parent_match_id, model)
+);
+
+-- Table structure for table events
+DROP TABLE IF EXISTS events;
+CREATE TABLE IF NOT EXISTS events (
+	id BIGINT PRIMARY KEY,
+	start_time TIMESTAMP,
+	home_team TEXT,
+	away_team TEXT,
+	bet_pick TEXT,
+	odd DOUBLE PRECISION,
+  odd_change DOUBLE PRECISION,
+	home_results INT,
+	away_results INT,
+	status TEXT,
+	tournament TEXT,
+	category TEXT,
+	sport TEXT
 );
