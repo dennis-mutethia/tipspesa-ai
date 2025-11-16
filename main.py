@@ -68,18 +68,18 @@ if __name__ == "__main__":
         coalesce=True  # Skip missed runs if piled up
     )
     
-    scheduler.add_job(
-        func=predict_task,
-        trigger=CronTrigger(
-            hour="3-21",      # Every hour from 3am to 9pm
-            minute="0",
-            second="0"
-        ),
-        id="predict_cron",
-        replace_existing=True,
-        misfire_grace_time=60,  # 1min grace
-        coalesce=True
-    )
+    # scheduler.add_job(
+    #     func=predict_task,
+    #     trigger=CronTrigger(
+    #         hour="3-21",      # Every hour from 3am to 9pm
+    #         minute="0",
+    #         second="0"
+    #     ),
+    #     id="predict_cron",
+    #     replace_existing=True,
+    #     misfire_grace_time=60,  # 1min grace
+    #     coalesce=True
+    # )
     
     scheduler.add_job(
         func=predict_dropping_task,

@@ -3,6 +3,7 @@ import logging
 import uuid
 from utils.betika import Betika
 from utils.db import Db
+from utils.one_signal import OneSignal
 from utils.sofascore import Sofascore
 
 logger = logging.getLogger(__name__)
@@ -29,20 +30,34 @@ class PredictDropping():
     
     def __call__(self):
         logger.info("Checking for results of started events")
-        #self.get_results()
+        self.get_results()
         logger.info("Results check completed")
         
         logger.info("Fetching dropping odds from Sofascore")
         dropping_odds = self.sofascore.get_dropping_odds()
+        predicted_match_ids = self.db.fetch_predicted_match_ids()
+        predictions = 0
         for event in dropping_odds:
             try:
                 self.db.insert_event(event=event)
                 logger.info("Inserted event: %s", event)
                 if event['odd'] < 2:
                     predicted_match = Betika().search_match(event['home_team'], event['away_team'], event['start_time'], event['bet_pick'])
-                    if predicted_match:
+                    if predicted_match and predicted_match['parent_match_id'] not in predicted_match_ids:
                         print(predicted_match)
                         self.db.insert_matches([predicted_match])
+                        predictions += 1
                 
             except Exception as e:
                 logger.error("Error inserting event %s: %s", event, e)
+                
+        
+        if predictions>0:
+            logger.info("Sending Notification to app users")
+            OneSignal().send_push_notification(
+                heading="🔥 New Predictions Just Dropped! 🔥",
+                message=f"{predictions} New Predictions have Just been Posted! Open App & Refresh to see them (Pull to Refresh)!!!",
+                image="https://tipspesa.vercel.app/static/puh-notification-image.JPG"
+            )
+        else:
+            logger.warning("No matches predicted")
