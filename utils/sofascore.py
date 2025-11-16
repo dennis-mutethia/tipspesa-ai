@@ -94,18 +94,19 @@ class Sofascore:
             sport = event.get("tournament", {}).get("category", {}).get("sport", {}).get("name", "N/A")
             bet_pick, odd, odd_change = self.get_latest_odds(event_id)
             
-            matches.append({
-                "id": event_id,
-                "start_time": start_time,
-                "home_team": home_team,
-                "away_team": away_team,
-                "tournament": tournament,
-                "category": category,
-                "sport": sport,
-                "bet_pick": bet_pick,
-                "odd": odd,
-                "odd_change": odd_change
-            })
+            if odd_change != 0:
+                matches.append({
+                    "id": event_id,
+                    "start_time": start_time,
+                    "home_team": home_team,
+                    "away_team": away_team,
+                    "tournament": tournament,
+                    "category": category,
+                    "sport": sport,
+                    "bet_pick": bet_pick,
+                    "odd": odd,
+                    "odd_change": odd_change
+                })
         
         return matches
 
