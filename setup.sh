@@ -4,13 +4,7 @@
 docker rmi -f tipspesa-ai
 
 #build the image
-docker build -f Dockerfile -t tipspesa-ai .
-
-#remove container if running
-docker rm -f tipspesa-ai  
-
-#run the container
-docker run -d --name tipspesa-ai tipspesa-ai
+docker build -f Dockerfile -t tipspesa-ai . && docker rm -f tipspesa-ai  && docker run -d --name tipspesa-ai tipspesa-ai
 
 
 ##optional tag and push to dockerhub

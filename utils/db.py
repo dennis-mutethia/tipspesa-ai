@@ -278,6 +278,7 @@ class Db:
                 :tournament, :category, :sport
             )
             ON CONFLICT (id) DO UPDATE SET
+                start_time = EXCLUDED.start_time,
                 bet_pick = EXCLUDED.bet_pick,
                 odd = EXCLUDED.odd,
                 odd_change = EXCLUDED.odd_change
@@ -302,7 +303,7 @@ class Db:
 
     def get_started_events(self) -> List[Dict[str, Any]]:
         query = text("""
-            SELECT id, bet_pick, start_time, CURRENT_TIMESTAMP
+            SELECT id, bet_pick
             FROM events
             WHERE start_time < CURRENT_TIMESTAMP + INTERVAL '3 hours'
               AND (status IS NULL OR status IN ('notstarted', 'inprogress'))
@@ -341,3 +342,45 @@ class Db:
                 })
         except SQLAlchemyError as e:
             logger.error("Error updating event results: %s", e)
+
+    def update_event_sportybet(self, id: str, _event_id: str, _market_id: str, _outcome_id: str) -> None:
+        query = text("""
+            UPDATE events
+            SET _event_id = :_event_id,
+                _market_id = :_market_id,
+                _outcome_id = :_outcome_id
+            WHERE id = :id
+        """)
+
+        try:
+            with self.engine.begin() as conn:
+                conn.execute(query, {
+                    '_event_id': _event_id,
+                    '_market_id': _market_id,
+                    '_outcome_id': _outcome_id,
+                    'id': id
+                })
+        except SQLAlchemyError as e:
+            logger.error("Error updating event results: %s", e)
+
+    def get_upcoming_events(self) -> List[Dict[str, Any]]:
+        query = text("""
+            SELECT _event_id, _market_id, _outcome_id
+            FROM events
+            WHERE status IS NULL
+        """)
+
+        try:
+            with self.engine.connect() as conn:
+                result = conn.execute(query)
+                events = []
+                for row in result:
+                    events.append({
+                        '_event_id': row[0],
+                        '_market_id': row[1],
+                        '_outcome_id': row[2]
+                    })
+                return events
+        except SQLAlchemyError as e:
+            logger.error("Error fetching upcoming events: %s", e)
+            return []

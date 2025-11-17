@@ -226,7 +226,6 @@ class Betika():
     
 
     def search_match(self, event):
-        #event['id'], event['home_team'], event['away_team'], event['start_time'], event['bet_pick']
         keywords = f"{event['home_team']} {event['away_team']}".split()
         for keyword in keywords:
             url = f'{self.base_url}/v1/uo/matches?keyword={keyword}'
@@ -234,7 +233,7 @@ class Betika():
             
             for datum in response.get('data', []):
                 if event['start_time'] == datum.get('start_time', '') and event['category']==datum.get('category') and event['tournament'] in datum.get('competition_name'):
-                    logger.info("Found match: %s", datum)    
+                    #logger.info("Found match: %s", datum)    
                     home_odd = datum.get('home_odd', 0)
                     neutral_odd = datum.get('neutral_odd', 0)
                     away_odd = datum.get('away_odd', 0)    

@@ -4,6 +4,7 @@ from utils.betika import Betika
 from utils.db import Db
 from utils.one_signal import OneSignal
 from utils.sofascore import Sofascore
+from utils.sportybet import Sportybet
 
 logger = logging.getLogger(__name__)
 
@@ -14,6 +15,32 @@ class PredictDropping():
     def __init__(self):
         self.sofascore = Sofascore()
         self.db = Db()
+        self.sportybet = Sportybet()
+    
+    def predict(self):
+        dropping_odds = self.sofascore.get_dropping_odds()
+        predicted_match_ids = self.db.fetch_predicted_match_ids()
+        predictions = 0
+        for event in dropping_odds:
+            try:
+                if event['odd'] < 1.85 and (event['bet_pick']=='1' or event['sport'] == 'Tennis'):
+                    self.db.insert_event(event=event)
+                    logger.info(event)
+                    
+                    betika_match = Betika().search_match(event)
+                    if betika_match and int(betika_match['parent_match_id']) not in predicted_match_ids:
+                        self.db.insert_matches([betika_match])
+                        predictions += 1
+                    
+                    sportybet_event = self.sportybet.search_event(event)
+                    if sportybet_event:
+                        self.db.update_event_sportybet(event['id'], sportybet_event['_event_id'], sportybet_event['_market_id'], sportybet_event['_outcome_id'])
+                
+            except Exception as e:
+                logger.error("Error inserting event %s: %s", event, e)
+        
+        return predictions
+        
         
     def get_results(self):
         started_events = self.db.get_started_events()
@@ -28,28 +55,24 @@ class PredictDropping():
             else:
                 logger.info("No result available yet for event_id=%s", event_id)
     
+    
+    def book_bet(self):
+        events = self.db.get_upcoming_events()
+        share_code = self.sportybet.book_bet(events)
+        logger.info("Sportybet Share Code: %s", share_code)
+            
+    
     def __call__(self):
         logger.info("Checking for results of started events")
         self.get_results()
         logger.info("Results check completed")
         
         logger.info("Fetching dropping odds from Sofascore")
-        dropping_odds = self.sofascore.get_dropping_odds()
-        predicted_match_ids = self.db.fetch_predicted_match_ids()
-        predictions = 0
-        for event in dropping_odds:
-            try:
-                if event['odd'] < 1.8 and event['bet_pick']=='1':
-                    self.db.insert_event(event=event)
-                    logger.info("Inserted event: %s", event)
-                    
-                    predicted_match = Betika().search_match(event)
-                    if predicted_match and int(predicted_match['parent_match_id']) not in predicted_match_ids:
-                        self.db.insert_matches([predicted_match])
-                        predictions += 1
-                
-            except Exception as e:
-                logger.error("Error inserting event %s: %s", event, e)
+        predictions = self.predict()
+        logger.info("Fetch droppin odds completed")
+        
+        logger.info("Booking Bet")
+        self.book_bet()
                 
         
         if predictions>0:
