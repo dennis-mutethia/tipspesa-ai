@@ -7,6 +7,8 @@ from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
+SPORTS = ['football', 'basketball', 'tennis', 'ice-hockey', 'volleyball']
+
 class Sofascore:
     def __init__(self):
         self.base_url = "https://www.sofascore.com/api/v1"
@@ -84,35 +86,36 @@ class Sofascore:
                     
         return None, None, 0
     
-    def get_dropping_odds(self, category="all"):
+    def get_dropping_odds(self):
         matches = []
         try:
-            endpoint = f"/odds/1/dropping/{category}"
-            events = self.get_data(endpoint).get("events", [])
-            
-            for event in events:
-                event_id = str(event.get("id", "N/A"))
-                start_time = datetime.fromtimestamp(event.get("startTimestamp", "N/A")).strftime('%Y-%m-%d %H:%M:%S')
-                home_team = event.get("homeTeam", {}).get("name", "N/A")
-                away_team = event.get("awayTeam", {}).get("name", "N/A")
-                tournament = event.get("tournament", {}).get("name", "N/A")
-                category = event.get("tournament", {}).get("category", {}).get("name", "N/A")
-                sport = event.get("tournament", {}).get("category", {}).get("sport", {}).get("name", "N/A")
-                bet_pick, odd, odd_change = self.get_latest_odds(event_id)
+            for sport in SPORTS:
+                endpoint = f"/odds/1/dropping/{sport}"
+                events = self.get_data(endpoint).get("events", [])
                 
-                if odd_change != 0:
-                    matches.append({
-                        "id": event_id,
-                        "start_time": start_time,
-                        "home_team": home_team,
-                        "away_team": away_team,
-                        "tournament": tournament,
-                        "category": category,
-                        "sport": sport,
-                        "bet_pick": bet_pick,
-                        "odd": odd,
-                        "odd_change": odd_change
-                    })
+                for event in events:
+                    event_id = str(event.get("id", "N/A"))
+                    start_time = datetime.fromtimestamp(event.get("startTimestamp", "N/A")).strftime('%Y-%m-%d %H:%M:%S')
+                    home_team = event.get("homeTeam", {}).get("name", "N/A")
+                    away_team = event.get("awayTeam", {}).get("name", "N/A")
+                    tournament = event.get("tournament", {}).get("name", "N/A")
+                    category = event.get("tournament", {}).get("category", {}).get("name", "N/A")
+                    sport = event.get("tournament", {}).get("category", {}).get("sport", {}).get("name", "N/A")
+                    bet_pick, odd, odd_change = self.get_latest_odds(event_id)
+                    
+                    if odd_change != 0:
+                        matches.append({
+                            "id": event_id,
+                            "start_time": start_time,
+                            "home_team": home_team,
+                            "away_team": away_team,
+                            "tournament": tournament,
+                            "category": category,
+                            "sport": sport,
+                            "bet_pick": bet_pick,
+                            "odd": odd,
+                            "odd_change": odd_change
+                        })
         except Exception as err:
             logger.error("Error fetching dropping odds for category %s: %s", category, err)
         

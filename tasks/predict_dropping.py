@@ -35,6 +35,8 @@ class PredictDropping():
                     sportybet_event = self.sportybet.search_event(event)
                     if sportybet_event:
                         self.db.update_event_sportybet(event['id'], sportybet_event['_event_id'], sportybet_event['_market_id'], sportybet_event['_outcome_id'])
+                        self.db.insert_matches([sportybet_event])
+                        predictions += (1 if not betika_match else 0)
                 
             except Exception as e:
                 logger.error("Error inserting event %s: %s", event, e)
