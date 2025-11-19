@@ -11,6 +11,7 @@ from tasks.autobet import Autobet
 from tasks.predict import Predict
 from tasks.predict_dropping import PredictDropping
 from tasks.predict_jackpot import PredictJackpot
+from tasks.predict_winning import PredictWinning
 from tasks.results import Results
 from tasks.withdraw import Withdraw
 
@@ -35,6 +36,10 @@ def predict_task():
 
 def predict_dropping_task():
     predict_dropping_instance = PredictDropping()
+    predict_dropping_instance()  # Assuming __call__ or run method
+
+def predict_winning_task():
+    predict_dropping_instance = PredictWinning()
     predict_dropping_instance()  # Assuming __call__ or run method
 
 def withdraw_task():
@@ -82,7 +87,7 @@ if __name__ == "__main__":
     # )
     
     scheduler.add_job(
-        func=predict_dropping_task,
+        func=predict_winning_task,
         trigger=CronTrigger(
             hour="*",      # Every hour            
             minute="0", 

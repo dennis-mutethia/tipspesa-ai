@@ -367,7 +367,8 @@ class Db:
         query = text("""
             SELECT _event_id, _market_id, _outcome_id
             FROM events
-            WHERE status IS NULL
+            WHERE status IS NULL AND _event_id IS NOT NULL
+            ORDER BY start_time
         """)
 
         try:

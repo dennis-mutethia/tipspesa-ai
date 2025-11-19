@@ -4,10 +4,9 @@ import requests
 import json
 
 from datetime import datetime
+#from playwright.sync_api import sync_playwright
 
 logger = logging.getLogger(__name__)
-
-SPORTS = ['football', 'basketball', 'tennis', 'ice-hockey', 'volleyball']
 
 class Sofascore:
     def __init__(self):
@@ -19,20 +18,24 @@ class Sofascore:
             "accept": "*/*",
             "accept-encoding": "gzip, deflate, br, zstd",
             "accept-language": "en-US,en;q=0.9",
+            "baggage": "sentry-environment=production,sentry-release=sG4u6P3mnevD8MPFEYRsy,sentry-public_key=d693747a6bb242d9bb9cf7069fb57988,sentry-trace_id=d01b6bebb093cb7009df7ed2003dd372",
             "cache-control": "no-cache",
             "pragma": "no-cache",
             "priority": "u=1, i",
-            #"sec-ch-ua": "\"Chromium\";v=\"142\", \"Brave\";v=\"142\", \"Not_A Brand\";v=\"99\"",
+            "referer": "https://www.sofascore.com/betting-tips-today",
+            "sec-ch-ua": "\"Chromium\";v=\"142\", \"Brave\";v=\"142\", \"Not_A Brand\";v=\"99\"",
             "sec-ch-ua-mobile": "?0",
-            #"sec-ch-ua-platform": "\"Windows\"",
+            "sec-ch-ua-platform": "\"Android\"",
             "sec-fetch-dest": "empty",
             "sec-fetch-mode": "cors",
             "sec-fetch-site": "same-origin",
             "sec-gpc": "1",
-            #"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
-            #"x-requested-with": "4b58a4"
+            #"sentry-trace": "d01b6bebb093cb7009df7ed2003dd372-9ecdd6a55b43fc6e",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
+            #"x-requested-with": "bee9d3"
         })
-
+ 
+ 
     def get_data(self, endpoint, params=None):
         try:
             url = f"{self.base_url}{endpoint}"
@@ -87,9 +90,10 @@ class Sofascore:
         return None, None, 0
     
     def get_dropping_odds(self):
+        sports = ['football', 'basketball', 'ice-hockey', 'volleyball']
         matches = []
-        try:
-            for sport in SPORTS:
+        for sport in sports:
+            try:
                 endpoint = f"/odds/1/dropping/{sport}"
                 events = self.get_data(endpoint).get("events", [])
                 
@@ -116,8 +120,8 @@ class Sofascore:
                             "odd": odd,
                             "odd_change": odd_change
                         })
-        except Exception as err:
-            logger.error("Error fetching dropping odds for category %s: %s", category, err)
+            except Exception as err:
+                logger.error("Error fetching dropping odds for sport %s: %s", sport, err)
         
         return matches
 
@@ -143,3 +147,47 @@ class Sofascore:
             logger.error("Error fetching results for event %s: %s", event_id, err)
         
         return None
+    
+    
+    def get_winning_odds(self):
+        sports = ['football', 'basketball', 'tennis', 'ice-hockey', 'volleyball']
+        matches = []
+        for sport in sports:
+            try:
+                endpoint = f"/odds/1/winning/{sport}"
+                response = self.get_data(endpoint)
+                events = response.get("events", [])
+                winning_odds_map = response.get("winningOddsMap", {})
+                odds_map = response.get("oddsMap", {})
+                
+                for event in events:
+                    event_id = str(event.get("id", "N/A"))
+                    start_time = datetime.fromtimestamp(event.get("startTimestamp", "N/A")).strftime('%Y-%m-%d %H:%M:%S')
+                    home_team = event.get("homeTeam", {}).get("name", "N/A")
+                    away_team = event.get("awayTeam", {}).get("name", "N/A")
+                    tournament = event.get("tournament", {}).get("name", "N/A")
+                    category = event.get("tournament", {}).get("category", {}).get("name", "N/A")
+                    sport = event.get("tournament", {}).get("category", {}).get("sport", {}).get("name", "N/A")
+                    winning_odds = winning_odds_map.get(event_id)
+                    odds = winning_odds.get("fractionalValue")
+                    for choice in odds_map.get(event_id).get("choices"):
+                        if choice.get("initialFractionalValue") == odds:
+                            matches.append({
+                                "id": event_id,
+                                "start_time": start_time,
+                                "home_team": home_team,
+                                "away_team": away_team,
+                                "tournament": tournament,
+                                "category": category,
+                                "sport": sport,
+                                "prediction": odds_map.get(event_id).get("marketGroup"),
+                                "bet_pick": choice.get("name"),
+                                "odd": round(int(odds.split('/')[0]) / int(odds.split('/')[1]) + 1, 2),
+                                "overall_prob": winning_odds.get("actual"),
+                                "odd_change": winning_odds.get("actual")
+                            })
+                    
+            except Exception as err:
+                logger.error("Error fetching dropping odds for sport %s: %s", sport, err)
+        
+        return matches

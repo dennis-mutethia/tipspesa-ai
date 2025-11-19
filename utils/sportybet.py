@@ -91,25 +91,30 @@ class Sportybet:
                         and any(word in away_keywords for word in datum.get('awayTeamName').replace(',', '').split()) \
                             and event['category']==datum.get('sport').get('category').get('name') \
                                 and event['tournament'] in datum.get('sport').get('category').get('tournament').get('name'):
-                    #logger.info("Found event: %s", datum)  
-                    return {
-                        'match_id': event['id'],
-                        'start_time': event['start_time'],
-                        'home_team': datum.get('homeTeamName'),
-                        'away_team': datum.get('awayTeamName'),
-                        'category': f"{event['category']} - {event['tournament']}",
-                        'prediction': '1X2',
-                        'odd': event['odd'],
-                        'overall_prob': 80,
-                        'parent_match_id': datum.get('eventId').replace('sr:match:', ''),
-                        'sub_type_id': 1,
-                        'bet_pick': datum.get('homeTeamName') if event['bet_pick'] == "1" else datum.get('awayTeamName') if event['bet_pick'] == "2" else 'draw', 
-                        'special_bet_value': '',
-                        'outcome_id': 1 if event['bet_pick'] == "1" else 3 if event['bet_pick'] == "2" else 2,
-                        '_event_id': datum.get('eventId'),
-                        '_market_id': datum.get('markets')[0].get("id"),
-                        '_outcome_id': "4" if event['bet_pick'] == "1" else "5" if event['bet_pick'] == "2" else "6"
-                    }
+                    
+                    for outcome in datum.get("markets")[0].get("outcomes"):
+                        if (event['bet_pick'] == "1" and outcome.get("desc") == "Home") \
+                            or (event['bet_pick'] == "2" and outcome.get("desc") == "Away") \
+                                or (event['bet_pick'] == "3" and outcome.get("desc") == "Draw"):
+                            
+                            return {
+                                'match_id': event['id'],
+                                'start_time': event['start_time'],
+                                'home_team': datum.get('homeTeamName'),
+                                'away_team': datum.get('awayTeamName'),
+                                'category': f"{event['category']} - {event['tournament']}",
+                                'prediction': '1X2',
+                                'odd': event['odd'],
+                                'overall_prob': event['overall_prob'],
+                                'parent_match_id': datum.get('eventId').replace('sr:match:', ''),
+                                'sub_type_id': 1,
+                                'bet_pick': datum.get('homeTeamName') if event['bet_pick'] == "1" else datum.get('awayTeamName') if event['bet_pick'] == "2" else 'draw', 
+                                'special_bet_value': '',
+                                'outcome_id': 1 if event['bet_pick'] == "1" else 3 if event['bet_pick'] == "2" else 2,
+                                '_event_id': datum.get('eventId'),
+                                '_market_id': datum.get('markets')[0].get("id"),
+                                '_outcome_id': outcome.get("id")
+                            }
         
         return None
     
@@ -122,14 +127,19 @@ class Sportybet:
                 "outcomeId": event['_outcome_id']
             })
         
-        if selections:
-            endpoint = "/orders/share"
-            payload = {
-                "selections": selections
-            }
-                        
-            response = self.post_data(endpoint, payload)
-            return response.get('data').get('shareCode')
+        try:
+            if selections:
+                endpoint = "/orders/share"
+                payload = {
+                    "selections": selections
+                }
+                print(json.dumps(payload))
+                            
+                response = self.post_data(endpoint, payload)
+                return response.get('data').get('shareCode')
+            
+        except Exception as err:
+            logger.error("Error booking bet: %s", err)
         
         return None
         
