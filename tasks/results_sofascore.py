@@ -24,6 +24,13 @@ class ResultsSofascore():
             if results:
                 self.db.update_match_results(str(event_id), results['home_score'], results['away_score'], results['status'])
                 logger.info("Updated result for event_id=%s, %s", event_id, results)
+                if results['status'] == "WON":
+                    logger.info("Sending Notification to app users")
+                    OneSignal().send_push_notification(
+                        heading="🎉🎉 Predicted Match WON!!! 🎉🎉",
+                        message=f"{results['home_team']} vs {results['away_team']} :: {results['home_score']}-{results['away_score']} ({bet_pick})",
+                        image="https://tipspesa.vercel.app/static/prediction-won.jpg"
+                    )
             else:
                 logger.info("No result available yet for event_id=%s", event_id)
                     

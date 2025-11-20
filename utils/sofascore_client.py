@@ -224,11 +224,13 @@ class SofascoreClient:
 
         if status_type != "finished":
             return {
-                "status": "inplay" if status_type in ("live", "inprogress") else "not_started",
+                "status": "live" if status_type in ("live", "inprogress") else "pending",
                 "home_score": event.get("homeScore", {}).get("current"),
                 "away_score": event.get("awayScore", {}).get("current"),
             }
-
+            
+        home_team = event.get("homeTeam", {}).get("name")
+        away_team = event.get("AwayTeam", {}).get("name")
         home_score = event.get("homeScore", {}).get("current", 0)
         away_score = event.get("awayScore", {}).get("current", 0)
         winner_code = event.get("winnerCode")  # 1=home, 2=away, 3=draw
@@ -239,6 +241,8 @@ class SofascoreClient:
         result = "WON" if winner_code == expected else "LOST"
 
         return {
+            "home_team": home_team,
+            "away_team": away_team,
             "home_score": home_score,
             "away_score": away_score,
             "status": "finished",

@@ -306,7 +306,7 @@ class Db:
             SELECT match_id, bet_pick
             FROM matches
             WHERE kickoff < CURRENT_TIMESTAMP + INTERVAL '3 hours'
-              AND (status IS NULL OR status IN ('notstarted', 'inplay', 'inprogress'))
+              AND (status IS NULL OR status = 'live')
         """)
 
         try:
