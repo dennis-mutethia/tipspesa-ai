@@ -19,8 +19,8 @@ class ResultsSofascore():
         started_events = self.db.get_started_events()
         for event in started_events:
             event_id = event['id']
-            bet_pick = event['bet_pick']
-            results = self.sofascore_client.get_match_result(event_id, bet_pick)
+            outcome_id = int(event['outcome_id'])
+            results = self.sofascore_client.get_match_result(event_id, outcome_id)
             if results:
                 self.db.update_match_results(str(event_id), results['home_score'], results['away_score'], results['status'])
                 logger.info("Updated result for event_id=%s, %s", event_id, results)
@@ -28,7 +28,7 @@ class ResultsSofascore():
                     logger.info("Sending Notification to app users")
                     OneSignal().send_push_notification(
                         heading="🎉🎉 Predicted Match WON!!! 🎉🎉",
-                        message=f"{results['home_team']} vs {results['away_team']} :: {results['home_score']}-{results['away_score']} ({bet_pick})",
+                        message=f"{results['home_team']} vs {results['away_team']} :: {results['home_score']}-{results['away_score']}",
                         image="https://tipspesa.vercel.app/static/prediction-won.jpg"
                     )
             else:

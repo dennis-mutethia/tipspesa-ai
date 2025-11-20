@@ -303,10 +303,10 @@ class Db:
 
     def get_started_events(self) -> List[Dict[str, Any]]:
         query = text("""
-            SELECT match_id, bet_pick
+            SELECT match_id, outcome_id
             FROM matches
             WHERE kickoff < CURRENT_TIMESTAMP + INTERVAL '3 hours'
-              AND (status IS NULL OR status IN ('LIVE', 'PENDING'))
+              AND (status IS NULL OR status IN ('LIVE', 'STARTING'))
         """)
 
         try:
@@ -316,7 +316,7 @@ class Db:
                 for row in result:
                     events.append({
                         'id': row[0],
-                        'bet_pick': row[1]
+                        'outcome_id': row[1]
                     })
                 return events
         except SQLAlchemyError as e:

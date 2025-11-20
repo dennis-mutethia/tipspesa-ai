@@ -213,7 +213,7 @@ class SofascoreClient:
         logger.info("Found %d high-confidence winning odds", len(matches))
         return matches
 
-    def get_match_result(self, event_id: str, bet_pick: str = None) -> Optional[Dict]:
+    def get_match_result(self, event_id: str, outcome_id: int = None) -> Optional[Dict]:
         """Check if match is finished and return result + win/loss."""
         data = self._get(f"/event/{event_id}")
         if not data:
@@ -224,28 +224,21 @@ class SofascoreClient:
 
         if status_type != "finished":
             return {
-                "status": "LIVE" if status_type in ("live", "inprogress") else "PENDING",
+                "status": "LIVE" if status_type in ("live", "inprogress") else "STARTING",
                 "home_score": event.get("homeScore", {}).get("current"),
                 "away_score": event.get("awayScore", {}).get("current"),
             }
             
         home_team = event.get("homeTeam", {}).get("name")
-        away_team = event.get("AwayTeam", {}).get("name")
+        away_team = event.get("awayTeam", {}).get("name")
         home_score = event.get("homeScore", {}).get("current", 0)
         away_score = event.get("awayScore", {}).get("current", 0)
-        winner_code = event.get("winnerCode")  # 1=home, 2=away, 3=draw
-
-        pick_to_code = {"Home": 1, "1": 1, "Away": 2, "2": 2, "Draw": 3, "X": 3}
-        expected = pick_to_code.get(bet_pick or "", 0)
-
-        result = "WON" if winner_code == expected else "LOST"
+        winner_code = event.get("winnerCode")
 
         return {
             "home_team": home_team,
             "away_team": away_team,
             "home_score": home_score,
             "away_score": away_score,
-            "status": "finished",
-            "result": result,
-            "winner_code": winner_code,
+            "status": "WON" if winner_code == outcome_id else "LOST"
         }
