@@ -9,9 +9,8 @@ import pytz  # pip install pytz if not installed
 
 from tasks.autobet import Autobet
 from tasks.predict import Predict
-from tasks.predict_dropping import PredictDropping
+from tasks.predict_sofascore import PredictSofascore
 from tasks.predict_jackpot import PredictJackpot
-from tasks.predict_winning import PredictWinning
 from tasks.results import Results
 from tasks.results_sofascore import ResultsSofascore
 from tasks.withdraw import Withdraw
@@ -39,13 +38,9 @@ def predict_task():
     predict_instance()  # Assuming __call__ or run method
 
 
-def predict_dropping_task():
-    predict_dropping_instance = PredictDropping()
-    predict_dropping_instance()  # Assuming __call__ or run method
-
-def predict_winning_task():
-    predict_dropping_instance = PredictWinning()
-    predict_dropping_instance()  # Assuming __call__ or run method
+def predict_sofascore_task():
+    predict_sofascore_instance = PredictSofascore()
+    predict_sofascore_instance()  # Assuming __call__ or run method
 
 def withdraw_task():
     withdraw_instance = Withdraw()
@@ -104,31 +99,18 @@ if __name__ == "__main__":
     # )
     
     scheduler.add_job(
-        func=predict_dropping_task,
+        func=predict_sofascore_task,
         trigger=CronTrigger(
             hour="*",      # Every hour            
             minute="0", 
             second="0"
         ),
-        id="predict_dropping_cron",
+        id="predict_sofascore_cron",
         replace_existing=True,
         misfire_grace_time=60,  # 1min grace
         coalesce=True
     )
     
-    scheduler.add_job(
-        func=predict_winning_task,
-        trigger=CronTrigger(
-            hour="*",      # Every hour            
-            minute="0", 
-            second="0"
-        ),
-        id="predict_winning_cron",
-        replace_existing=True,
-        misfire_grace_time=60,  # 1min grace
-        coalesce=True
-    )
-        
     # scheduler.add_job(
     #     func=autobet_task, 
     #     trigger=CronTrigger(

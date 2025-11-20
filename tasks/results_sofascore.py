@@ -2,8 +2,7 @@
 import logging
 from utils.db import Db
 from utils.one_signal import OneSignal
-from utils.sofascore import Sofascore
-from utils.sportybet import Sportybet
+from utils.sofascore_client import SofascoreClient
 
 logger = logging.getLogger(__name__)
 
@@ -12,7 +11,7 @@ class ResultsSofascore():
         main class
     """
     def __init__(self):
-        self.sofascore = Sofascore()
+        self.sofascore_client = SofascoreClient()
         self.db = Db()
         
         
@@ -21,7 +20,7 @@ class ResultsSofascore():
         for event in started_events:
             event_id = event['id']
             bet_pick = event['bet_pick']
-            results = self.sofascore.get_results(event_id, bet_pick)
+            results = self.sofascore_client.get_match_result(event_id, bet_pick)
             if results:
                 self.db.update_event_results(event_id, results['home_score'], results['away_score'], results['status'])
                 self.db.update_match_results(str(event_id), results['home_score'], results['away_score'], results['status'])
