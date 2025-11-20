@@ -224,7 +224,7 @@ class SofascoreClient:
 
         if status_type != "finished":
             return {
-                "status": "LIVE" if status_type in ("live", "inprogress") else "pending",
+                "status": "LIVE" if status_type in ("live", "inprogress") else "PENDING",
                 "home_score": event.get("homeScore", {}).get("current"),
                 "away_score": event.get("awayScore", {}).get("current"),
             }
