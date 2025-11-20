@@ -5,6 +5,7 @@ from typing import List, Dict, Optional, Tuple, Any
 
 import requests
 from dotenv import load_dotenv
+from unidecode import unidecode
 
 load_dotenv()
 
@@ -146,15 +147,15 @@ class SofascoreClient:
                     matches.append({
                         "id": event_id,
                         "start_time": start_time,
-                        "home_team": home_team,
-                        "away_team": away_team,
-                        "tournament": tournament,
-                        "category": category,
+                        "home_team": unidecode(home_team),
+                        "away_team": unidecode(away_team),
+                        "tournament": unidecode(tournament),
+                        "category": unidecode(category),
                         "sport": sport.capitalize(),
                         "bet_pick": bet_pick or "Unknown",
                         "odd": odd,
-                        "odd_change": round(change, 3),
-                        "overall_prob": abs(round(change, 3)),  # reuse as confidence
+                        "odd_change": round(change, 2),
+                        "overall_prob": round(change, 2) 
                     })
 
         logger.info("Found %d dropping odds matches", len(matches))
@@ -206,11 +207,11 @@ class SofascoreClient:
                             "bet_pick": choice.get("name"),
                             "odd": self._fractional_to_decimal(target_fractional or "1/1"),
                             "overall_prob": win_info.get("actual", 0),
-                            "confidence": win_info.get("actual", 0),
+                            "odd_change": win_info.get("actual", 0),
                         })
                         break  # only one winning tip per match
 
-        logger.info("Found %d high-confidence winning odds", len(matches))
+        logger.info("Found %d winning odds", len(matches))
         return matches
 
     def get_match_result(self, event_id: str, outcome_id: int = None) -> Optional[Dict]:

@@ -39,7 +39,11 @@ class Db:
             ON CONFLICT (match_id) DO UPDATE SET
                 prediction = EXCLUDED.prediction,
                 odd = EXCLUDED.odd,
-                overall_prob = EXCLUDED.overall_prob
+                overall_prob = EXCLUDED.overall_prob,
+                sub_type_id = EXCLUDED.sub_type_id,
+                special_bet_value = EXCLUDED.special_bet_value,
+                bet_pick = EXCLUDED.bet_pick,
+                outcome_id = EXCLUDED.outcome_id
         """)
 
         values = [
@@ -130,7 +134,7 @@ class Db:
 
     def fetch_predicted_match_ids(self) -> Set[str]:
         query = text("""
-            SELECT parent_match_id
+            SELECT match_id
             FROM matches
             WHERE kickoff > (CURRENT_TIMESTAMP + INTERVAL '3 hours')
         """)
@@ -303,7 +307,7 @@ class Db:
 
     def get_started_events(self) -> List[Dict[str, Any]]:
         query = text("""
-            SELECT match_id, outcome_id
+            SELECT match_id, special_bet_value
             FROM matches
             WHERE kickoff < CURRENT_TIMESTAMP + INTERVAL '3 hours'
               AND (status IS NULL OR status IN ('LIVE', 'STARTING'))
@@ -365,10 +369,10 @@ class Db:
 
     def get_upcoming_events(self) -> List[Dict[str, Any]]:
         query = text("""
-            SELECT _event_id, _market_id, _outcome_id
-            FROM events
-            WHERE status IS NULL AND _event_id IS NOT NULL
-            ORDER BY start_time
+            SELECT parent_match_id, sub_type_id, outcome_id
+            FROM matches
+            WHERE status IS NULL AND parent_match_id != match_id::INT
+            ORDER BY kickoff
         """)
 
         try:

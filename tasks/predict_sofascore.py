@@ -23,14 +23,12 @@ class PredictSofascore():
         predicted_match_ids = self.db.fetch_predicted_match_ids()
         predictions = 0
         for event in events:
-            sportybet_event = self.sportybet_client.search_event(event)
-            print(sportybet_event)
             try:
                 if 1.2 < event['odd'] < 1.55:
-                    self.db.insert_event(event=event)
+                    sportybet_event = self.sportybet_client.search_event(event)
                     logger.info(sportybet_event)
                     self.db.insert_matches([sportybet_event])
-                    predictions += (1 if int(sportybet_event['parent_match_id']) not in predicted_match_ids else 0)
+                    predictions += (1 if sportybet_event['match_id'] not in predicted_match_ids else 0)
                 
             except Exception as e:
                 logger.error("Error inserting event %s: %s", event, e)
@@ -46,17 +44,18 @@ class PredictSofascore():
             logger.info("Sportybet Share Code: %s", share_code)
         
         logger.info("----------------------------------------------------")
-            
-        event_chunks = [events[i:i + 8] for i in range(0, len(events), 8)]
-        for chunk in event_chunks:    
-            share_code = self.sportybet_client.book_bet(chunk)
-            logger.info("Sportybet Share Code: %s", share_code)
+        
+        if len(events) > 8:            
+            event_chunks = [events[i:i + 8] for i in range(0, len(events), 8)]
+            for chunk in event_chunks:    
+                share_code = self.sportybet_client.book_bet(chunk)
+                logger.info("Sportybet Share Code: %s", share_code)
             
     
     def __call__(self):        
-        logger.info("Fetching prdictions from Sofascore")
+        logger.info("Fetching predictions from Sofascore")
         predictions = self.predict()
-        logger.info("Fetch prdictions completed")
+        logger.info("Fetch predictions completed")
         
         logger.info("Booking Bet")
         self.book_bet()
