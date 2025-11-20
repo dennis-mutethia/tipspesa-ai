@@ -129,7 +129,7 @@ class SportybetClient:
                                 "sub_type_id": market["id"],
                                 "bet_pick": (match.get("homeTeamName") if bet_pick == "1" else match.get("awayTeamName") if bet_pick == "2" else "Draw"),
                                 "special_bet_value": "",
-                                "outcome_id": outcome["id"]
+                                "outcome_id": bet_pick
                             }
         logger.info("No matching event found for: %s vs %s on %s", event["home_team"], event["away_team"], target_date)
         

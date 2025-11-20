@@ -5,6 +5,7 @@ from tasks.autobet import Autobet
 from tasks.predict import Predict
 from tasks.predict_sofascore import PredictSofascore
 from tasks.predict_jackpot import PredictJackpot
+from tasks.results_sofascore import ResultsSofascore
 
 
 # Global logging configuration (applies to all modules)
@@ -14,4 +15,4 @@ logging.basicConfig(
     datefmt='%Y-%m-%d %H:%M:%S'  # Optional: Custom date format (e.g., 2025-11-04 22:13:45)
 )
 
-PredictSofascore()()
+ResultsSofascore()()

@@ -22,7 +22,6 @@ class ResultsSofascore():
             bet_pick = event['bet_pick']
             results = self.sofascore_client.get_match_result(event_id, bet_pick)
             if results:
-                self.db.update_event_results(event_id, results['home_score'], results['away_score'], results['status'])
                 self.db.update_match_results(str(event_id), results['home_score'], results['away_score'], results['status'])
                 logger.info("Updated result for event_id=%s, %s", event_id, results)
             else:

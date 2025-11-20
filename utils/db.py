@@ -303,10 +303,10 @@ class Db:
 
     def get_started_events(self) -> List[Dict[str, Any]]:
         query = text("""
-            SELECT id, bet_pick
-            FROM events
-            WHERE start_time < CURRENT_TIMESTAMP + INTERVAL '3 hours'
-              AND (status IS NULL OR status IN ('notstarted', 'inprogress'))
+            SELECT match_id, bet_pick
+            FROM matches
+            WHERE kickoff < CURRENT_TIMESTAMP + INTERVAL '3 hours'
+              AND (status IS NULL OR status IN ('notstarted', 'inplay', 'inprogress'))
         """)
 
         try:
