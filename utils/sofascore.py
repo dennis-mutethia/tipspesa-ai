@@ -150,7 +150,7 @@ class Sofascore:
     
     
     def get_winning_odds(self):
-        sports = ['football', 'basketball', 'tennis', 'ice-hockey', 'volleyball']
+        sports = ['football', 'basketball', 'ice-hockey', 'volleyball']
         matches = []
         for sport in sports:
             try:

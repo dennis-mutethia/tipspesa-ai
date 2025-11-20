@@ -13,6 +13,7 @@ from tasks.predict_dropping import PredictDropping
 from tasks.predict_jackpot import PredictJackpot
 from tasks.predict_winning import PredictWinning
 from tasks.results import Results
+from tasks.results_sofascore import ResultsSofascore
 from tasks.withdraw import Withdraw
 
 # Global logging configuration (applies to all modules)
@@ -28,6 +29,10 @@ logger = logging.getLogger(__name__)
 def results_task():
     results_instance = Results()
     results_instance()  # Assuming __call__ or run method
+    
+def results_sofascore_task():
+    results_sofascore_instance = ResultsSofascore()
+    results_sofascore_instance()  # Assuming __call__ or run method
 
 def predict_task():
     predict_instance = Predict()
@@ -72,6 +77,18 @@ if __name__ == "__main__":
     #     misfire_grace_time=30,  # 30s grace for delays
     #     coalesce=True  # Skip missed runs if piled up
     # )
+    scheduler.add_job(
+        func=results_sofascore_task,
+        trigger=CronTrigger(
+            hour="*",       # Every hour
+            minute="*/10",  # Every 10 minutes
+            second="0"      # At the start of the minute
+        ),
+        id="results_sofascore_cron",
+        replace_existing=True,
+        misfire_grace_time=30,  # 30s grace for delays
+        coalesce=True  # Skip missed runs if piled up
+    )
     
     # scheduler.add_job(
     #     func=predict_task,
@@ -87,7 +104,7 @@ if __name__ == "__main__":
     # )
     
     scheduler.add_job(
-        func=predict_winning_task,
+        func=predict_dropping_task,
         trigger=CronTrigger(
             hour="*",      # Every hour            
             minute="0", 
@@ -98,19 +115,32 @@ if __name__ == "__main__":
         misfire_grace_time=60,  # 1min grace
         coalesce=True
     )
-        
+    
     scheduler.add_job(
-        func=autobet_task, 
+        func=predict_winning_task,
         trigger=CronTrigger(
-            hour="*", # Every hour
-            minute="0",
+            hour="*",      # Every hour            
+            minute="0", 
             second="0"
         ),
-        id="autobet_cron",
+        id="predict_winning_cron",
         replace_existing=True,
-        misfire_grace_time=60,  # 1min grace for startup lag
+        misfire_grace_time=60,  # 1min grace
         coalesce=True
     )
+        
+    # scheduler.add_job(
+    #     func=autobet_task, 
+    #     trigger=CronTrigger(
+    #         hour="*", # Every hour
+    #         minute="0",
+    #         second="0"
+    #     ),
+    #     id="autobet_cron",
+    #     replace_existing=True,
+    #     misfire_grace_time=60,  # 1min grace for startup lag
+    #     coalesce=True
+    # )
     
     # scheduler.add_job(
     #     func=predict_jackpot_task,

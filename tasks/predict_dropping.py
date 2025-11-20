@@ -23,7 +23,7 @@ class PredictDropping():
         predictions = 0
         for event in dropping_odds:
             try:
-                if event['odd'] < 1.85 and (event['bet_pick']=='1' or event['sport'] == 'Tennis'):
+                if 1.2 < event['odd'] < 1.6 and (event['bet_pick']=='1' or event['sport'] == 'Tennis'):
                     self.db.insert_event(event=event)
                     logger.info(event)
                     
@@ -45,21 +45,7 @@ class PredictDropping():
         
         return predictions
         
-        
-    def get_results(self):
-        started_events = self.db.get_started_events()
-        for event in started_events:
-            event_id = event['id']
-            bet_pick = event['bet_pick']
-            results = self.sofascore.get_results(event_id, bet_pick)
-            if results:
-                self.db.update_event_results(event_id, results['home_score'], results['away_score'], results['status'])
-                self.db.update_match_results(str(event_id), results['home_score'], results['away_score'], results['status'])
-                logger.info("Updated result for event_id=%s, %s", event_id, results)
-            else:
-                logger.info("No result available yet for event_id=%s", event_id)
-    
-    
+            
     def book_bet(self):
         events = self.db.get_upcoming_events()
         event_chunks = [events[i:i + 20] for i in range(0, len(events), 20)]
@@ -75,11 +61,7 @@ class PredictDropping():
             logger.info("Sportybet Share Code: %s", share_code)
             
     
-    def __call__(self):
-        logger.info("Checking for results of started events")
-        self.get_results()
-        logger.info("Results check completed")
-        
+    def __call__(self):        
         logger.info("Fetching dropping odds from Sofascore")
         predictions = self.predict()
         logger.info("Fetch droppin odds completed")

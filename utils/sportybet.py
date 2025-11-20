@@ -133,7 +133,6 @@ class Sportybet:
                 payload = {
                     "selections": selections
                 }
-                print(json.dumps(payload))
                             
                 response = self.post_data(endpoint, payload)
                 return response.get('data').get('shareCode')
