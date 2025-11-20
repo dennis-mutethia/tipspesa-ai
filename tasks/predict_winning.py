@@ -22,7 +22,7 @@ class PredictWinning():
         predictions = 0
         for event in events:
             try:
-                if 1.2 < event['odd'] < 1.6 and event['overall_prob'] >= 75:
+                if 1.2 < event['odd'] < 1.55 and event['overall_prob'] >= 75:
                     self.db.insert_event(event=event)
                                         
                     sportybet_event = self.sportybet.search_event(event)

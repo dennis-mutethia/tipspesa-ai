@@ -16,4 +16,4 @@ logging.basicConfig(
 )
 
 PredictDropping()()
-#PredictWinning()()
+PredictWinning()()

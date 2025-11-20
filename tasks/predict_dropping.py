@@ -23,7 +23,7 @@ class PredictDropping():
         predictions = 0
         for event in dropping_odds:
             try:
-                if 1.2 < event['odd'] < 1.6 and (event['bet_pick']=='1' or event['sport'] == 'Tennis'):
+                if 1.2 < event['odd'] < 1.55 and (event['bet_pick']=='1' or event['sport'] == 'Tennis'):
                     self.db.insert_event(event=event)
                     logger.info(event)
                     
