@@ -143,7 +143,7 @@ class SofascoreClient:
 
                 bet_pick, odd, change = self.get_latest_odds(event_id)
 
-                if odd and change < 0:  # Only include actual dropping odds
+                if odd and change < 0 and bet_pick=="1":  # Only include actual dropping odds
                     matches.append({
                         "id": event_id,
                         "start_time": start_time,

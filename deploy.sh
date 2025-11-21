@@ -4,7 +4,7 @@
 #docker rmi -f tipspesa-ai
 
 #build the image
-docker build -f Dockerfile -t tipspesa-ai .  
+docker build -t tipspesa-ai .  
 
 #stop container
 docker rm -f tipspesa-ai  
@@ -16,4 +16,4 @@ docker run -d --name tipspesa-ai tipspesa-ai
 docker tag tipspesa-ai:latest dennismuga/tipspesa-ai:latest
 
 #push
-docker push dennismuga/tipspesa-ai:latest
+#docker push dennismuga/tipspesa-ai:latest

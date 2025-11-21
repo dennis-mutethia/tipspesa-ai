@@ -78,8 +78,8 @@ class SportybetClient:
         event["outcome_id"] = event["bet_pick"]
         event["bet_pick"] = (event["home_team"] if event["outcome_id"] == "1" else event["away_team"] if event["outcome_id"] == "2" else "Draw")
         
-        home_team = event["home_team"].lower()
-        away_team = event["away_team"].lower()
+        home_team = event["home_team"].lower().replace("-", " ").replace("/", " ")
+        away_team = event["away_team"].lower().replace("-", " ").replace("/", " ")
         target_date = event["start_time"][:10]  # Extract YYYY-MM-DD
 
         # Map bet_pick to outcome description
@@ -90,12 +90,12 @@ class SportybetClient:
             logger.warning("Invalid bet_pick: %s", event["outcome_id"])
             return None
 
-        keywords = set(home_team.split() + away_team.split())
+        keywords = [word for word in (home_team.split() + away_team.split()) if len(word) > 2]
 
         endpoint = "/factsCenter/event/firstSearch"
         params = {"pageSize": 20}
 
-        for keyword in keywords:
+        for keyword in set(keywords):
             params["keyword"] = keyword
             data = self.get(endpoint, params)
 

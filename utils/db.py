@@ -40,6 +40,7 @@ class Db:
                 prediction = EXCLUDED.prediction,
                 odd = EXCLUDED.odd,
                 overall_prob = EXCLUDED.overall_prob,
+                parent_match_id = EXCLUDED.parent_match_id,
                 sub_type_id = EXCLUDED.sub_type_id,
                 special_bet_value = EXCLUDED.special_bet_value,
                 bet_pick = EXCLUDED.bet_pick,
