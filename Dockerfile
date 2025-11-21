@@ -1,15 +1,14 @@
-# Use python base image
-FROM python:3.13-slim-bullseye
+FROM python:3.13-alpine
 
-COPY requirements.txt .
-#update pip & install dependencies
-RUN pip install --upgrade pip \
-    && pip install -r requirements.txt
-
-# Set the timezone to Africa/Nairobi
-RUN ln -sf /usr/share/zoneinfo/Africa/Nairobi /etc/localtime
+# Only runtime packages needed
+RUN apk add --no-cache tzdata ca-certificates \
+    && cp /usr/share/zoneinfo/Africa/Nairobi /etc/localtime \
+    && echo "Africa/Nairobi" > /etc/timezone \
+    && pip install --upgrade pip
 
 COPY . .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Use the startup script as entrypoint to run both services
+ENV TZ=Africa/Nairobi
+
 ENTRYPOINT ["python", "main.py"]
