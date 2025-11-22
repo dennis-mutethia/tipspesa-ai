@@ -17,7 +17,7 @@ class PredictSofascore():
         self.sportybet_client = SportybetClient()
     
     def predict(self):
-        dropping_odds = self.sofascore_client.get_dropping_odds()
+        dropping_odds = [] #self.sofascore_client.get_dropping_odds()
         winning_odds = self.sofascore_client.get_winning_odds()
         events = dropping_odds + winning_odds
         predicted_match_ids = self.db.fetch_predicted_match_ids()
