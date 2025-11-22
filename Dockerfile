@@ -1,14 +1,21 @@
+#Use small python alpine base
 FROM python:3.13-alpine
 
-# Only runtime packages needed
-RUN apk add --no-cache tzdata ca-certificates \
-    && cp /usr/share/zoneinfo/Africa/Nairobi /etc/localtime \
-    && echo "Africa/Nairobi" > /etc/timezone \
-    && pip install --upgrade pip
+# Set Local Timezone
+RUN apk add --no-cache tzdata ca-certificates && \
+    cp /usr/share/zoneinfo/Africa/Nairobi /etc/localtime && \
+    echo "Africa/Nairobi" > /etc/timezone 
 
-COPY . .
-RUN pip install -r requirements.txt
-
+#set local timezone
 ENV TZ=Africa/Nairobi
 
+#install dependencies
+COPY requirements.txt .
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt
+
+#copy rest of the code
+COPY . .
+
+#Run application
 ENTRYPOINT ["python", "main.py"]
