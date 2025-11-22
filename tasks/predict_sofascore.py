@@ -24,7 +24,7 @@ class PredictSofascore():
         predictions = 0
         for event in events:
             try:
-                if 1.2 < event['odd'] < 1.55:
+                if 1.2 < event['odd'] < 2:
                     sportybet_event = self.sportybet_client.search_event(event)
                     logger.info(sportybet_event)
                     self.db.insert_matches([sportybet_event])
