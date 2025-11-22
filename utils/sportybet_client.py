@@ -78,8 +78,8 @@ class SportybetClient:
         event["outcome_id"] = event["bet_pick"]
         event["bet_pick"] = (event["home_team"] if event["outcome_id"] == "1" else event["away_team"] if event["outcome_id"] == "2" else "Draw")
         
-        home_team = event["home_team"].lower().replace("-", " ").replace("/", " ")
-        away_team = event["away_team"].lower().replace("-", " ").replace("/", " ")
+        home_team = event["home_team"].lower().replace(",", "").replace("-", " ").replace("/", " ")
+        away_team = event["away_team"].lower().replace(",", "").replace("-", " ").replace("/", " ")
         target_date = event["start_time"][:10]  # Extract YYYY-MM-DD
 
         # Map bet_pick to outcome description
@@ -90,12 +90,10 @@ class SportybetClient:
             logger.warning("Invalid bet_pick: %s", event["outcome_id"])
             return None
 
-        keywords = [word for word in (home_team.split() + away_team.split()) if len(word) > 2]
-
         endpoint = "/factsCenter/event/firstSearch"
         params = {"pageSize": 20}
 
-        for keyword in set(keywords):
+        for keyword in set(home_team.split() + away_team.split()):
             params["keyword"] = keyword
             data = self.get(endpoint, params)
 
@@ -105,13 +103,13 @@ class SportybetClient:
             for match in data["data"].get("preMatch", []):
                 match_date = datetime.fromtimestamp(match["estimateStartTime"] / 1000).strftime("%Y-%m-%d")
 
-                home_name = match.get("homeTeamName", "").lower().replace(",", "")
-                away_name = match.get("awayTeamName", "").lower().replace(",", "")
+                home_name = match.get("homeTeamName", "").lower().replace(",", "").replace("-", " ").replace("/", " ")
+                away_name = match.get("awayTeamName", "").lower().replace(",", "").replace("-", " ").replace("/", " ")
                 
                 # Match conditions
                 if (match_date == target_date
-                    and any(k in home_name for k in keywords)
-                    and any(k in away_name for k in keywords)
+                    and any(k in home_name for k in set(home_team.split()))
+                    and any(k in away_name for k in set(away_team.split()))
                     and event["category"] == match.get("sport", {}).get("category", {}).get("name")):
 
                     market = match["markets"][0]  # Assuming 1X2 is first smarket
