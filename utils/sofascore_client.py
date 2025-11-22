@@ -181,8 +181,8 @@ class SofascoreClient:
                     continue
 
                 win_info = winning_map[event_id]
-                if win_info.get("actual", 0) < 75:  # Confidence threshold
-                    continue
+                # if win_info.get("actual", 0) < 75:  # Confidence threshold
+                #     continue
 
                 start_time = datetime.fromtimestamp(event.get("startTimestamp", 0)).strftime("%Y-%m-%d %H:%M:%S")
                 home_team = event.get("homeTeam", {}).get("name", "Unknown")
