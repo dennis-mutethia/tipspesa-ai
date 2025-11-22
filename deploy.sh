@@ -16,4 +16,4 @@ docker run -d --name tipspesa-ai tipspesa-ai
 docker tag tipspesa-ai:latest dennismuga/tipspesa-ai:latest
 
 #push
-#docker push dennismuga/tipspesa-ai:latest
+docker push dennismuga/tipspesa-ai:latest
