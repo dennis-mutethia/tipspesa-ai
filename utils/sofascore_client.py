@@ -214,6 +214,59 @@ class SofascoreClient:
         logger.info("Found %d winning odds", len(matches))
         return matches
 
+    
+    def get_high_value_streaks(self) -> List[Dict[str, Any]]:
+        """Fetch all currently dropping 1X2 odds across configured sports."""
+        matches = []
+
+        logger.info("Fetching high value streaks")
+        data = self._get("/odds/1/high-value-streaks")
+        if not data or "general" not in data:
+            logger.warning("No high value streaks")
+            return []
+
+        for general in data.get("general"):
+            event = general.get("event")
+            event_id = str(event.get("id", ""))
+            start_ts = event.get("startTimestamp")
+            if not start_ts or not event_id:
+                continue
+
+            start_time = datetime.fromtimestamp(start_ts).strftime("%Y-%m-%d %H:%M:%S")
+            home_team = event.get("homeTeam", {}).get("name", "Unknown")
+            away_team = event.get("awayTeam", {}).get("name", "Unknown")
+            tournament = event.get("tournament", {}).get("name", "Unknown")
+            category = event.get("tournament", {}).get("category", {}).get("name", "Unknown")
+            sport = event.get("tournament", {}).get("category", {}).get("sport", {}).get("name", "Unknown")
+
+            streak = general.get("streak", {})
+            bet_pick = streak.get("name")
+            value = streak.get("value")
+            if "/" not in value or "2.5" not in bet_pick:
+                continue
+            
+            
+            values = value.split("/")
+            if values[0] != values[1]:
+                continue
+            
+            matches.append({
+                "id": event_id,
+                "start_time": start_time,
+                "home_team": unidecode(home_team),
+                "away_team": unidecode(away_team),
+                "tournament": unidecode(tournament),
+                "category": unidecode(category),
+                "sport": sport.capitalize(),
+                "bet_pick": "Over 2.5" if "2.5" in bet_pick else "OV1.5",
+                "odd": 1.4,
+                "odd_change": 0,
+                "overall_prob": 0
+            })
+
+        logger.info("Found %d high value streaks", len(matches))
+        return matches
+
     def get_match_result(self, event_id: str, outcome_id: int = None) -> Optional[Dict]:
         """Check if match is finished and return result + win/loss."""
         data = self._get(f"/event/{event_id}")

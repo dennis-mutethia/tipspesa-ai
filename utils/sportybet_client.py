@@ -72,18 +72,23 @@ class SportybetClient:
         """
         event["match_id"] = event["id"]
         event["parent_match_id"] = event["id"]
-        event["prediction"] = "1X2"
+        event["prediction"] = "1X2" if event["bet_pick"] in ["1", "2", "3"] else "Over/Under" if event["bet_pick"] in "Over 2.5" else None
         event["sub_type_id"] = "0"
         event["special_bet_value"] = event["bet_pick"]
-        event["outcome_id"] = event["bet_pick"]
-        event["bet_pick"] = (event["home_team"] if event["outcome_id"] == "1" else event["away_team"] if event["outcome_id"] == "2" else "Draw")
+        event["outcome_id"] = event["bet_pick"] if event["bet_pick"] in ["1", "2", "3"] else "12" if event["bet_pick"] == "Over 2.5" else None
+        event["bet_pick"] = (event["home_team"] if event["outcome_id"] == "1" else event["away_team"] if event["outcome_id"] == "2" else "Draw") if event["prediction"] == "1X2" else event["bet_pick"]
         
         home_team = event["home_team"].lower().replace(",", "").replace("-", " ").replace("/", " ")
         away_team = event["away_team"].lower().replace(",", "").replace("-", " ").replace("/", " ")
         target_date = event["start_time"][:10]  # Extract YYYY-MM-DD
 
         # Map bet_pick to outcome description
-        outcome_map = {"1": "Home", "2": "Away", "X": "Draw"}
+        outcome_map = {
+            "1": "Home", 
+            "2": "Away", 
+            "X": "Draw",
+            "12": "Over 2.5"
+        }
         target_outcome = outcome_map.get(event["outcome_id"].upper())
 
         if not target_outcome:
@@ -112,16 +117,20 @@ class SportybetClient:
                     and any(k in away_name for k in set(away_team.split()))
                     and event["category"] == match.get("sport", {}).get("category", {}).get("name")):
 
-                    market = match["markets"][0]  # Assuming 1X2 is first smarket
-                    for outcome in market.get("outcomes", []):
-                        if outcome.get("desc") == target_outcome:
-                            parent_match_id = match.get("eventId", "").replace("sr:match:", "")
-                            event["parent_match_id"] = parent_match_id
-                            event["sub_type_id"] = market.get("id")           
-                            event["outcome_id"] = outcome.get("id")                          
-                            event["category"] = f'{event["category"]} - {event["tournament"]}'
+                    for market in match.get("markets"):
+                        if market.get("name") != event["prediction"]:
+                            continue
+                        
+                        for outcome in market.get("outcomes", []):
+                            if outcome.get("desc") == target_outcome:
+                                parent_match_id = match.get("eventId", "").replace("sr:match:", "")
+                                event["parent_match_id"] = parent_match_id
+                                event["sub_type_id"] = market.get("id")           
+                                event["outcome_id"] = outcome.get("id")                          
+                                event["category"] = f'{event["category"]} - {event["tournament"]}'
+                                event["odd"] = outcome.get("odds")   
 
-                            return event
+                                return event
                             
         logger.info("No matching sportybet event found for: %s vs %s on %s", event["home_team"], event["away_team"], target_date)
         

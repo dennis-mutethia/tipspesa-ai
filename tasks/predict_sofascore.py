@@ -17,9 +17,10 @@ class PredictSofascore():
         self.sportybet_client = SportybetClient()
     
     def predict(self):
+        high_value_streaks = self.sofascore_client.get_high_value_streaks()
         dropping_odds = [] #self.sofascore_client.get_dropping_odds()
         winning_odds = self.sofascore_client.get_winning_odds()
-        events = dropping_odds + winning_odds
+        events = high_value_streaks + dropping_odds + winning_odds
         predicted_match_ids = self.db.fetch_predicted_match_ids()
         predictions = 0
         for event in events:
