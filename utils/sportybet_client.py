@@ -147,11 +147,12 @@ class SportybetClient:
                 "eventId": f'sr:match:{ev["_event_id"]}',
                 "marketId": str(ev["_market_id"]),
                 "outcomeId": str(ev["_outcome_id"]),
+                "specifier": "total=2.5" if ev["_outcome_id"] == 12 else None
             }
             for ev in events
             if all(k in ev for k in ("_event_id", "_market_id", "_outcome_id"))
         ]
-
+        
         if not selections:
             logger.error("No valid selections to book")
             return None
