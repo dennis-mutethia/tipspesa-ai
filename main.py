@@ -76,13 +76,13 @@ if __name__ == "__main__":
         func=results_sofascore_task,
         trigger=CronTrigger(
             hour="*",       # Every hour
-            minute="*/10",  # Every 10 minutes
+            minute="*/3",   # Every 3 minutes
             second="0"      # At the start of the minute
         ),
         id="results_sofascore_cron",
         replace_existing=True,
         misfire_grace_time=30,  # 30s grace for delays
-        coalesce=True  # Skip missed runs if piled up
+        coalesce=True           # Skip missed runs if piled up
     )
     
     # scheduler.add_job(

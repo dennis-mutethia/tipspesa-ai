@@ -23,7 +23,7 @@ class ResultsSofascore():
             results = self.sofascore_client.get_match_result(event_id, outcome_id)
             if results:
                 self.db.update_match_results(str(event_id), results['home_score'], results['away_score'], results['status'])
-                logger.info("Updated result for event_id=%s, %s", event_id, results)
+                logger.info("Updated result for event_id=%s, expected_outcome_id=%s, %s", event_id, outcome_id, results)
                 if results['status'] == "WON":
                     logger.info("Sending Notification to app users")
                     OneSignal().send_push_notification(
