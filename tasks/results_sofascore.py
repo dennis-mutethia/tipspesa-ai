@@ -19,7 +19,7 @@ class ResultsSofascore():
         started_events = self.db.get_started_events()
         for event in started_events:
             event_id = event['id']
-            outcome_id = int(event['outcome_id'])
+            outcome_id = event['outcome_id']
             results = self.sofascore_client.get_match_result(event_id, outcome_id)
             if results:
                 self.db.update_match_results(str(event_id), results['home_score'], results['away_score'], results['status'])

@@ -28,19 +28,20 @@ logger = logging.getLogger(__name__)
 def results_task():
     results_instance = Results()
     results_instance()  # Assuming __call__ or run method
+
+def predict_task():
+    predict_instance = Predict()
+    predict_instance()  # Assuming __call__ or run method
+    
     
 def results_sofascore_task():
     results_sofascore_instance = ResultsSofascore()
     results_sofascore_instance()  # Assuming __call__ or run method
 
-def predict_task():
-    predict_instance = Predict()
-    predict_instance()  # Assuming __call__ or run method
-
-
 def predict_sofascore_task():
     predict_sofascore_instance = PredictSofascore()
     predict_sofascore_instance()  # Assuming __call__ or run method
+    
 
 def withdraw_task():
     withdraw_instance = Withdraw()
@@ -49,6 +50,7 @@ def withdraw_task():
 def autobet_task():
     autobet_instance = Autobet()
     autobet_instance()  # Assuming __call__ or run method (includes Withdraw if needed)
+    
 
 def predict_jackpot_task():
     predict_jackpot_instance = PredictJackpot()
@@ -60,83 +62,33 @@ if __name__ == "__main__":
     scheduler = BackgroundScheduler(timezone=pytz.timezone('Africa/Nairobi'))  # EAT/UTC+3 for Meru, KE
     
     # Add jobs with explicit CronTrigger for absolute wall-clock scheduling
-    # scheduler.add_job(
-    #     func=results_task,
-    #     trigger=CronTrigger(
-    #         hour="0,1,15-23", # At midnight, 1am, and every hour from 3pm to 11pm 
-    #         minute="*",  # Every minute
-    #         second="0"   # At the start of the minute
-    #     ),
-    #     id="results_cron",
-    #     replace_existing=True,
-    #     misfire_grace_time=30,  # 30s grace for delays
-    #     coalesce=True  # Skip missed runs if piled up
-    # )
     scheduler.add_job(
-        func=results_sofascore_task,
+        func=results_task,
         trigger=CronTrigger(
-            hour="*",       # Every hour
-            minute="*/3",   # Every 3 minutes
-            second="0"      # At the start of the minute
+            hour="0,1,15-23", # At midnight, 1am, and every hour from 3pm to 11pm 
+            minute="*",  # Every minute
+            second="0"   # At the start of the minute
         ),
-        id="results_sofascore_cron",
+        id="results_cron",
         replace_existing=True,
         misfire_grace_time=30,  # 30s grace for delays
-        coalesce=True           # Skip missed runs if piled up
+        coalesce=True  # Skip missed runs if piled up
     )
-    
-    # scheduler.add_job(
-    #     func=predict_task,
-    #     trigger=CronTrigger(
-    #         hour="3-21",      # Every hour from 3am to 9pm
-    #         minute="0",
-    #         second="0"
-    #     ),
-    #     id="predict_cron",
-    #     replace_existing=True,
-    #     misfire_grace_time=60,  # 1min grace
-    #     coalesce=True
-    # )
-    
+        
     scheduler.add_job(
-        func=predict_sofascore_task,
+        func=predict_task,
         trigger=CronTrigger(
             hour="*",      # Every hour            
             minute="0", 
             second="0"
         ),
-        id="predict_sofascore_cron",
+        id="predict_task",
         replace_existing=True,
         misfire_grace_time=60,  # 1min grace
         coalesce=True
     )
     
-    # scheduler.add_job(
-    #     func=autobet_task, 
-    #     trigger=CronTrigger(
-    #         hour="*", # Every hour
-    #         minute="0",
-    #         second="0"
-    #     ),
-    #     id="autobet_cron",
-    #     replace_existing=True,
-    #     misfire_grace_time=60,  # 1min grace for startup lag
-    #     coalesce=True
-    # )
-    
-    # scheduler.add_job(
-    #     func=predict_jackpot_task,
-    #     trigger=CronTrigger(
-    #         hour="1",      # Every day at 1 am
-    #         minute="0",
-    #         second="0"
-    #     ),
-    #     id="predict_jackpot_cron",
-    #     replace_existing=True,
-    #     misfire_grace_time=60,  # 1min grace
-    #     coalesce=True
-    # )
-        
+            
     scheduler.start()
     
     # Graceful shutdown handler

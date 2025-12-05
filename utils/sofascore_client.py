@@ -197,8 +197,8 @@ class SofascoreClient:
                 target_fractional = win_info.get("fractionalValue")
 
                 for choice in market_choices:
-                    if choice.get("initialFractionalValue") == target_fractional:
-                        matches.append({
+                    if choice.get("initialFractionalValue") == target_fractional and choice.get("name")=="1":
+                        match = {
                             "id": event_id,
                             "start_time": start_time,
                             "home_team": home_team,
@@ -211,7 +211,8 @@ class SofascoreClient:
                             "odd": self._fractional_to_decimal(target_fractional or "1/1"),
                             "overall_prob": win_info.get("actual", 0),
                             "odd_change": win_info.get("actual", 0),
-                        })
+                        }
+                        matches.append(match)
                         break  # only one winning tip per match
 
         logger.info("Found %d winning odds", len(matches))
@@ -291,11 +292,17 @@ class SofascoreClient:
         home_score = event.get("homeScore", {}).get("current", 0)
         away_score = event.get("awayScore", {}).get("current", 0)
         winner_code = event.get("winnerCode")
+        
+        status = "WON" if (
+            outcome_id=="Over 1.5" and (home_score+away_score) > 1
+        ) or (
+            outcome_id=="Over 2.5" and (home_score+away_score) > 2
+        ) else "LOST" 
 
         return {
             "home_team": home_team,
             "away_team": away_team,
             "home_score": home_score,
             "away_score": away_score,
-            "status": "WON" if winner_code == outcome_id else "LOST"
+            "status": status
         }
