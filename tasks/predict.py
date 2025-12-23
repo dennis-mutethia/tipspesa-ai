@@ -160,25 +160,25 @@ Be data-driven, objective, and concise."
         )                   
         
         #apply condition for each bet pick
-        if filtered_match:
-            filtered_match = (
-                None 
-                if (int(filtered_match['sub_type_id']) == 1  and int(filtered_match['outcome_id']) == 1 and filtered_match['odd'] >= 1.45)  #home win
-                #or (int(filtered_match['sub_type_id']) == 1  and int(filtered_match['outcome_id']) == 3 and filtered_match['odd'] <= 1.3)   #away win
-                or (filtered_match["bet_pick"].lower() == 'over 1.5' and (filtered_match['odd'] <= 1.2 or filtered_match['odd'] >= 1.28))   #OV1.5
-                or (filtered_match["bet_pick"].lower() == 'yes' and (filtered_match['odd'] < 1.3 or filtered_match['odd'] > 1.4))           #GG
-                else filtered_match
-            )
+        # if filtered_match:
+        #     filtered_match = (
+        #         None 
+        #         if (int(filtered_match['sub_type_id']) == 1  and int(filtered_match['outcome_id']) == 1 and filtered_match['odd'] >= 1.45)  #home win
+        #         #or (int(filtered_match['sub_type_id']) == 1  and int(filtered_match['outcome_id']) == 3 and filtered_match['odd'] <= 1.3)   #away win
+        #         or (filtered_match["bet_pick"].lower() == 'over 1.5' and (filtered_match['odd'] <= 1.2 or filtered_match['odd'] >= 1.28))   #OV1.5
+        #         or (filtered_match["bet_pick"].lower() == 'yes' and (filtered_match['odd'] < 1.3 or filtered_match['odd'] > 1.4))           #GG
+        #         else filtered_match
+        #     )
         
-        #Map GG to OV1.5
-        if filtered_match:
-            if int(filtered_match['outcome_id']) == 74: 
-                filtered_match['sub_type_id'] = '18'
-                filtered_match['outcome_id'] = '12'
-                filtered_match["prediction"] = 'TOTAL'
-                filtered_match["bet_pick"] = 'over 1.5'
-                filtered_match["special_bet_value"] = 'total=1.5'
-                filtered_match['odd'] = (float(filtered_match['odd']) - 1)/2 + 1
+        # #Map GG to OV1.5
+        # if filtered_match:
+        #     if int(filtered_match['outcome_id']) == 74: 
+        #         filtered_match['sub_type_id'] = '18'
+        #         filtered_match['outcome_id'] = '12'
+        #         filtered_match["prediction"] = 'TOTAL'
+        #         filtered_match["bet_pick"] = 'over 1.5'
+        #         filtered_match["special_bet_value"] = 'total=1.5'
+        #         filtered_match['odd'] = (float(filtered_match['odd']) - 1)/2 + 1
         
         return filtered_match  
     
