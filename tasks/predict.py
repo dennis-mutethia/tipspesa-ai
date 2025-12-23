@@ -1,8 +1,10 @@
 
 from datetime import datetime
+import os
 import json
 import logging
 import time
+from dotenv import load_dotenv
 
 from utils.azure_models import AzureModels
 from utils.betika import Betika
@@ -19,12 +21,16 @@ class Predict():
         main class
     """
     def __init__(self):
+        load_dotenv()
         self.betika = Betika()
         self.gemini = Gemini()
         self.github_models = GithubModels()
         self.azure_models = AzureModels()
         self.db = Db()
-    
+        self.min_prob = int(os.getenv('MIN_PROB', '75'))
+        self.min_odd = float(os.getenv('MIN_ODD', '1.15'))
+        self.max_odd = float(os.getenv('MAX_ODD', '1.30'))
+            
     def prepare_query(self, parent_match_id):
         logger.info("Preparing query for match id: %s", parent_match_id)
         url = f'https://api.betika.com/v1/uo/match?parent_match_id={parent_match_id}'
@@ -141,13 +147,12 @@ Be data-driven, objective, and concise."
         return query
     
     def is_valid_match(self, filtered_match):
-        MIN_ODD, MAX_ODD, MIN_PROB = 1.15, 1.30, 81
         
         filtered_match = (
             filtered_match
                 if filtered_match
-                    and MIN_ODD <= filtered_match["odd"] <= MAX_ODD
-                    and filtered_match["overall_prob"] >= MIN_PROB   
+                    and self.min_odd <= filtered_match["odd"] <= self.max_odd
+                    and filtered_match["overall_prob"] >= self.min_prob   
                     and int(filtered_match['outcome_id']) != 3              #remove away win
                     and filtered_match["bet_pick"].lower() != 'over 0.5'    #remove over 0.5 
                     and 'under' not in filtered_match["bet_pick"].lower()   #remove unders       
